@@ -10,74 +10,73 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ChangelogRouteImport } from './routes/changelog'
-import { Route as LeaderboardRouteImport } from './routes/leaderboard'
-import { Route as RubricRouteImport } from './routes/rubric'
-import { Route as ReportIdRouteImport } from './routes/report.$id'
+import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppResultsRouteImport } from './routes/app.results'
+import { Route as AppRubricRouteImport } from './routes/app.rubric'
+import { Route as AppPIdRouteImport } from './routes/app.p.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ChangelogRoute = ChangelogRouteImport.update({
-  id: '/changelog',
-  path: '/changelog',
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/app/',
+  path: '/app/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LeaderboardRoute = LeaderboardRouteImport.update({
-  id: '/leaderboard',
-  path: '/leaderboard',
+const AppResultsRoute = AppResultsRouteImport.update({
+  id: '/app/results',
+  path: '/app/results',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RubricRoute = RubricRouteImport.update({
-  id: '/rubric',
-  path: '/rubric',
+const AppRubricRoute = AppRubricRouteImport.update({
+  id: '/app/rubric',
+  path: '/app/rubric',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ReportIdRoute = ReportIdRouteImport.update({
-  id: '/report/$id',
-  path: '/report/$id',
+const AppPIdRoute = AppPIdRouteImport.update({
+  id: '/app/p/$id',
+  path: '/app/p/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/changelog': typeof ChangelogRoute
-  '/leaderboard': typeof LeaderboardRoute
-  '/rubric': typeof RubricRoute
-  '/report/$id': typeof ReportIdRoute
+  '/app/results': typeof AppResultsRoute
+  '/app/rubric': typeof AppRubricRoute
+  '/app/': typeof AppIndexRoute
+  '/app/p/$id': typeof AppPIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/changelog': typeof ChangelogRoute
-  '/leaderboard': typeof LeaderboardRoute
-  '/rubric': typeof RubricRoute
-  '/report/$id': typeof ReportIdRoute
+  '/app/results': typeof AppResultsRoute
+  '/app/rubric': typeof AppRubricRoute
+  '/app': typeof AppIndexRoute
+  '/app/p/$id': typeof AppPIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/changelog': typeof ChangelogRoute
-  '/leaderboard': typeof LeaderboardRoute
-  '/rubric': typeof RubricRoute
-  '/report/$id': typeof ReportIdRoute
+  '/app/results': typeof AppResultsRoute
+  '/app/rubric': typeof AppRubricRoute
+  '/app/': typeof AppIndexRoute
+  '/app/p/$id': typeof AppPIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/changelog' | '/leaderboard' | '/rubric' | '/report/$id'
+  fullPaths: '/' | '/app/results' | '/app/rubric' | '/app/' | '/app/p/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/changelog' | '/leaderboard' | '/rubric' | '/report/$id'
-  id:
-    '__root__' | '/' | '/changelog' | '/leaderboard' | '/rubric' | '/report/$id'
+  to: '/' | '/app/results' | '/app/rubric' | '/app' | '/app/p/$id'
+  id: '__root__' | '/' | '/app/results' | '/app/rubric' | '/app/' | '/app/p/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ChangelogRoute: typeof ChangelogRoute
-  LeaderboardRoute: typeof LeaderboardRoute
-  RubricRoute: typeof RubricRoute
-  ReportIdRoute: typeof ReportIdRoute
+  AppResultsRoute: typeof AppResultsRoute
+  AppRubricRoute: typeof AppRubricRoute
+  AppIndexRoute: typeof AppIndexRoute
+  AppPIdRoute: typeof AppPIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -89,32 +88,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/changelog': {
-      id: '/changelog'
-      path: '/changelog'
-      fullPath: '/changelog'
-      preLoaderRoute: typeof ChangelogRouteImport
+    '/app/': {
+      id: '/app/'
+      path: '/app'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/leaderboard': {
-      id: '/leaderboard'
-      path: '/leaderboard'
-      fullPath: '/leaderboard'
-      preLoaderRoute: typeof LeaderboardRouteImport
+    '/app/results': {
+      id: '/app/results'
+      path: '/app/results'
+      fullPath: '/app/results'
+      preLoaderRoute: typeof AppResultsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/rubric': {
-      id: '/rubric'
-      path: '/rubric'
-      fullPath: '/rubric'
-      preLoaderRoute: typeof RubricRouteImport
+    '/app/rubric': {
+      id: '/app/rubric'
+      path: '/app/rubric'
+      fullPath: '/app/rubric'
+      preLoaderRoute: typeof AppRubricRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/report/$id': {
-      id: '/report/$id'
-      path: '/report/$id'
-      fullPath: '/report/$id'
-      preLoaderRoute: typeof ReportIdRouteImport
+    '/app/p/$id': {
+      id: '/app/p/$id'
+      path: '/app/p/$id'
+      fullPath: '/app/p/$id'
+      preLoaderRoute: typeof AppPIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -122,10 +121,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ChangelogRoute: ChangelogRoute,
-  LeaderboardRoute: LeaderboardRoute,
-  RubricRoute: RubricRoute,
-  ReportIdRoute: ReportIdRoute,
+  AppResultsRoute: AppResultsRoute,
+  AppRubricRoute: AppRubricRoute,
+  AppIndexRoute: AppIndexRoute,
+  AppPIdRoute: AppPIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
