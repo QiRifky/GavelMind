@@ -1,152 +1,168 @@
-// All app data flows through here. Mock in-memory store for now; API_BASE_URL is reserved for a real backend.
+/**
+ * GavelMind data layer. EVERY piece of app data goes through this file.
+ * Today it is an in-memory mock store with simulated delays; later each exported
+ * async function is swapped for a real call to the judge's own backend with the same shape.
+ * Rule: AI only drafts. Ranking uses judge final scores only (see judgeTotal).
+ */
 import { useSyncExternalStore } from "react";
 
 export const API_BASE_URL: string = import.meta.env["VITE_API_BASE_URL"] ?? "";
 
-export type EntryStatus = "queued" | "analyzing" | "done" | "failed";
+// ---------- Types ----------
+export type AnalysisStatus = "queued" | "analyzing" | "done" | "failed";
+export type JudgeStatus = "Not reviewed" | "In review" | "Finalized";
 export type RunStatus = "worked" | "failed" | "error";
-export type Tone = "serious" | "sarcastic" | "playful";
-
-export interface Entry { id: string; url: string; name: string; status: EntryStatus }
-export interface Criterion { id: string; name: string; weight: number }
-export interface Draft { score: number; reason: string; evidence: string }
+export type CheckResult = "pass" | "warn" | "fail";
+export type SummaryStyle = "neutral" | "concise" | "detailed";
 export type LogLineType = "cmd" | "ok" | "info" | "warn" | "error" | "result";
+
+export interface Project { id: string; name: string; repoUrl: string; demoUrl?: string; status: AnalysisStatus }
+export interface Criterion { id: string; name: string; weight: number }
 export interface LogLine { type: LogLineType; text: string }
-export type CheckResult = "pass" | "fail" | "unknown";
-export interface RuleCheck { id: string; label: string; result: CheckResult; evidence: string }
-export interface Flag { text: string; severity: 1 | 2 | 3; evidence: string }
-export type StackKind = "language" | "framework" | "database" | "tool";
-export interface StackItem { name: string; kind: StackKind; desc: string }
+export interface StackItem { name: string; kind: "language" | "framework" | "database" | "tool" }
+export interface RuleCheck { id: string; label: string; result: CheckResult; reason: string; evidenceUrl: string }
+/** One model's draft for one criterion. `model` is a display name supplied by the API. */
+export interface ModelDraft { model: string; score: number; reason: string; evidence: string }
 export interface Report {
-  entryId: string;
-  summary: string[];
-  run: { status: RunStatus; evidence: string; log: LogLine[] };
-  flags: Flag[];
-  checks: RuleCheck[];
+  projectId: string;
+  /** Exactly 3 neutral sentences. */
+  summary: [string, string, string];
+  does: string;
+  doesNot: string;
   stack: StackItem[];
+  checks: RuleCheck[];
+  material: {
+    description: { text: string; source: string };
+    repository: { readme: string; source: string; run: { status: RunStatus; evidence: string; log: LogLine[] } };
+    demo: { url?: string; transcriptStatus: "not provided" | "transcribing" | "ready"; transcript?: string; source: string };
+  };
+  /** Model names returned by the API, never hard-coded in components. */
+  models: string[];
 }
-export interface LogItem { id: number; at: number; what: string; oldValue: string; newValue: string }
+export interface JudgeScore { score?: number; note?: string }
+export type ChangeKind = "score" | "note" | "rubric" | "finalized";
+export interface ChangeItem { id: number; at: number; kind: ChangeKind; what: string; oldValue: string; newValue: string }
+export interface Discovered { name: string; repoUrl: string; demoUrl?: string }
+export type AnalyzeStage = 0 | 1 | 2 | 3;
+export const STAGES = [
+  { label: "Cloning repository", detail: "Copying the code into an isolated workspace." },
+  { label: "Running in sandbox", detail: "Installing dependencies and starting the app." },
+  { label: "Checking rules", detail: "Comparing commits, connectors and demo against the event rules." },
+  { label: "Drafting scores", detail: "Writing draft scores with reasons for you to review." },
+] as const;
 
 interface State {
-  entries: Entry[];
+  projects: Project[];
   criteria: Criterion[];
   reports: Record<string, Report>;
-  finals: Record<string, Record<string, number>>;
-  log: LogItem[];
+  judge: Record<string, Record<string, JudgeScore>>;
+  log: ChangeItem[];
   finalized: boolean;
-  tone: Tone;
+  winners: string[];
 }
 
-const seedEntries: Entry[] = [
-  { id: "e1", url: "https://github.com/lumen-labs/plantpal", name: "lumen-labs/plantpal", status: "done" },
-  { id: "e2", url: "https://github.com/quietbyte/transit-whisper", name: "quietbyte/transit-whisper", status: "done" },
-  { id: "e3", url: "https://github.com/ada-team/receipt-ninja", name: "ada-team/receipt-ninja", status: "done" },
-];
-
-function makeReport(e: Entry, n: number): Report {
-  const runs: RunStatus[] = ["worked", "error", "worked", "failed"];
-  const run = runs[n % runs.length] ?? "worked";
-  return {
-    entryId: e.id,
-    summary: [
-      `${e.name} is a hackathon project with a small web front end and a single service behind it.`,
-      `The README describes the core idea clearly and lists setup steps that mostly match the code.`,
-      `The main flow is implemented end to end, while secondary screens are partly stubbed.`,
-      `Tests are light, covering only a few helper functions.`,
-    ],
-    run: {
-      status: run,
-      log: runLog(run),
-      evidence:
-        run === "worked"
-          ? "`npm install && npm start` exited 0; server answered GET / with 200 in 412 ms."
-          : run === "error"
-            ? "Build succeeded, but runtime threw `TypeError: cannot read 'map' of undefined` at src/App.tsx:42."
-            : "`npm install` failed: package-lock.json references a missing private package.",
-    },
-    flags:
-      n % 2 === 0
-        ? [
-            { text: "87% of commits land in the last 2 hours before the deadline.", severity: 2, evidence: "41 of 47 commits between 22:04 and 23:58 on the final day (git log)." },
-            { text: "README screenshots don't match the current UI.", severity: 1, evidence: "docs/screenshot.png shows a sidebar that no file in src/ renders." },
-          ]
-        : [{ text: "Large vendored folder copied from another open-source project.", severity: 3, evidence: "vendor/ (2.1 MB) matches an existing public repo file-for-file; licence not credited." }],
-    checks: [
-      { id: "week", label: "Built in hackathon week", result: n % 2 === 0 ? "pass" : "fail", evidence: n % 2 === 0 ? "First commit Mon 09:12, last commit Sun 23:58 — all inside the event window." : "First commit is 3 weeks before the event started." },
-      { id: "sprite", label: "Runs on a Sprite", result: run === "worked" ? "pass" : run === "error" ? "unknown" : "fail", evidence: run === "worked" ? "Started in the sandbox and answered HTTP 200." : run === "error" ? "Built, but crashed before a request could be served." : "Install step failed; the app never started." },
-      { id: "connector", label: "Uses a connector", result: n % 3 === 0 ? "pass" : "unknown", evidence: n % 3 === 0 ? "src/lib/calendar.ts calls a connected calendar service." : "No connector usage found in code; may be configured outside the repo." },
-      { id: "demo", label: "Demo and description", result: "pass", evidence: "README has a description and a demo video link." },
-    ],
-    stack: [
-      { name: "TypeScript", kind: "language", desc: "Used for the whole front end and the API handlers." },
-      { name: "React", kind: "framework", desc: "Renders every screen of the app." },
-      { name: n % 2 === 0 ? "SQLite" : "Postgres", kind: "database", desc: "Stores user records and saved items." },
-      { name: "Vite", kind: "tool", desc: "Builds and serves the front end during development." },
-    ],
-  };
-}
-
-function runLog(run: RunStatus): LogLine[] {
-  const base: LogLine[] = [
-    { type: "info", text: "Cloning repository into isolated sandbox" },
-    { type: "cmd", text: "npm install" },
-  ];
-  if (run === "failed")
-    return [...base, { type: "error", text: "npm ERR! 404 package not found in registry" }, { type: "result", text: "Result: failed — install did not complete" }];
-  const built: LogLine[] = [
-    ...base,
-    { type: "ok", text: "Dependencies installed" },
-    { type: "warn", text: "2 deprecated packages" },
-    { type: "cmd", text: "npm run build" },
-    { type: "ok", text: "Build finished" },
-    { type: "cmd", text: "npm start" },
-  ];
-  if (run === "error")
-    return [...built, { type: "error", text: "TypeError: cannot read 'map' of undefined (src/App.tsx:42)" }, { type: "result", text: "Result: error — crashed at runtime" }];
-  return [...built, { type: "ok", text: "GET / → 200 in 412 ms" }, { type: "result", text: "Result: worked" }];
-}
-
-/** Async read, same shape the real API will return. */
-export function fetchReport(id: string): Promise<Report> {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const r = state.reports[id];
-      if (r) resolve(r);
-      else reject(new Error("Report not found"));
-    }, 350);
-  });
-}
-
+// ---------- Mock generators ----------
 function hash(s: string) {
   let h = 0;
   for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0;
   return h;
 }
+const MOCK_MODELS = ["Claude Sonnet 4.5", "GPT-5", "Gemini 2.5 Pro"];
+const nameOf = (url: string) => url.replace(/^https?:\/\/(www\.)?github\.com\//, "").replace(/\/$/, "");
+export const isRepoUrl = (u: string) => /^https?:\/\/(www\.)?github\.com\/[^/\s]+\/[^/\s]+\/?$/.test(u);
 
-export function draftFor(entryId: string, c: Criterion): Draft {
-  const score = 4 + (hash(entryId + c.name) % 6); // 4..9 out of 10
+function runLog(run: RunStatus): LogLine[] {
+  const base: LogLine[] = [{ type: "info", text: "Cloning repository into isolated sandbox" }, { type: "cmd", text: "npm install" }];
+  if (run === "failed") return [...base, { type: "error", text: "npm ERR! 404 package not found in registry" }, { type: "result", text: "Result: failed — install did not complete" }];
+  const built: LogLine[] = [...base, { type: "ok", text: "Dependencies installed" }, { type: "warn", text: "2 deprecated packages" }, { type: "cmd", text: "npm run build" }, { type: "ok", text: "Build finished" }, { type: "cmd", text: "npm start" }];
+  if (run === "error") return [...built, { type: "error", text: "TypeError: cannot read 'map' of undefined (src/App.tsx:42)" }, { type: "result", text: "Result: error — crashed at runtime" }];
+  return [...built, { type: "ok", text: "GET / → 200 in 412 ms" }, { type: "result", text: "Result: worked" }];
+}
+
+function makeReport(p: Project): Report {
+  const n = hash(p.id + p.name);
+  const run: RunStatus = (["worked", "worked", "error", "failed"] as const)[n % 4] ?? "worked";
+  const even = n % 2 === 0;
+  const r = (result: CheckResult, reason: string, file: string): Pick<RuleCheck, "result" | "reason" | "evidenceUrl"> => ({ result, reason, evidenceUrl: `${p.repoUrl}/${file}` });
   return {
-    score,
-    reason: score >= 7 ? `Strong on ${c.name.toLowerCase()}, with clear signs of intent.` : `${c.name} is present but uneven across the project.`,
-    evidence: `See README.md and src/ (${(hash(c.id + entryId) % 30) + 3} relevant files reviewed).`,
+    projectId: p.id,
+    summary: [
+      `${p.name} is a web app with a small front end and one service behind it.`,
+      `The main flow works end to end; secondary screens are partly stubbed.`,
+      `Tests cover a few helper functions only.`,
+    ],
+    does: "Lets a user upload data, processes it on the server and shows the result on one screen.",
+    doesNot: "No accounts, no saved history, and no mobile layout.",
+    stack: [
+      { name: "TypeScript", kind: "language" },
+      { name: "React", kind: "framework" },
+      { name: even ? "SQLite" : "Postgres", kind: "database" },
+      { name: "Vite", kind: "tool" },
+    ],
+    checks: [
+      { id: "event", label: "Built during the event", ...(even ? r("pass", "All 47 commits fall inside the event window.", "commits/main") : r("warn", "First commit is 3 weeks before the event; most work is inside it.", "commits/main")) },
+      { id: "connector", label: "Uses a required connector", ...(n % 3 === 0 ? r("pass", "src/lib/calendar.ts calls a connected calendar service.", "blob/main/src/lib/calendar.ts") : r("warn", "No connector call found in code; may be configured outside the repo.", "search?q=connector")) },
+      { id: "demo", label: "Demo provided", ...(p.demoUrl ? r("pass", "Demo video linked in the README.", "blob/main/README.md") : r("fail", "No demo video or live link found.", "blob/main/README.md")) },
+      { id: "public", label: "Repository is public", ...r("pass", "Repository opened without credentials.", "") },
+      { id: "runs", label: "Runs successfully", ...(run === "worked" ? r("pass", "Started in the sandbox and answered HTTP 200.", "actions") : run === "error" ? r("warn", "Built, then crashed before serving a request.", "blob/main/src/App.tsx") : r("fail", "Install step failed; the app never started.", "blob/main/package.json")) },
+    ],
+    material: {
+      description: { text: `${p.name}: a hackathon project that turns a manual task into a one-click flow.`, source: "Submission form" },
+      repository: {
+        readme: "README explains the idea in two paragraphs and lists setup steps that mostly match package.json.",
+        source: `${p.repoUrl}#readme`,
+        run: {
+          status: run,
+          log: runLog(run),
+          evidence: run === "worked" ? "`npm install && npm start` exited 0; GET / returned 200 in 412 ms." : run === "error" ? "Runtime threw `TypeError` at src/App.tsx:42." : "`npm install` failed on a missing private package.",
+        },
+      },
+      demo: p.demoUrl
+        ? { url: p.demoUrl, transcriptStatus: "ready", transcript: "Hi, we're the team. Here you paste a file, press Run, and after a few seconds the summary appears on the right. That's the main flow.", source: p.demoUrl }
+        : { transcriptStatus: "not provided", source: "Submission form" },
+    },
+    models: MOCK_MODELS,
   };
 }
 
+/** Per-model drafts for one criterion. Deterministic mock; real API returns these. */
+export function draftsFor(report: Report, c: Criterion): ModelDraft[] {
+  return report.models.map((model) => {
+    const score = 4 + (hash(report.projectId + c.name + model) % 6);
+    return {
+      model,
+      score,
+      reason: score >= 7 ? `Strong on ${c.name.toLowerCase()}; the main flow shows clear intent.` : `${c.name} is present but uneven across the project.`,
+      evidence: `README.md and ${(hash(c.id + model) % 20) + 3} files in src/`,
+    };
+  });
+}
+export const average = (xs: number[]) => (xs.length ? Math.round((xs.reduce((a, b) => a + b, 0) / xs.length) * 10) / 10 : 0);
+/** Models agree when every draft is within 1 point of every other. */
+export const agreement = (xs: number[]) => xs.length > 0 && Math.max(...xs) - Math.min(...xs) <= 1;
+
+// ---------- Store ----------
+const seed: Project[] = [
+  { id: "p1", name: "lumen-labs/plantpal", repoUrl: "https://github.com/lumen-labs/plantpal", demoUrl: "https://youtu.be/plantpal-demo", status: "done" },
+  { id: "p2", name: "quietbyte/transit-whisper", repoUrl: "https://github.com/quietbyte/transit-whisper", status: "done" },
+  { id: "p3", name: "ada-team/receipt-ninja", repoUrl: "https://github.com/ada-team/receipt-ninja", demoUrl: "https://youtu.be/receipt-ninja", status: "done" },
+  { id: "p4", name: "nightowls/standup-bot", repoUrl: "https://github.com/nightowls/standup-bot", status: "queued" },
+];
+const DEFAULT_CRITERIA: Criterion[] = [
+  { id: "c1", name: "Creativity", weight: 25 },
+  { id: "c2", name: "Usefulness", weight: 25 },
+  { id: "c3", name: "Technical quality", weight: 25 },
+  { id: "c4", name: "Demo clarity", weight: 25 },
+];
 let state: State = {
-  entries: seedEntries,
-  criteria: [
-    { id: "c1", name: "Creativity", weight: 25 },
-    { id: "c2", name: "Usefulness", weight: 25 },
-    { id: "c3", name: "Technical quality", weight: 25 },
-    { id: "c4", name: "Demo clarity", weight: 25 },
-  ],
-  reports: Object.fromEntries(seedEntries.map((e, i) => [e.id, makeReport(e, i)])),
-  finals: {},
+  projects: seed,
+  criteria: DEFAULT_CRITERIA,
+  reports: Object.fromEntries(seed.filter((p) => p.status === "done").map((p) => [p.id, makeReport(p)])),
+  judge: {},
   log: [],
   finalized: false,
-  tone: "serious",
+  winners: [],
 };
-
 const listeners = new Set<() => void>();
 const set = (patch: Partial<State>) => {
   state = { ...state, ...patch };
@@ -154,102 +170,123 @@ const set = (patch: Partial<State>) => {
 };
 const subscribe = (l: () => void) => {
   listeners.add(l);
-  return () => {
-    listeners.delete(l);
-  };
+  return () => void listeners.delete(l);
 };
+/** Live view of the store for components. */
 export function useApi() {
   return useSyncExternalStore(subscribe, () => state, () => state);
 }
-
-/** Read-only snapshot for tests and server code; never mutate the returned object. */
+/** Read-only snapshot for tests; never mutate. */
 export function snapshot(): State {
   return state;
 }
-
-let logId = 0;
-function log(what: string, oldValue: string, newValue: string) {
-  set({ log: [{ id: ++logId, at: Date.now(), what, oldValue, newValue }, ...state.log] });
-}
-
-let idSeq = 100;
-export function addEntries(text: string) {
-  const urls = text.split(/[\s,]+/).map((u) => u.trim()).filter(Boolean);
-  const fresh: Entry[] = urls.map((url) => ({
-    id: `e${++idSeq}`,
-    url,
-    name: url.replace(/^https?:\/\/(www\.)?github\.com\//, "").replace(/\/$/, ""),
-    status: "queued",
-  }));
-  set({ entries: [...state.entries, ...fresh] });
-}
-
-export function analyze() {
-  const todo = state.entries.filter((e) => e.status === "queued" || e.status === "failed");
-  todo.forEach((e, i) => {
-    updateEntry(e.id, "queued");
-    setTimeout(() => updateEntry(e.id, "analyzing"), 400 + i * 500);
-    setTimeout(() => {
-      const ok = /^https?:\/\/(www\.)?github\.com\/[^/\s]+\/[^/\s]+\/?$/.test(e.url);
-      if (ok) set({ reports: { ...state.reports, [e.id]: makeReport(e, hash(e.id)) } });
-      updateEntry(e.id, ok ? "done" : "failed");
-    }, 1800 + i * 700);
+const wait = (ms: number, signal?: AbortSignal) =>
+  new Promise<void>((res, rej) => {
+    const t = setTimeout(res, ms);
+    signal?.addEventListener("abort", () => { clearTimeout(t); rej(new DOMException("Cancelled", "AbortError")); });
   });
+let logId = 0;
+function log(kind: ChangeKind, what: string, oldValue: string, newValue: string) {
+  set({ log: [{ id: ++logId, at: Date.now(), kind, what, oldValue, newValue }, ...state.log] });
 }
-function updateEntry(id: string, status: EntryStatus) {
-  set({ entries: state.entries.map((e) => (e.id === id ? { ...e, status } : e)) });
+let idSeq = 100;
+
+// ---------- Projects ----------
+export async function listProjects(): Promise<Project[]> {
+  await wait(200);
+  return state.projects;
 }
-export function removeEntry(id: string) {
-  set({ entries: state.entries.filter((e) => e.id !== id) });
+/** Adds URLs (one per line). Skips duplicates. Returns the created projects. */
+export function addProjects(items: Array<string | Discovered>): Project[] {
+  const known = new Set(state.projects.map((p) => p.repoUrl));
+  const fresh: Project[] = [];
+  for (const it of items) {
+    const d: Discovered = typeof it === "string" ? { repoUrl: it.trim(), name: nameOf(it.trim()) } : it;
+    if (!d.repoUrl || known.has(d.repoUrl)) continue;
+    known.add(d.repoUrl);
+    fresh.push({ id: `p${++idSeq}`, name: d.name, repoUrl: d.repoUrl, status: "queued", ...(d.demoUrl ? { demoUrl: d.demoUrl } : {}) });
+  }
+  set({ projects: [...state.projects, ...fresh] });
+  return fresh;
+}
+export const splitUrls = (text: string) => text.split(/[\s,]+/).map((u) => u.trim()).filter(Boolean);
+export function removeProject(id: string) {
+  set({ projects: state.projects.filter((p) => p.id !== id) });
+}
+/** Reads a showcase page and returns the projects it lists (mock). */
+export async function scanShowcase(pageUrl: string): Promise<Discovered[]> {
+  await wait(900);
+  if (!/^https?:\/\//.test(pageUrl)) throw new Error("That doesn't look like a web address.");
+  const host = pageUrl.replace(/^https?:\/\//, "").split("/")[0] ?? "showcase";
+  return ["echo-notes", "parkspot", "lingo-loop", "fridge-chef", "commit-coach"].map((n, i) => ({
+    name: `team-${i + 1}/${n}`,
+    repoUrl: `https://github.com/team-${i + 1}/${n}`,
+    ...(i % 2 === 0 ? { demoUrl: `https://${host}/demo/${n}` } : {}),
+  }));
+}
+function setStatus(id: string, status: AnalysisStatus) {
+  set({ projects: state.projects.map((p) => (p.id === id ? { ...p, status } : p)) });
+}
+/**
+ * Runs the four analysis stages. onStage reports progress; abort the signal to cancel
+ * (the project goes back to queued). Rejects for URLs that are not a GitHub repo.
+ */
+export async function analyzeProject(id: string, opts: { onStage?: (s: AnalyzeStage) => void; signal?: AbortSignal; stageMs?: number } = {}): Promise<Report> {
+  const p = state.projects.find((x) => x.id === id);
+  if (!p) throw new Error("Project not found");
+  setStatus(id, "analyzing");
+  try {
+    for (const s of [0, 1, 2, 3] as const) {
+      opts.onStage?.(s);
+      await wait(opts.stageMs ?? 1100, opts.signal);
+      if (s === 0 && !isRepoUrl(p.repoUrl)) throw new Error("Couldn't clone this address. Use a public GitHub repository URL.");
+    }
+  } catch (e) {
+    setStatus(id, e instanceof DOMException && e.name === "AbortError" ? "queued" : "failed");
+    throw e;
+  }
+  const report = makeReport(p);
+  set({ reports: { ...state.reports, [id]: report } });
+  setStatus(id, "done");
+  return report;
+}
+export async function getReport(id: string): Promise<Report> {
+  await wait(350);
+  const r = state.reports[id];
+  if (!r) throw new Error("No report yet. Run the analysis first.");
+  return r;
 }
 
-export function addCriterion(name: string) {
-  set({ criteria: [...state.criteria, { id: `c${++idSeq}`, name, weight: 10 }] });
-  log("Rubric: added criterion", "—", name);
-}
-export function removeCriterion(id: string) {
-  const c = state.criteria.find((x) => x.id === id);
-  set({ criteria: state.criteria.filter((x) => x.id !== id) });
-  if (c) log("Rubric: removed criterion", c.name, "—");
-}
-export function renameCriterion(id: string, name: string) {
-  const c = state.criteria.find((x) => x.id === id);
-  if (!c || c.name === name || !name.trim()) return;
-  set({ criteria: state.criteria.map((x) => (x.id === id ? { ...x, name } : x)) });
-  log("Rubric: renamed criterion", c.name, name);
-}
-export function setWeight(id: string, weight: number) {
-  const c = state.criteria.find((x) => x.id === id);
-  if (!c || c.weight === weight) return;
-  set({ criteria: state.criteria.map((x) => (x.id === id ? { ...x, weight } : x)) });
-  log(`Rubric: weight of ${c.name}`, String(c.weight), String(weight));
-}
-
-export function setFinal(entryId: string, critId: string, value: number | null) {
+// ---------- Judge ----------
+/** Autosaves one judge field. score null clears it. Logged. */
+export function saveJudgeScore(projectId: string, critId: string, patch: { score?: number | null; note?: string }) {
   if (state.finalized) return;
-  const prev = state.finals[entryId]?.[critId];
-  if (prev === (value ?? undefined)) return;
-  const row = { ...(state.finals[entryId] ?? {}) };
-  if (value === null) delete row[critId];
-  else row[critId] = value;
-  set({ finals: { ...state.finals, [entryId]: row } });
-  const e = state.entries.find((x) => x.id === entryId);
-  const c = state.criteria.find((x) => x.id === critId);
-  log(
-    `Final score: ${e?.name ?? entryId} · ${c?.name ?? critId}`,
-    prev === undefined ? "—" : String(prev),
-    value === null ? "—" : String(value),
-  );
+  const prev = state.judge[projectId]?.[critId] ?? {};
+  const next: JudgeScore = { ...prev };
+  const p = state.projects.find((x) => x.id === projectId)?.name ?? projectId;
+  const c = state.criteria.find((x) => x.id === critId)?.name ?? critId;
+  if (patch.score !== undefined && patch.score !== (prev.score ?? null)) {
+    if (patch.score === null) delete next.score;
+    else next.score = Math.max(0, Math.min(10, patch.score));
+    log("score", `${p} · ${c}`, prev.score === undefined ? "—" : String(prev.score), next.score === undefined ? "—" : String(next.score));
+  }
+  if (patch.note !== undefined && patch.note !== (prev.note ?? "")) {
+    if (patch.note === "") delete next.note;
+    else next.note = patch.note;
+    log("note", `${p} · ${c} note`, prev.note ?? "—", patch.note || "—");
+  }
+  set({ judge: { ...state.judge, [projectId]: { ...(state.judge[projectId] ?? {}), [critId]: next } } });
 }
-
-export function setFinalized(v: boolean) {
-  set({ finalized: v });
-  log("Results status", v ? "Draft" : "Final", v ? "Final" : "Draft");
+export function finalsOf(projectId: string, s: State = state): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const [k, v] of Object.entries(s.judge[projectId] ?? {})) if (v.score !== undefined) out[k] = v.score;
+  return out;
 }
-export function setTone(tone: Tone) {
-  set({ tone });
+export function judgeStatus(projectId: string, s: State = state): JudgeStatus {
+  const n = Object.keys(finalsOf(projectId, s)).length;
+  if (s.finalized && judgeTotal(finalsOf(projectId, s), s.criteria) !== null) return "Finalized";
+  return n > 0 ? "In review" : "Not reviewed";
 }
-
 /** Weighted score from the judge's final numbers only; null until every criterion is decided. */
 export function judgeTotal(finals: Record<string, number> | undefined, criteria: Criterion[]): number | null {
   if (!finals || criteria.length === 0) return null;
@@ -264,12 +301,71 @@ export function judgeTotal(finals: Record<string, number> | undefined, criteria:
   return w === 0 ? null : sum / w;
 }
 
-/** Tone changes wording only, never numbers. */
-export function voice(tone: Tone, key: "intro" | "flag" | "reason", text = ""): string {
-  const t = {
-    intro: { serious: "", sarcastic: "Brace yourself. ", playful: "Ooh, a fresh one! " },
-    flag: { serious: "Worth checking", sarcastic: "Hmm, suspiciously convenient", playful: "Eyebrow-raiser" },
-    reason: { serious: "", sarcastic: "To be fair: ", playful: "Fun fact: " },
-  } as const;
-  return t[key][tone] + text;
+// ---------- Rubric ----------
+export async function getRubric(): Promise<Criterion[]> {
+  await wait(150);
+  return state.criteria;
+}
+export const weightTotal = (cs: Criterion[]) => cs.reduce((a, c) => a + c.weight, 0);
+/** Save is allowed only when weights total exactly 100 and every name is filled. */
+export const canSaveRubric = (cs: Criterion[]) => cs.length > 0 && weightTotal(cs) === 100 && cs.every((c) => c.name.trim() !== "");
+export function saveRubric(next: Criterion[]): boolean {
+  if (!canSaveRubric(next)) return false;
+  const old = state.criteria;
+  for (const c of next) {
+    const o = old.find((x) => x.id === c.id);
+    if (!o) log("rubric", "Rubric: added criterion", "—", `${c.name} (${c.weight}%)`);
+    else {
+      if (o.name !== c.name) log("rubric", "Rubric: renamed criterion", o.name, c.name);
+      if (o.weight !== c.weight) log("rubric", `Rubric: weight of ${c.name}`, `${o.weight}%`, `${c.weight}%`);
+    }
+  }
+  for (const o of old) if (!next.some((c) => c.id === o.id)) log("rubric", "Rubric: removed criterion", o.name, "—");
+  set({ criteria: next.map((c) => ({ ...c, name: c.name.trim() })) });
+  return true;
+}
+export const newCriterionId = () => `c${++idSeq}`;
+
+// ---------- Results ----------
+/** Records the winners the judge picked. The app never picks them. */
+export function finalize(winnerIds: string[]) {
+  set({ finalized: true, winners: winnerIds });
+  const names = winnerIds.map((id) => state.projects.find((p) => p.id === id)?.name ?? id).join(", ");
+  log("finalized", "Results finalized", "Draft", names ? `Final · winners: ${names}` : "Final");
+}
+export function reopen() {
+  set({ finalized: false, winners: [] });
+  log("finalized", "Results reopened", "Final", "Draft");
+}
+export function getChangeLog(): ChangeItem[] {
+  return state.log;
+}
+export const EXPORT_LINE = "AI scores are drafts; final scores are the judge's decisions.";
+export type ExportFormat = "csv" | "json" | "md";
+/** Builds the export file in the browser. */
+export function exportResults(format: ExportFormat, s: State = state): { filename: string; mime: string; content: string } {
+  const rows = s.projects.map((p) => ({ name: p.name, repo: p.repoUrl, scores: finalsOf(p.id, s), total: judgeTotal(finalsOf(p.id, s), s.criteria) }));
+  const fmt = (t: number | null) => (t === null ? "Awaiting judge review" : t.toFixed(2));
+  if (format === "json")
+    return { filename: "gavelmind-results.json", mime: "application/json", content: JSON.stringify({ note: EXPORT_LINE, finalized: s.finalized, rubric: s.criteria, winners: s.winners, results: rows }, null, 2) };
+  if (format === "csv") {
+    const esc = (v: string) => `"${v.replace(/"/g, '""')}"`;
+    const head = ["Project", "Repo", ...s.criteria.map((c) => `${c.name} (${c.weight}%)`), "Judge total"];
+    const body = rows.map((r) => [r.name, r.repo, ...s.criteria.map((c) => String(r.scores[c.id] ?? "")), fmt(r.total)].map(esc).join(","));
+    return { filename: "gavelmind-results.csv", mime: "text/csv", content: [esc(EXPORT_LINE), head.map(esc).join(","), ...body].join("\n") };
+  }
+  const md = [
+    "# GavelMind results", "", `> ${EXPORT_LINE}`, "", `Status: ${s.finalized ? "Final" : "Draft, not final"}`, "",
+    "## Rubric", ...s.criteria.map((c) => `- ${c.name}: ${c.weight}%`), "",
+    "## Judge's final scores", `| Project | ${s.criteria.map((c) => c.name).join(" | ")} | Total |`, `|---|${s.criteria.map(() => "---").join("|")}|---|`,
+    ...rows.map((r) => `| ${r.name} | ${s.criteria.map((c) => r.scores[c.id] ?? "—").join(" | ")} | ${fmt(r.total)} |`),
+  ];
+  return { filename: "gavelmind-results.md", mime: "text/markdown", content: md.join("\n") };
+}
+
+/** Summary wording per style. Style changes wording only, never numbers. */
+export function summaryText(r: Report, style: SummaryStyle): string[] {
+  if (style === "concise") return [r.summary[0]];
+  if (style === "detailed") return [...r.summary, `What it does: ${r.does}`, `What it does not do: ${r.doesNot}`];
+  return [...r.summary];
 }

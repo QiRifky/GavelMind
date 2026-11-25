@@ -12,7 +12,7 @@ export const ACCENTS: Record<Accent, string> = {
 const GRID =
   "linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px)";
 
-/** Cursor position lives in CSS variables (--mx/--my) so moving never re-renders React. */
+/** Glow follows the mouse only (desktop); keyboard focus also lights it. Cursor position lives in CSS variables (--mx/--my) so moving never re-renders React. */
 export function GlowCard({ accent, className, children, label }: { accent: Accent; className?: string; children: ReactNode; label: string }) {
   const ref = useRef<HTMLElement>(null);
   const rgb = ACCENTS[accent];
@@ -31,12 +31,9 @@ export function GlowCard({ accent, className, children, label }: { accent: Accen
       ref={ref}
       aria-label={label}
       style={{ ["--rgb" as string]: rgb, ["--mx" as string]: "50%", ["--my" as string]: "0px" }}
-      onPointerMove={(e) => move(e.clientX, e.clientY)}
-      onPointerEnter={on}
+      onPointerMove={(e) => { if (e.pointerType === "mouse") move(e.clientX, e.clientY); }}
+      onPointerEnter={(e) => { if (e.pointerType === "mouse") on(); }}
       onPointerLeave={(e) => { if (e.pointerType === "mouse") off(); }}
-      onTouchStart={(e) => { const t = e.touches[0]; if (t) { move(t.clientX, t.clientY); on(); } }}
-      onTouchMove={(e) => { const t = e.touches[0]; if (t) move(t.clientX, t.clientY); }}
-      onTouchEnd={off}
       onFocus={(e) => {
         on();
         const r = ref.current?.getBoundingClientRect();

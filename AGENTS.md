@@ -31,6 +31,8 @@ use the editor.
 
 - All app data goes through src/lib/api.ts (in-memory mock store via useSyncExternalStore); no backend or auth, by user request.
 - Leaderboard ranks only by judge final scores (judgeTotal); AI drafts never rank or declare a winner.
-- Assistant tone changes wording only (voice()), never numbers.
+- Summary style (Neutral/Concise/Detailed via summaryText()) changes wording only, never numbers.
+- Pages live under /app (Entries, /app/p/$id report, /app/rubric, /app/results); old paths are 301 redirects so links keep working.
+- AI model names come from Report.models in api.ts, never hard-coded in components.
 - App theme is dark (#191919 base); every color is a CSS variable in the :root block of src/styles.css — no hex in components, so palette changes touch one place.
-- Report card page uses the glow bento style (GlowCard; accents read from --glow-* vars; status colors pass/warn/fail only for status).
+- Report page uses the glow bento style (GlowCard glows on mouse only; accents from --glow-* vars; pass/warn/fail colors only for status).

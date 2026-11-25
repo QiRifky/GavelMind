@@ -223,3 +223,9 @@ body {
 
 @keyframes ring-fill { from { stroke-dashoffset: 88; } to { stroke-dashoffset: 0; } }
 @utility animate-ring { animation: ring-fill 900ms ease-out both; }
+
+/* Analyze orb */
+@keyframes orb-breathe { 0%, 100% { transform: scale(0.94); opacity: 0.75; } 50% { transform: scale(1.04); opacity: 1; } }
+@keyframes orb-spin { to { transform: rotate(360deg); } }
+@utility animate-orb-breathe { animation: orb-breathe 3.2s ease-in-out infinite; }
+@utility animate-orb-spin { animation: orb-spin 6s linear infinite; }

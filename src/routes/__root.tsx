@@ -9,7 +9,6 @@ import {
   type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
-import { setTone, useApi, type Tone } from "../lib/api";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -138,14 +137,12 @@ function RootComponent() {
 }
 
 const links = [
-  { to: "/", label: "Entries" },
-  { to: "/rubric", label: "Rubric" },
-  { to: "/leaderboard", label: "Leaderboard" },
-  { to: "/changelog", label: "Change log" },
+  { to: "/app", label: "Entries" },
+  { to: "/app/rubric", label: "Rubric" },
+  { to: "/app/results", label: "Results" },
 ] as const;
 
 function Nav() {
-  const { tone } = useApi();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
@@ -157,24 +154,16 @@ function Nav() {
   return (
     <nav className={`sticky top-0 z-30 border-b transition-colors ${scrolled || open ? "border-border bg-(--nav-scrolled) backdrop-blur-md" : "border-transparent bg-transparent"}`}>
       <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 sm:px-6">
-        <Link to="/" className="flex items-center gap-2 text-lg font-medium tracking-tight">
+        <Link to="/app" className="flex items-center gap-2 text-lg font-medium tracking-tight">
           <svg viewBox="0 0 24 24" className="size-6 text-primary" fill="currentColor" aria-hidden><rect x="4" y="3" width="11" height="6" rx="2" transform="rotate(-35 9.5 6)"/><rect x="10" y="9" width="3" height="11" rx="1.5" transform="rotate(-35 11.5 14.5)"/><rect x="13" y="19" width="9" height="2.5" rx="1.25"/></svg>
-          gavelmind
+          GavelMind
         </Link>
         <div className="hidden flex-1 items-center gap-1 md:flex">
           {links.map((l) => (
             <Link key={l.to} to={l.to} activeOptions={{ exact: true }} className="rounded-full px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground" activeProps={{ className: "bg-secondary text-foreground shadow-glass" }}>{l.label}</Link>
           ))}
         </div>
-        <label className="ml-auto flex items-center gap-2 text-sm text-muted-foreground md:ml-0">
-          <span className="hidden sm:inline">Assistant tone</span>
-          <select value={tone} onChange={(e) => setTone(e.target.value as Tone)} className="h-9 rounded-full border border-border bg-secondary px-3 text-foreground">
-            <option value="serious">Serious</option>
-            <option value="sarcastic">Sarcastic but fair</option>
-            <option value="playful">Playful</option>
-          </select>
-        </label>
-        <button className="rounded-full border border-border px-3 py-1.5 text-sm md:hidden" onClick={() => setOpen(!open)} aria-expanded={open}>Menu</button>
+        <button className="ml-auto rounded-full border border-border px-3 py-1.5 text-sm md:hidden" onClick={() => setOpen(!open)} aria-expanded={open}>Menu</button>
       </div>
       {open && (
         <div className="flex flex-col gap-1 px-4 pb-3 md:hidden">
