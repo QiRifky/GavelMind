@@ -10,11 +10,20 @@ export type Tone = "serious" | "sarcastic" | "playful";
 export interface Entry { id: string; url: string; name: string; status: EntryStatus }
 export interface Criterion { id: string; name: string; weight: number }
 export interface Draft { score: number; reason: string; evidence: string }
+export type LogLineType = "cmd" | "ok" | "info" | "warn" | "error" | "result";
+export interface LogLine { type: LogLineType; text: string }
+export type CheckResult = "pass" | "fail" | "unknown";
+export interface RuleCheck { id: string; label: string; result: CheckResult; evidence: string }
+export interface Flag { text: string; severity: 1 | 2 | 3; evidence: string }
+export type StackKind = "language" | "framework" | "database" | "tool";
+export interface StackItem { name: string; kind: StackKind; desc: string }
 export interface Report {
   entryId: string;
   summary: string[];
-  run: { status: RunStatus; evidence: string };
-  flags: string[];
+  run: { status: RunStatus; evidence: string; log: LogLine[] };
+  flags: Flag[];
+  checks: RuleCheck[];
+  stack: StackItem[];
 }
 export interface LogItem { id: number; at: number; what: string; oldValue: string; newValue: string }
 
@@ -47,6 +56,7 @@ function makeReport(e: Entry, n: number): Report {
     ],
     run: {
       status: run,
+      log: runLog(run),
       evidence:
         run === "worked"
           ? "`npm install && npm start` exited 0; server answered GET / with 200 in 412 ms."
@@ -56,9 +66,55 @@ function makeReport(e: Entry, n: number): Report {
     },
     flags:
       n % 2 === 0
-        ? ["87% of commits land in the last 2 hours before the deadline.", "README screenshots don't match the current UI."]
-        : ["Large vendored folder (2.1 MB) copied from another open-source project."],
+        ? [
+            { text: "87% of commits land in the last 2 hours before the deadline.", severity: 2, evidence: "41 of 47 commits between 22:04 and 23:58 on the final day (git log)." },
+            { text: "README screenshots don't match the current UI.", severity: 1, evidence: "docs/screenshot.png shows a sidebar that no file in src/ renders." },
+          ]
+        : [{ text: "Large vendored folder copied from another open-source project.", severity: 3, evidence: "vendor/ (2.1 MB) matches an existing public repo file-for-file; licence not credited." }],
+    checks: [
+      { id: "week", label: "Built in hackathon week", result: n % 2 === 0 ? "pass" : "fail", evidence: n % 2 === 0 ? "First commit Mon 09:12, last commit Sun 23:58 — all inside the event window." : "First commit is 3 weeks before the event started." },
+      { id: "sprite", label: "Runs on a Sprite", result: run === "worked" ? "pass" : run === "error" ? "unknown" : "fail", evidence: run === "worked" ? "Started in the sandbox and answered HTTP 200." : run === "error" ? "Built, but crashed before a request could be served." : "Install step failed; the app never started." },
+      { id: "connector", label: "Uses a connector", result: n % 3 === 0 ? "pass" : "unknown", evidence: n % 3 === 0 ? "src/lib/calendar.ts calls a connected calendar service." : "No connector usage found in code; may be configured outside the repo." },
+      { id: "demo", label: "Demo and description", result: "pass", evidence: "README has a description and a demo video link." },
+    ],
+    stack: [
+      { name: "TypeScript", kind: "language", desc: "Used for the whole front end and the API handlers." },
+      { name: "React", kind: "framework", desc: "Renders every screen of the app." },
+      { name: n % 2 === 0 ? "SQLite" : "Postgres", kind: "database", desc: "Stores user records and saved items." },
+      { name: "Vite", kind: "tool", desc: "Builds and serves the front end during development." },
+    ],
   };
+}
+
+function runLog(run: RunStatus): LogLine[] {
+  const base: LogLine[] = [
+    { type: "info", text: "Cloning repository into isolated sandbox" },
+    { type: "cmd", text: "npm install" },
+  ];
+  if (run === "failed")
+    return [...base, { type: "error", text: "npm ERR! 404 package not found in registry" }, { type: "result", text: "Result: failed — install did not complete" }];
+  const built: LogLine[] = [
+    ...base,
+    { type: "ok", text: "Dependencies installed" },
+    { type: "warn", text: "2 deprecated packages" },
+    { type: "cmd", text: "npm run build" },
+    { type: "ok", text: "Build finished" },
+    { type: "cmd", text: "npm start" },
+  ];
+  if (run === "error")
+    return [...built, { type: "error", text: "TypeError: cannot read 'map' of undefined (src/App.tsx:42)" }, { type: "result", text: "Result: error — crashed at runtime" }];
+  return [...built, { type: "ok", text: "GET / → 200 in 412 ms" }, { type: "result", text: "Result: worked" }];
+}
+
+/** Async read, same shape the real API will return. */
+export function fetchReport(id: string): Promise<Report> {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const r = state.reports[id];
+      if (r) resolve(r);
+      else reject(new Error("Report not found"));
+    }, 350);
+  });
 }
 
 function hash(s: string) {

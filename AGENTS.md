@@ -32,3 +32,4 @@ use the editor.
 - All app data goes through src/lib/api.ts (in-memory mock store via useSyncExternalStore); no backend or auth, by user request.
 - Leaderboard ranks only by judge final scores (judgeTotal); AI drafts never rank or declare a winner.
 - Assistant tone changes wording only (voice()), never numbers.
+- Report card page uses the dark glow bento style (GlowCard in src/components/glow-card.tsx, cursor via CSS vars); other pages keep the warm paper style.
