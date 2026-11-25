@@ -5,6 +5,7 @@ import {
   type CheckResult, type Criterion, type LogLineType, type Report, type StackKind, type Tone,
 } from "@/lib/api";
 import { ACCENTS, CardState, CardTitle, GlowCard } from "@/components/glow-card";
+import { Breakdown, MaterialTabs, ModelTable } from "@/components/report-extras";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/report/$id")({
@@ -25,7 +26,7 @@ type Load = { state: "loading" } | { state: "error"; message: string } | { state
 
 function ReportPage() {
   const { id } = Route.useParams();
-  const { entries, criteria, finals, finalized, tone } = useApi();
+  const { entries, criteria, finals, finalized, tone, models } = useApi();
   const entry = entries.find((e) => e.id === id);
   const [load, setLoad] = useState<Load>({ state: "loading" });
 
@@ -74,6 +75,15 @@ function ReportPage() {
         </GlowCard>
         <GlowCard accent="amber" label="Flags">
           <Flags load={load} tone={tone} />
+        </GlowCard>
+        <GlowCard accent="orange" label="Collected material" className="md:col-span-2">
+          <MaterialTabs load={load} />
+        </GlowCard>
+        <GlowCard accent="green" label="Scoring breakdown" className="md:col-span-2">
+          <Breakdown load={load} id={id} criteria={criteria} mine={mine} />
+        </GlowCard>
+        <GlowCard accent="amber" label="Multi-model drafts" className="md:col-span-2 lg:col-span-4">
+          <ModelTable load={load} id={id} criteria={criteria} models={models} tone={tone} />
         </GlowCard>
         <GlowCard accent="orange" label="Detected stack" className="md:col-span-2 lg:col-span-4">
           <Stack load={load} />

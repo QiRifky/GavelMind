@@ -34,3 +34,6 @@ use the editor.
 - Assistant tone changes wording only (voice()), never numbers.
 - App theme is dark (#191919 base); every color is a CSS variable in the :root block of src/styles.css — no hex in components, so palette changes touch one place.
 - Report card page uses the glow bento style (GlowCard; accents read from --glow-* vars; status colors pass/warn/fail only for status).
+- AI drafts come from several models (state.models in api.ts, never hard-coded names); the aggregated draft is their average and is reference-only.
+- Rubric weights must total exactly 100 to save (weightsValid/saveRubric); the rubric page edits a local draft until Save.
+- Exports (src/lib/export.ts) are built in the browser from judge finals, rubric and change log only, and always carry the "AI scores are drafts" note.
