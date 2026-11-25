@@ -3,14 +3,14 @@ import { cn } from "@/lib/utils";
 
 export type Accent = "orange" | "rust" | "green" | "amber";
 export const ACCENTS: Record<Accent, string> = {
-  orange: "255, 122, 47",
-  rust: "194, 65, 12",
-  green: "31, 138, 91",
-  amber: "217, 154, 30",
+  orange: "var(--glow-orange)",
+  rust: "var(--glow-ember)",
+  green: "var(--glow-green)",
+  amber: "var(--glow-amber)",
 };
 
 const GRID =
-  "linear-gradient(rgba(23,23,23,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(23,23,23,0.07) 1px, transparent 1px)";
+  "linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px)";
 
 /** Cursor position lives in CSS variables (--mx/--my) so moving never re-renders React. */
 export function GlowCard({ accent, className, children, label }: { accent: Accent; className?: string; children: ReactNode; label: string }) {
@@ -46,12 +46,12 @@ export function GlowCard({ accent, className, children, label }: { accent: Accen
       onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) off(); }}
       className={cn("group relative rounded-3xl", className)}
     >
-      <div aria-hidden className="absolute inset-0 rounded-3xl bg-foreground/[0.06] shadow-[var(--shadow-tile)]" />
+      <div aria-hidden className="absolute inset-0 rounded-3xl bg-border shadow-[var(--shadow-tile)]" />
       <div aria-hidden className={cn(layer, "inset-0 rounded-3xl")}
-        style={{ background: "radial-gradient(240px circle at var(--mx) var(--my), rgba(var(--rgb), 0.75), transparent 70%)" }} />
+        style={{ background: "radial-gradient(240px circle at var(--mx) var(--my), rgba(var(--rgb), 0.9), transparent 70%)" }} />
       <div aria-hidden className="absolute inset-px overflow-hidden rounded-[23px] bg-card/85 backdrop-blur-sm">
         <div className={cn(layer, "inset-0")}
-          style={{ background: "radial-gradient(380px circle at var(--mx) var(--my), rgba(var(--rgb), 0.12), transparent 65%)" }} />
+          style={{ background: "radial-gradient(380px circle at var(--mx) var(--my), rgba(var(--rgb), 0.18), transparent 65%)" }} />
         <div className={cn(layer, "inset-0")}
           style={{
             backgroundImage: GRID,

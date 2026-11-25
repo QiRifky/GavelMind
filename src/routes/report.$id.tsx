@@ -154,12 +154,12 @@ function JudgeCard({ load, id, criteria, mine, finalized, tone, allScored }: {
           </ul>
           <div className="mt-auto flex flex-wrap gap-2 pt-4">
             {finalized ? (
-              <button onClick={() => setFinalized(false)} className="h-10 rounded-full border border-border bg-secondary px-5 text-sm hover:bg-card focus-visible:outline-2 focus-visible:outline-ring">Reopen for edits</button>
+              <button onClick={() => setFinalized(false)} className="h-10 rounded-full border border-border bg-secondary px-5 text-sm hover:bg-card hover:border-foreground/25 focus-visible:outline-2 focus-visible:outline-ring">Reopen for edits</button>
             ) : (
               <button disabled={!allScored} onClick={() => setFinalized(true)} title={allScored ? "" : "Score every criterion first"}
                 className="h-10 rounded-full bg-primary px-5 text-sm font-medium text-foreground transition active:scale-[0.97] disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">Finalize</button>
             )}
-            <Link to="/changelog" className="inline-flex h-10 items-center rounded-full border border-border bg-secondary px-5 text-sm hover:bg-card focus-visible:outline-2 focus-visible:outline-ring">View change log</Link>
+            <Link to="/changelog" className="inline-flex h-10 items-center rounded-full border border-border bg-secondary px-5 text-sm hover:bg-card hover:border-foreground/25 focus-visible:outline-2 focus-visible:outline-ring">View change log</Link>
           </div>
         </>
       )}
@@ -194,12 +194,12 @@ function Chart({ criteria, drafts, finals }: { criteria: Criterion[]; drafts: nu
           if (e.key === "ArrowLeft") setHover((h) => Math.max(0, (h ?? n) - 1));
         }}
         onBlur={() => setHover(null)}>
-        {[0, 5, 10].map((v) => <line key={v} x1={P} x2={W - P} y1={y(v)} y2={y(v)} stroke="rgba(23,23,23,0.08)" />)}
-        <polyline points={path(drafts)} fill="none" stroke="rgba(116,113,108,0.8)" strokeWidth={1.5} strokeDasharray="4 4" />
-        <polyline points={path(finals)} fill="none" stroke={`rgb(${accentRgb})`} strokeWidth={2.5} style={{ filter: `drop-shadow(0 0 6px rgba(${accentRgb},0.8))` }} />
+        {[0, 5, 10].map((v) => <line key={v} x1={P} x2={W - P} y1={y(v)} y2={y(v)} stroke="var(--chart-grid)" />)}
+        <polyline points={path(drafts)} fill="none" stroke="var(--grey)" strokeWidth={1.5} strokeDasharray="4 4" />
+        <polyline points={path(finals)} fill="none" stroke={`rgb(${accentRgb})`} strokeWidth={2.5} style={{ filter: `drop-shadow(0 0 6px rgba(${accentRgb},0.6))` }} />
         {finals.map((v, i) => v !== undefined && <circle key={i} cx={x(i)} cy={y(v)} r={3.5} fill={`rgb(${accentRgb})`} />)}
-        {drafts.map((v, i) => <circle key={`d${i}`} cx={x(i)} cy={y(v)} r={2.5} fill="rgba(116,113,108,0.9)" />)}
-        {hover !== null && <line x1={x(hover)} x2={x(hover)} y1={P / 2} y2={H - P / 2} stroke="rgba(23,23,23,0.3)" />}
+        {drafts.map((v, i) => <circle key={`d${i}`} cx={x(i)} cy={y(v)} r={2.5} fill="var(--grey)" />)}
+        {hover !== null && <line x1={x(hover)} x2={x(hover)} y1={P / 2} y2={H - P / 2} stroke="var(--line)" />}
       </svg>
       <div className="mt-2 flex gap-4 text-xs text-muted-foreground">
         <span className="flex items-center gap-1.5"><span className="w-4 border-t border-dashed border-muted-foreground" />AI draft</span>
