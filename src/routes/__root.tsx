@@ -156,7 +156,7 @@ function Nav() {
       <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 sm:px-6">
         <Link to="/app" className="flex items-center gap-2 text-lg font-medium tracking-tight">
           <svg viewBox="0 0 24 24" className="size-6 text-primary" fill="currentColor" aria-hidden><rect x="4" y="3" width="11" height="6" rx="2" transform="rotate(-35 9.5 6)"/><rect x="10" y="9" width="3" height="11" rx="1.5" transform="rotate(-35 11.5 14.5)"/><rect x="13" y="19" width="9" height="2.5" rx="1.25"/></svg>
-          GavelMind
+          Gavel Mind
         </Link>
         <div className="hidden flex-1 items-center gap-1 md:flex">
           {links.map((l) => (
