@@ -46,7 +46,7 @@ function ReportPage() {
         <section className="glass p-6">
           <p className="eyebrow">Run status</p>
           <div className="mt-3"><Badge tone={runTone}>{report.run.status}</Badge></div>
-          <p className="mt-3 rounded-xl bg-muted p-3 font-mono text-xs leading-relaxed">{report.run.evidence}</p>
+          <p className="mt-3 rounded-xl border border-border bg-secondary p-3 font-mono text-xs leading-relaxed text-foreground">{report.run.evidence}</p>
         </section>
         {report.flags.length > 0 && (
           <section className="glass p-6 lg:col-span-3">
@@ -82,14 +82,14 @@ function ReportPage() {
                       <p className="text-[0.65rem] uppercase tracking-wider text-muted-foreground">AI draft</p>
                       <p className="text-lg tabular-nums text-muted-foreground">{d.score}</p>
                     </div>
-                    <label className="rounded-2xl border border-primary/40 bg-background/70 px-3 py-2 text-center">
+                    <label className="rounded-2xl border border-primary/40 bg-secondary px-3 py-2 text-center">
                       <span className="block text-[0.65rem] uppercase tracking-wider text-accent-foreground">Judge's decision</span>
                       <input type="number" min={0} max={10} step={0.5} disabled={finalized} value={v ?? ""} placeholder="—"
                         onChange={(e) => setFinal(id, c.id, e.target.value === "" ? null : Math.min(10, Math.max(0, Number(e.target.value))))}
                         className="w-16 bg-transparent text-center text-lg tabular-nums focus:outline-hidden" aria-label={`Final score for ${c.name}`} />
                     </label>
                     {!finalized && v === undefined && (
-                      <button onClick={() => setFinal(id, c.id, d.score)} className="mb-1 rounded-full border border-border px-3 py-1 text-xs hover:bg-card">Accept draft</button>
+                      <button onClick={() => setFinal(id, c.id, d.score)} className="mb-1 rounded-full border border-border px-3 py-1 text-xs hover:bg-hover-surface">Accept draft</button>
                     )}
                   </div>
                 </li>

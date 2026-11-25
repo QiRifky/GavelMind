@@ -32,3 +32,4 @@ use the editor.
 - All app data goes through src/lib/api.ts (in-memory mock store via useSyncExternalStore); no backend or auth, by user request.
 - Leaderboard ranks only by judge final scores (judgeTotal); AI drafts never rank or declare a winner.
 - Assistant tone changes wording only (voice()), never numbers.
+- Define the palette and all derived color/shadow roles in src/styles.css; pages and the standalone error screen reference its semantic tokens so a re-theme has one source of truth.

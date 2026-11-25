@@ -1,10 +1,8 @@
-# GavelMind update
+# GavelMind dark re-theme
 
-- [ ] Apply centralized dark-theme tokens across existing pages and controls.
-- [ ] Add URL collection and mock showcase discovery with selectable projects.
-- [ ] Add source-labeled description, repository, and demo-video materials.
-- [ ] Add per-model drafts, agreement, and transparent scoring breakdown.
-- [ ] Add editable 100% rubric with save validation and project preview.
-- [ ] Add judge-score CSV, JSON, and Markdown exports.
-- [ ] Preserve and test judge-only ranking, finalization, change log, and tone rules.
-- [ ] Verify complete flows on phone and laptop and commit changes.
+- [x] Apply centralized dark-theme tokens across existing pages and controls.
+- [x] Preserve layout, copy, routes, data, and all judging behavior.
+- [x] Check all pages, contrast, keyboard focus, and phone/laptop presentation.
+- [x] Run existing tests and commit the re-theme.
+
+The latest uploaded brief limits this update to presentation only; earlier feature additions are outside the current scope.

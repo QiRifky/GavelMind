@@ -33,7 +33,7 @@ function Entries() {
           <label htmlFor="urls" className="eyebrow">Repo URLs</label>
           <textarea id="urls" value={text} onChange={(e) => setText(e.target.value)} rows={6}
             placeholder={"https://github.com/team/project-one\nhttps://github.com/team/project-two"}
-            className="mt-3 w-full rounded-2xl border border-border bg-background/60 p-3 font-mono text-sm outline-hidden focus:border-primary" />
+            className="mt-3 w-full rounded-2xl border border-border bg-secondary p-3 font-mono text-sm outline-hidden focus:border-primary" />
           <div className="mt-4 flex flex-wrap gap-2">
             <Pill variant="outline" disabled={!text.trim()} onClick={() => { addEntries(text); setText(""); }}>Add to queue</Pill>
             <Pill disabled={!pending && !text.trim()} onClick={() => { if (text.trim()) { addEntries(text); setText(""); } analyze(); }}>Analyze →</Pill>

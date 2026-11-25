@@ -110,7 +110,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <head>
         <HeadContent />
       </head>
@@ -146,8 +146,15 @@ const links = [
 function Nav() {
   const { tone } = useApi();
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const updateScrolled = () => setScrolled(window.scrollY > 0);
+    updateScrolled();
+    window.addEventListener("scroll", updateScrolled, { passive: true });
+    return () => window.removeEventListener("scroll", updateScrolled);
+  }, []);
   return (
-    <nav className="sticky top-0 z-30 border-b border-border/60 bg-background/70 backdrop-blur-md">
+    <nav className={`app-nav sticky top-0 z-30 ${scrolled ? "app-nav-scrolled" : ""}`}>
       <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 sm:px-6">
         <Link to="/" className="flex items-center gap-2 text-lg font-medium tracking-tight">
           <svg viewBox="0 0 24 24" className="size-6 text-primary" fill="currentColor" aria-hidden><rect x="4" y="3" width="11" height="6" rx="2" transform="rotate(-35 9.5 6)"/><rect x="10" y="9" width="3" height="11" rx="1.5" transform="rotate(-35 11.5 14.5)"/><rect x="13" y="19" width="9" height="2.5" rx="1.25"/></svg>
@@ -171,7 +178,7 @@ function Nav() {
       {open && (
         <div className="flex flex-col gap-1 px-4 pb-3 md:hidden">
           {links.map((l) => (
-            <Link key={l.to} to={l.to} onClick={() => setOpen(false)} className="rounded-xl px-3 py-2 text-sm hover:bg-card">{l.label}</Link>
+            <Link key={l.to} to={l.to} onClick={() => setOpen(false)} className="rounded-xl px-3 py-2 text-sm hover:bg-hover-surface">{l.label}</Link>
           ))}
         </div>
       )}
