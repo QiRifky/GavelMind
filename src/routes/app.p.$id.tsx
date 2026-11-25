@@ -5,6 +5,7 @@ import { AnalyzeCard } from "@/components/analyze-card";
 import { CardState, CardTitle, GlowCard } from "@/components/glow-card";
 import { AiNotice, Badge } from "@/components/ui-bits";
 import { cn } from "@/lib/utils";
+import { BenchMatrix } from "@/components/ui/bench-matrix";
 
 export const Route = createFileRoute("/app/p/$id")({
   head: () => ({ meta: [{ title: "Project report — GavelMind" }, { name: "description", content: "Prepared material, AI draft scores and your final decisions for one project." }] }),
@@ -63,6 +64,7 @@ function Bento({ r, criteria }: { r: Report; criteria: Criterion[] }) {
         <RulesCard r={r} />
         <MaterialCard r={r} />
         <DraftsCard r={r} criteria={criteria} />
+        <ModelMatrixCard r={r} criteria={criteria} />
         <BreakdownCard r={r} criteria={criteria} />
       </div>
       <div className="lg:sticky lg:top-20 lg:self-start"><JudgePanel r={r} criteria={criteria} /></div>
@@ -188,6 +190,22 @@ function DraftsCard({ r, criteria }: { r: Report; criteria: Criterion[] }) {
           );
         })}
       </div>
+    </GlowCard>
+  );
+}
+
+function ModelMatrixCard({ r, criteria }: { r: Report; criteria: Criterion[] }) {
+  if (criteria.length === 0) return null;
+  const models = r.models.map((m) => ({ id: m, label: m, vendor: "AI draft" }));
+  const rows = criteria.map((c) => {
+    const ds = draftsFor(r, c);
+    const scores = ds.map((d) => d.score);
+    return { bench: c.name, note: `weight ${c.weight} · avg ${average(scores)} · ${agreement(scores) ? "models agree" : "models disagree"}`, values: scores, decimals: 0 };
+  });
+  return (
+    <GlowCard accent="orange" label="Model comparison">
+      <CardTitle accent="orange" right={<span className="text-xs text-muted-foreground">Suggestions only</span>}>Model comparison</CardTitle>
+      <BenchMatrix models={models} groups={[{ label: "rubric", rows }]} benchColLabel="criterion" meta={`${criteria.length} criteria · ${r.models.length} models`} footnote="Bold marks the highest draft per criterion. These are AI suggestions; your final score decides." />
     </GlowCard>
   );
 }
