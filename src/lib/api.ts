@@ -5,7 +5,6 @@ export const API_BASE_URL: string = import.meta.env["VITE_API_BASE_URL"] ?? "";
 
 export type EntryStatus = "queued" | "collecting" | "analyzing" | "done" | "failed";
 export type RunStatus = "worked" | "failed" | "error";
-export type Tone = "serious" | "sarcastic" | "playful";
 
 /** url is the source the judge pasted (repo or showcase page); repoUrl is the repository found from it. */
 export interface Entry { id: string; url: string; name: string; status: EntryStatus; repoUrl: string | null; demoUrl?: string }
@@ -46,7 +45,6 @@ interface State {
   finals: Record<string, Record<string, number>>;
   log: LogItem[];
   finalized: boolean;
-  tone: Tone;
 }
 
 const seedEntries: Entry[] = [
@@ -197,7 +195,6 @@ let state: State = {
   finals: {},
   log: [],
   finalized: false,
-  tone: "serious",
 };
 
 const listeners = new Set<() => void>();
@@ -348,9 +345,6 @@ export function setFinalized(v: boolean) {
   set({ finalized: v });
   log("Results status", v ? "Draft" : "Final", v ? "Final" : "Draft");
 }
-export function setTone(tone: Tone) {
-  set({ tone });
-}
 
 /** Weighted score from the judge's final numbers only; null until every criterion is decided. */
 export function judgeTotal(finals: Record<string, number> | undefined, criteria: Criterion[]): number | null {
@@ -366,12 +360,3 @@ export function judgeTotal(finals: Record<string, number> | undefined, criteria:
   return w === 0 ? null : sum / w;
 }
 
-/** Tone changes wording only, never numbers. */
-export function voice(tone: Tone, key: "intro" | "flag" | "reason", text = ""): string {
-  const t = {
-    intro: { serious: "", sarcastic: "Brace yourself. ", playful: "Ooh, a fresh one! " },
-    flag: { serious: "Worth checking", sarcastic: "Hmm, suspiciously convenient", playful: "Eyebrow-raiser" },
-    reason: { serious: "", sarcastic: "To be fair: ", playful: "Fun fact: " },
-  } as const;
-  return t[key][tone] + text;
-}

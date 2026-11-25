@@ -1,14 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import {
-  draftFor, fetchReport, judgeTotal, setFinal, setFinalized, setTone, useApi, voice,
-  type CheckResult, type Criterion, type LogLineType, type Report, type StackKind, type Tone,
+  draftFor, fetchReport, judgeTotal, setFinal, setFinalized, useApi,
+  type CheckResult, type Criterion, type LogLineType, type Report, type StackKind,
 } from "@/lib/api";
 import { ACCENTS, CardState, CardTitle, GlowCard } from "@/components/glow-card";
 import { Breakdown, MaterialTabs, ModelTable } from "@/components/report-extras";
 import { cn } from "@/lib/utils";
-import { ThinkingOrb } from "@/components/thinking-orb";
-import { copilotAnswer } from "@/lib/copilot";
 
 export const Route = createFileRoute("/report/$id")({
   head: () => ({
@@ -28,7 +26,7 @@ type Load = { state: "loading" } | { state: "error"; message: string } | { state
 
 function ReportPage() {
   const { id } = Route.useParams();
-  const { entries, criteria, finals, finalized, tone, models } = useApi();
+  const { entries, criteria, finals, finalized, models } = useApi();
   const entry = entries.find((e) => e.id === id);
   const [load, setLoad] = useState<Load>({ state: "loading" });
 
@@ -65,7 +63,7 @@ function ReportPage() {
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <GlowCard accent="orange" label="Judge's decision" className="md:col-span-2 lg:row-span-2">
-          <JudgeCard load={load} id={id} criteria={criteria} mine={mine} finalized={finalized} tone={tone} allScored={allScored} />
+          <JudgeCard load={load} id={id} criteria={criteria} mine={mine} finalized={finalized} allScored={allScored} />
         </GlowCard>
         <GlowCard accent="rust" label="Sandbox run log" className="lg:row-span-2">
           <RunLog load={load} />
@@ -76,7 +74,7 @@ function ReportPage() {
             : load.report.checks.length === 0 ? <CardState kind="empty">No rule checks available.</CardState> : <RuleChecks report={load.report} />}
         </GlowCard>
         <GlowCard accent="amber" label="Flags">
-          <Flags load={load} tone={tone} />
+          <Flags load={load} />
         </GlowCard>
         <GlowCard accent="orange" label="Collected material" className="md:col-span-2">
           <MaterialTabs load={load} />
@@ -85,7 +83,7 @@ function ReportPage() {
           <Breakdown load={load} id={id} criteria={criteria} mine={mine} />
         </GlowCard>
         <GlowCard accent="amber" label="Multi-model drafts" className="md:col-span-2 lg:col-span-4">
-          <ModelTable load={load} id={id} criteria={criteria} models={models} tone={tone} />
+          <ModelTable load={load} id={id} criteria={criteria} models={models} />
         </GlowCard>
         <GlowCard accent="orange" label="Detected stack" className="md:col-span-2 lg:col-span-4">
           <Stack load={load} />
@@ -93,18 +91,10 @@ function ReportPage() {
       </div>
 
       <div className="mt-4">
-        <GlowCard accent="orange" label="Ask GavelMind">
-          <CardTitle accent="orange">Ask GavelMind</CardTitle>
-          <p className="text-sm text-muted-foreground">Ask about the stack, checks, flags or run. Answers come from the collected material and never give scores.</p>
-          <ThinkingOrb onAsk={(q) => copilotAnswer(q, report)} />
-        </GlowCard>
-      </div>
-
-      <div className="mt-4">
         <GlowCard accent="orange" label="Summary">
-          <CardTitle accent="orange" right={<ToneSelect tone={tone} />}>Summary</CardTitle>
+          <CardTitle accent="orange">Summary</CardTitle>
           {load.state === "loading" ? <CardState kind="loading" /> : load.state === "error" ? <CardState kind="error">{load.message}</CardState>
-            : report && report.summary.length > 0 ? <p className="max-w-3xl leading-relaxed text-foreground">{voice(tone, "intro")}{report.summary.join(" ")}</p>
+            : report && report.summary.length > 0 ? <p className="max-w-3xl leading-relaxed text-foreground">{report.summary.join(" ")}</p>
             : <CardState kind="empty">No summary yet.</CardState>}
         </GlowCard>
       </div>
@@ -112,23 +102,10 @@ function ReportPage() {
   );
 }
 
-function ToneSelect({ tone }: { tone: Tone }) {
-  return (
-    <label className="flex items-center gap-2 text-xs text-muted-foreground">
-      Tone
-      <select value={tone} onChange={(e) => setTone(e.target.value as Tone)} className="h-8 rounded-full border border-border bg-secondary px-3 text-foreground focus-visible:outline-2 focus-visible:outline-ring">
-        <option value="serious">Serious</option>
-        <option value="sarcastic">Sarcastic but fair</option>
-        <option value="playful">Playful</option>
-      </select>
-    </label>
-  );
-}
-
 /* ---------------- Judge's decision ---------------- */
 
-function JudgeCard({ load, id, criteria, mine, finalized, tone, allScored }: {
-  load: Load; id: string; criteria: Criterion[]; mine: Record<string, number>; finalized: boolean; tone: Tone; allScored: boolean;
+function JudgeCard({ load, id, criteria, mine, finalized, allScored }: {
+  load: Load; id: string; criteria: Criterion[]; mine: Record<string, number>; finalized: boolean; allScored: boolean;
 }) {
   const total = judgeTotal(mine, criteria);
   const drafts = criteria.map((c) => draftFor(id, c));
@@ -156,7 +133,7 @@ function JudgeCard({ load, id, criteria, mine, finalized, tone, allScored }: {
                 <li key={c.id} className="grid grid-cols-[minmax(0,1fr)_auto] gap-3 py-3">
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-foreground">{c.name} <span className="text-xs font-normal text-foreground0">· AI draft {d.score}</span></p>
-                    <p className="mt-0.5 text-sm text-muted-foreground">{voice(tone, "reason", d.reason)}</p>
+                    <p className="mt-0.5 text-sm text-muted-foreground">{d.reason}</p>
                     <details className="mt-1 text-xs text-muted-foreground">
                       <summary className="cursor-pointer text-accent-foreground focus-visible:outline-2 focus-visible:outline-ring">Evidence</summary>
                       <p className="mt-1">{d.evidence}</p>
@@ -179,7 +156,6 @@ function JudgeCard({ load, id, criteria, mine, finalized, tone, allScored }: {
               <button disabled={!allScored} onClick={() => setFinalized(true)} title={allScored ? "" : "Score every criterion first"}
                 className="h-10 rounded-full bg-primary px-5 text-sm font-medium text-foreground transition active:scale-[0.97] disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">Finalize</button>
             )}
-            <Link to="/changelog" className="inline-flex h-10 items-center rounded-full border border-border bg-secondary px-5 text-sm hover:bg-card hover:border-foreground/25 focus-visible:outline-2 focus-visible:outline-ring">View change log</Link>
           </div>
         </>
       )}
@@ -314,7 +290,7 @@ function RuleChecks({ report }: { report: Report }) {
 
 /* ---------------- Flags ---------------- */
 
-function Flags({ load, tone }: { load: Load; tone: Tone }) {
+function Flags({ load }: { load: Load }) {
   const flags = load.state === "ready" ? load.report.flags : [];
   return (
     <>
@@ -323,7 +299,7 @@ function Flags({ load, tone }: { load: Load; tone: Tone }) {
         : flags.length === 0 ? <CardState kind="empty">No flags found</CardState> : (
         <>
           <p className="text-4xl tabular-nums text-warn">{flags.length}</p>
-          <p className="text-xs text-foreground0">{voice(tone, "flag")}</p>
+          <p className="text-xs text-foreground0">Worth checking</p>
           <ul className="mt-3 space-y-2">
             {flags.map((f) => (
               <li key={f.text}>

@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { aggregate, modelDrafts, type Criterion, type Model, type Report, type Tone, voice } from "@/lib/api";
+import { aggregate, modelDrafts, type Criterion, type Model, type Report } from "@/lib/api";
 import { CardState, CardTitle } from "@/components/glow-card";
 import { cn } from "@/lib/utils";
 
@@ -57,7 +57,7 @@ export function MaterialTabs({ load }: { load: ReportLoad }) {
 }
 
 /* Per-criterion draft from each model, aggregated draft and agreement. */
-export function ModelTable({ load, id, criteria, models, tone }: { load: ReportLoad; id: string; criteria: Criterion[]; models: Model[]; tone: Tone }) {
+export function ModelTable({ load, id, criteria, models }: { load: ReportLoad; id: string; criteria: Criterion[]; models: Model[] }) {
   return (
     <>
       <CardTitle accent="amber">Multi-model drafts</CardTitle>
@@ -83,7 +83,7 @@ export function ModelTable({ load, id, criteria, models, tone }: { load: ReportL
                       <td key={d.modelId} className="px-2 py-3">
                         <details>
                           <summary className="cursor-pointer tabular-nums">{d.score}</summary>
-                          <p className="mt-1 max-w-48 text-xs text-muted-foreground">{voice(tone, "reason", d.reason)}</p>
+                          <p className="mt-1 max-w-48 text-xs text-muted-foreground">{d.reason}</p>
                           <p className="mt-1 max-w-48 font-mono text-[11px] text-muted-foreground/80">evidence · {d.evidence}</p>
                         </details>
                       </td>

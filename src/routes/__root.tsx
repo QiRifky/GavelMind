@@ -9,7 +9,6 @@ import {
   type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
-import { setTone, useApi, type Tone } from "../lib/api";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -141,11 +140,9 @@ const links = [
   { to: "/", label: "Entries" },
   { to: "/rubric", label: "Rubric" },
   { to: "/leaderboard", label: "Leaderboard" },
-  { to: "/changelog", label: "Change log" },
 ] as const;
 
 function Nav() {
-  const { tone } = useApi();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
@@ -166,15 +163,7 @@ function Nav() {
             <Link key={l.to} to={l.to} activeOptions={{ exact: true }} className="rounded-full px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground" activeProps={{ className: "bg-secondary text-foreground shadow-glass" }}>{l.label}</Link>
           ))}
         </div>
-        <label className="ml-auto flex items-center gap-2 text-sm text-muted-foreground md:ml-0">
-          <span className="hidden sm:inline">Assistant tone</span>
-          <select value={tone} onChange={(e) => setTone(e.target.value as Tone)} className="h-9 rounded-full border border-border bg-secondary px-3 text-foreground">
-            <option value="serious">Serious</option>
-            <option value="sarcastic">Sarcastic but fair</option>
-            <option value="playful">Playful</option>
-          </select>
-        </label>
-        <button className="rounded-full border border-border px-3 py-1.5 text-sm md:hidden" onClick={() => setOpen(!open)} aria-expanded={open}>Menu</button>
+        <button className="ml-auto rounded-full border border-border px-3 py-1.5 text-sm md:hidden" onClick={() => setOpen(!open)} aria-expanded={open}>Menu</button>
       </div>
       {open && (
         <div className="flex flex-col gap-1 px-4 pb-3 md:hidden">

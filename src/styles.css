@@ -230,15 +230,3 @@ body {
 @keyframes ring-fill { from { stroke-dashoffset: 88; } to { stroke-dashoffset: 0; } }
 @utility animate-ring { animation: ring-fill 900ms ease-out both; }
 
-/* Thinking orb (judge copilot) */
-@keyframes orb-in { from { opacity: 0; transform: translateY(6px) scale(.97); } to { opacity: 1; transform: none; } }
-@keyframes orb-shimmer { from { background-position: 150% 0; } to { background-position: -100% 0; } }
-.orb-in { animation: orb-in .45s cubic-bezier(.22,1,.36,1) both; }
-.orb-word { opacity: 0; animation: orb-in .35s ease-out both; }
-.orb-shimmer {
-  color: transparent;
-  background: linear-gradient(90deg, var(--muted-foreground) 30%, var(--foreground) 50%, var(--muted-foreground) 70%) 0 0 / 200% 100%;
-  background-clip: text;
-  animation: orb-in .3s ease-out both, orb-shimmer 1.6s linear infinite;
-}
-@media (prefers-reduced-motion: reduce) { .orb-in, .orb-word, .orb-shimmer { animation: none; opacity: 1; } }

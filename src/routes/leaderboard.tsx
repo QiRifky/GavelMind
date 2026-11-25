@@ -68,6 +68,20 @@ function Leaderboard() {
           {rows.length === 0 && <li className="p-6 text-center text-sm text-muted-foreground">No analyzed entries yet.</li>}
         </ol>
       </section>
+      <section className="glass mt-6 p-2 sm:p-3" aria-labelledby="log-title">
+        <h2 id="log-title" className="px-3 pt-2 pb-1 text-lg font-medium">Change log</h2>
+        <p className="px-3 pb-2 text-sm text-muted-foreground">Every judge edit, newest first.</p>
+        <ul className="divide-y divide-border/70">
+          {log.map((l) => (
+            <li key={l.id} className="grid gap-1 px-3 py-3 sm:grid-cols-[7rem_minmax(0,1fr)_auto] sm:items-center sm:gap-4">
+              <time className="text-xs tabular-nums text-muted-foreground">{new Date(l.at).toLocaleTimeString()}</time>
+              <span className="min-w-0 truncate text-sm">{l.what}</span>
+              <span className="text-sm tabular-nums"><span className="text-muted-foreground line-through">{l.oldValue}</span> → <span className="font-medium text-primary">{l.newValue}</span></span>
+            </li>
+          ))}
+          {log.length === 0 && <li className="p-6 text-center text-sm text-muted-foreground">No edits yet.</li>}
+        </ul>
+      </section>
     </>
   );
 }
