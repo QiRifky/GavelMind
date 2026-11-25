@@ -162,6 +162,11 @@ export function useApi() {
   return useSyncExternalStore(subscribe, () => state, () => state);
 }
 
+/** Read-only snapshot for tests and server code; never mutate the returned object. */
+export function snapshot(): State {
+  return state;
+}
+
 let logId = 0;
 function log(what: string, oldValue: string, newValue: string) {
   set({ log: [{ id: ++logId, at: Date.now(), what, oldValue, newValue }, ...state.log] });

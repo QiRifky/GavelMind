@@ -31,7 +31,9 @@
 
 @theme inline {
   --font-sans: "Onest", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
   --color-accent-brand: var(--accent-brand);
+  --color-well: var(--well);
   --color-glass: var(--glass);
   --shadow-glass: var(--shadow-soft);
   --color-pass: var(--pass);
@@ -87,6 +89,7 @@
   --page: #191919;
   --surface: #222222;
   --surface-2: #2a2a2a;
+  --well: #161616;
   --ink: #f5f3ee;
   --grey: #a39f98;
   --line: rgb(255 255 255 / 0.10);
