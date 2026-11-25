@@ -5,6 +5,7 @@ import { AnalyzeCard } from "@/components/analyze-card";
 import { CardState, CardTitle, GlowCard } from "@/components/glow-card";
 import { AiNotice, Badge } from "@/components/ui-bits";
 import { cn } from "@/lib/utils";
+import { ReportOverview } from "@/components/report-overview";
 import { BenchMatrix } from "@/components/ui/bench-matrix";
 
 export const Route = createFileRoute("/app/p/$id")({
@@ -51,7 +52,7 @@ function ReportPage() {
       <AiNotice />
       {load.k === "loading" && <div className="glass mt-6 p-6"><CardState kind="loading" /></div>}
       {load.k === "error" && <div className="glass mt-6 p-6"><CardState kind="error">{load.m}</CardState><button className="mt-3 text-sm text-primary underline" onClick={() => setTick((t) => t + 1)}>Retry</button></div>}
-      {load.k === "ok" && <Bento r={load.r} criteria={state.criteria} />}
+      {load.k === "ok" && <><div className="mt-6"><ReportOverview r={load.r} project={project} criteria={state.criteria} /></div><Bento r={load.r} criteria={state.criteria} /></>}
     </>
   );
 }
