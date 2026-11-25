@@ -1,5 +1,3 @@
-import appCss from "../styles.css?url";
-
 export function renderErrorPage(): string {
   return `<!doctype html>
 <html lang="en">
@@ -7,19 +5,15 @@ export function renderErrorPage(): string {
     <meta charset="utf-8" />
     <title>This page didn't load</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="${appCss}" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&display=swap" />
     <style>
-      body { font: 15px/1.5 var(--font-sans); background: var(--page); color: var(--ink); display: grid; place-items: center; min-height: 100vh; margin: 0; padding: 1.5rem; }
+      body { font: 15px/1.5 system-ui, -apple-system, sans-serif; background: #191919; color: #f5f3ee; color-scheme: dark; display: grid; place-items: center; min-height: 100vh; margin: 0; padding: 1.5rem; }
       .card { max-width: 28rem; width: 100%; text-align: center; padding: 2rem; }
       h1 { font-size: 1.25rem; margin: 0 0 0.5rem; }
-      p { color: var(--grey); margin: 0 0 1.5rem; }
+      p { color: #a39f98; margin: 0 0 1.5rem; }
       .actions { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
       a, button { padding: 0.5rem 1rem; border-radius: 0.375rem; font: inherit; cursor: pointer; text-decoration: none; border: 1px solid transparent; }
-      .primary { background: var(--accent); color: var(--page); }
-      .secondary { background: var(--surface-2); color: var(--ink); border-color: var(--line); }
-      .primary:hover { filter: brightness(1.05); }
-      .secondary:hover { background: var(--hover-surface); }
+      .primary { background: #ff7a2f; color: #191919; }
+      .secondary { background: transparent; color: #f5f3ee; border-color: rgb(255 255 255 / 0.1); }
     </style>
   </head>
   <body>

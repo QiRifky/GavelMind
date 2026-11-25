@@ -41,7 +41,7 @@ function Rubric() {
           ))}
         </ul>
         <form className="mt-3 flex gap-2 px-2" onSubmit={(e) => { e.preventDefault(); if (name.trim()) { addCriterion(name.trim()); setName(""); } }}>
-          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="New criterion" className="h-10 min-w-0 flex-1 rounded-full border border-border bg-secondary px-4 text-sm focus:border-primary focus:outline-hidden" />
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="New criterion" className="h-10 min-w-0 flex-1 rounded-full border border-border bg-background/60 px-4 text-sm focus:border-primary focus:outline-hidden" />
           <Pill type="submit" disabled={!name.trim()}>Add</Pill>
         </form>
       </section>

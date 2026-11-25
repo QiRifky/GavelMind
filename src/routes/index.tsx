@@ -29,14 +29,19 @@ function Entries() {
         Paste one GitHub repo URL per line. GavelMind runs and reads each one, then prepares a report for you.
       </PageHead>
       <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
-        <section className="glass p-5 sm:p-6">
-          <label htmlFor="urls" className="eyebrow">Repo URLs</label>
-          <textarea id="urls" value={text} onChange={(e) => setText(e.target.value)} rows={6}
+        <section className="glass flex flex-col p-5 sm:p-6">
+          <label htmlFor="urls" className="eyebrow font-mono">Repo URLs</label>
+          <textarea
+            id="urls"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            rows={7}
             placeholder={"https://github.com/team/project-one\nhttps://github.com/team/project-two"}
-            className="mt-3 w-full rounded-2xl border border-border bg-secondary p-3 font-mono text-sm outline-hidden focus:border-primary" />
-          <div className="mt-4 flex flex-wrap gap-2">
-            <Pill variant="outline" disabled={!text.trim()} onClick={() => { addEntries(text); setText(""); }}>Add to queue</Pill>
-            <Pill disabled={!pending && !text.trim()} onClick={() => { if (text.trim()) { addEntries(text); setText(""); } analyze(); }}>Analyze →</Pill>
+            className="mt-3 min-h-44 w-full flex-1 resize-y rounded-2xl border border-border bg-well p-4 font-mono text-sm leading-relaxed text-muted-foreground outline-none transition placeholder:text-muted-foreground/60 focus:border-primary"
+          />
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <Pill variant="outline" size="lg" disabled={!text.trim()} onClick={() => { addEntries(text); setText(""); }}>Add to queue</Pill>
+            <Pill size="lg" disabled={!pending && !text.trim()} onClick={() => { if (text.trim()) { addEntries(text); setText(""); } analyze(); }}>Analyze →</Pill>
           </div>
         </section>
         <section className="glass p-2 sm:p-3">
