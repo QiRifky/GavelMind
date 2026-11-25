@@ -8,7 +8,8 @@ import {
   Scripts,
   type ErrorComponentProps,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { setTone, useApi, type Tone } from "../lib/api";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -81,11 +82,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "GavelMind — AI assistant for hackathon judges" },
+      { name: "description", content: "GavelMind prepares material and drafts scores. The judge makes every final decision." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "GavelMind — AI assistant for hackathon judges" },
+      { property: "og:description", content: "GavelMind prepares material and drafts scores. The judge makes every final decision." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
@@ -95,6 +96,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&display=swap" },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
   }),
@@ -124,7 +128,53 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <Nav />
+      <main className="mx-auto max-w-6xl px-4 pb-20 pt-8 sm:px-6 sm:pt-12">
+        <Outlet />
+      </main>
     </QueryClientProvider>
+  );
+}
+
+const links = [
+  { to: "/", label: "Entries" },
+  { to: "/rubric", label: "Rubric" },
+  { to: "/leaderboard", label: "Leaderboard" },
+  { to: "/changelog", label: "Change log" },
+] as const;
+
+function Nav() {
+  const { tone } = useApi();
+  const [open, setOpen] = useState(false);
+  return (
+    <nav className="sticky top-0 z-30 border-b border-border/60 bg-background/70 backdrop-blur-md">
+      <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 sm:px-6">
+        <Link to="/" className="flex items-center gap-2 text-lg font-medium tracking-tight">
+          <svg viewBox="0 0 24 24" className="size-6 text-primary" fill="currentColor" aria-hidden><rect x="4" y="3" width="11" height="6" rx="2" transform="rotate(-35 9.5 6)"/><rect x="10" y="9" width="3" height="11" rx="1.5" transform="rotate(-35 11.5 14.5)"/><rect x="13" y="19" width="9" height="2.5" rx="1.25"/></svg>
+          gavelmind
+        </Link>
+        <div className="hidden flex-1 items-center gap-1 md:flex">
+          {links.map((l) => (
+            <Link key={l.to} to={l.to} activeOptions={{ exact: true }} className="rounded-full px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground" activeProps={{ className: "bg-card text-foreground shadow-glass" }}>{l.label}</Link>
+          ))}
+        </div>
+        <label className="ml-auto flex items-center gap-2 text-sm text-muted-foreground md:ml-0">
+          <span className="hidden sm:inline">Assistant tone</span>
+          <select value={tone} onChange={(e) => setTone(e.target.value as Tone)} className="h-9 rounded-full border border-border bg-secondary px-3 text-foreground">
+            <option value="serious">Serious</option>
+            <option value="sarcastic">Sarcastic but fair</option>
+            <option value="playful">Playful</option>
+          </select>
+        </label>
+        <button className="rounded-full border border-border px-3 py-1.5 text-sm md:hidden" onClick={() => setOpen(!open)} aria-expanded={open}>Menu</button>
+      </div>
+      {open && (
+        <div className="flex flex-col gap-1 px-4 pb-3 md:hidden">
+          {links.map((l) => (
+            <Link key={l.to} to={l.to} onClick={() => setOpen(false)} className="rounded-xl px-3 py-2 text-sm hover:bg-card">{l.label}</Link>
+          ))}
+        </div>
+      )}
+    </nav>
   );
 }
