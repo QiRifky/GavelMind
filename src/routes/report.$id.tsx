@@ -7,6 +7,8 @@ import {
 import { ACCENTS, CardState, CardTitle, GlowCard } from "@/components/glow-card";
 import { Breakdown, MaterialTabs, ModelTable } from "@/components/report-extras";
 import { cn } from "@/lib/utils";
+import { ThinkingOrb } from "@/components/thinking-orb";
+import { copilotAnswer } from "@/lib/copilot";
 
 export const Route = createFileRoute("/report/$id")({
   head: () => ({
@@ -87,6 +89,14 @@ function ReportPage() {
         </GlowCard>
         <GlowCard accent="orange" label="Detected stack" className="md:col-span-2 lg:col-span-4">
           <Stack load={load} />
+        </GlowCard>
+      </div>
+
+      <div className="mt-4">
+        <GlowCard accent="orange" label="Ask GavelMind">
+          <CardTitle accent="orange">Ask GavelMind</CardTitle>
+          <p className="text-sm text-muted-foreground">Ask about the stack, checks, flags or run. Answers come from the collected material and never give scores.</p>
+          <ThinkingOrb onAsk={(q) => copilotAnswer(q, report)} />
         </GlowCard>
       </div>
 

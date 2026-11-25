@@ -37,3 +37,4 @@ use the editor.
 - AI drafts come from several models (state.models in api.ts, never hard-coded names); the aggregated draft is their average and is reference-only.
 - Rubric weights must total exactly 100 to save (weightsValid/saveRubric); the rubric page edits a local draft until Save.
 - Exports (src/lib/export.ts) are built in the browser from judge finals, rubric and change log only, and always carry the "AI scores are drafts" note.
+- Judge copilot (src/lib/copilot.ts) answers only from report material and refuses scores, ranks or winners; why: the judge makes every final decision.
