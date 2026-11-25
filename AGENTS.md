@@ -38,3 +38,4 @@ use the editor.
 - Rubric weights must total exactly 100 to save (weightsValid/saveRubric); the rubric page edits a local draft until Save.
 - Exports (src/lib/export.ts) are built in the browser from judge finals, rubric and change log only, and always carry the "AI scores are drafts" note.
 - Judge copilot (src/lib/copilot.ts) answers only from report material and refuses scores, ranks or winners; why: the judge makes every final decision.
+- Every card on every page uses the shared bento tile look (glass/tile utilities in styles.css; GlowCard uses the same radius); why: all pages read as one family, matching the Bento Component Board project.

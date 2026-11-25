@@ -44,12 +44,12 @@ export function GlowCard({ accent, className, children, label }: { accent: Accen
         if (r) { ref.current?.style.setProperty("--mx", `${t.left - r.left + t.width / 2}px`); ref.current?.style.setProperty("--my", `${t.top - r.top + t.height / 2}px`); }
       }}
       onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) off(); }}
-      className={cn("group relative rounded-3xl", className)}
+      className={cn("group relative rounded-[calc(var(--radius)-2px)]", className)}
     >
-      <div aria-hidden className="absolute inset-0 rounded-3xl bg-border shadow-[var(--shadow-tile)]" />
-      <div aria-hidden className={cn(layer, "inset-0 rounded-3xl")}
+      <div aria-hidden className="absolute inset-0 rounded-[calc(var(--radius)-2px)] bg-border shadow-[var(--shadow-tile)]" />
+      <div aria-hidden className={cn(layer, "inset-0 rounded-[calc(var(--radius)-2px)]")}
         style={{ background: "radial-gradient(240px circle at var(--mx) var(--my), rgba(var(--rgb), 0.9), transparent 70%)" }} />
-      <div aria-hidden className="absolute inset-px overflow-hidden rounded-[23px] bg-card/85 backdrop-blur-sm">
+      <div aria-hidden className="absolute inset-px overflow-hidden rounded-[calc(var(--radius)-3px)] bg-card">
         <div className={cn(layer, "inset-0")}
           style={{ background: "radial-gradient(380px circle at var(--mx) var(--my), rgba(var(--rgb), 0.18), transparent 65%)" }} />
         <div className={cn(layer, "inset-0")}
