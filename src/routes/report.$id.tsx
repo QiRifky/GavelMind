@@ -44,48 +44,47 @@ function ReportPage() {
   const allScored = criteria.length > 0 && criteria.every((c) => mine[c.id] !== undefined);
 
   return (
-    <div className="text-slate-200">
-      <div aria-hidden className="fixed inset-0 -z-10 bg-night" />
+    <div className="text-foreground">
       <header className="mb-6">
-        <p className="text-xs font-medium tracking-[0.16em] text-indigo-300">REPORT CARD</p>
+        <p className="text-xs font-medium tracking-[0.16em] text-accent-foreground flex items-center gap-2"><span className="size-1.5 rounded-full bg-primary" />REPORT CARD</p>
         <div className="mt-2 flex flex-wrap items-center gap-3">
-          <h2 className="min-w-0 truncate text-[clamp(1.8rem,1rem+2.4vw,2.8rem)] font-normal tracking-[-0.03em] text-slate-50">{entry?.name ?? "Unknown project"}</h2>
+          <h2 className="min-w-0 truncate text-[clamp(1.8rem,1rem+2.4vw,2.8rem)] font-normal tracking-[-0.03em] text-foreground">{entry?.name ?? "Unknown project"}</h2>
           <span className={cn("rounded-full px-3 py-1 text-xs font-medium",
-            finalized ? "bg-emerald-400/15 text-emerald-300" : "bg-amber-400/15 text-amber-300")}>
+            finalized ? "bg-pass/12 text-pass" : "bg-warn/12 text-warn")}>
             {finalized ? "Final" : "AI draft - awaiting judge review"}
           </span>
         </div>
-        {entry && <a href={entry.url} target="_blank" rel="noreferrer" className="mt-1 inline-block text-sm text-slate-400 hover:text-slate-200">{entry.url}</a>}
-        <p role="note" className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 px-4 py-3 text-sm text-amber-100">
+        {entry && <a href={entry.url} target="_blank" rel="noreferrer" className="mt-1 inline-block text-sm text-muted-foreground hover:text-foreground">{entry.url}</a>}
+        <p role="note" className="mt-4 rounded-2xl border border-primary/30 bg-accent px-4 py-3 text-sm text-accent-foreground">
           AI scores are suggestions to help you decide. The final decision is yours.
         </p>
       </header>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <GlowCard accent="indigo" label="Judge's decision" className="md:col-span-2 lg:row-span-2">
+        <GlowCard accent="orange" label="Judge's decision" className="md:col-span-2 lg:row-span-2">
           <JudgeCard load={load} id={id} criteria={criteria} mine={mine} finalized={finalized} tone={tone} allScored={allScored} />
         </GlowCard>
-        <GlowCard accent="fuchsia" label="Sandbox run log" className="lg:row-span-2">
+        <GlowCard accent="rust" label="Sandbox run log" className="lg:row-span-2">
           <RunLog load={load} />
         </GlowCard>
-        <GlowCard accent="emerald" label="Rule checks">
-          <CardTitle accent="emerald">Rule checks</CardTitle>
+        <GlowCard accent="green" label="Rule checks">
+          <CardTitle accent="green">Rule checks</CardTitle>
           {load.state === "loading" ? <CardState kind="loading" /> : load.state === "error" ? <CardState kind="error">{load.message}</CardState>
             : load.report.checks.length === 0 ? <CardState kind="empty">No rule checks available.</CardState> : <RuleChecks report={load.report} />}
         </GlowCard>
         <GlowCard accent="amber" label="Flags">
           <Flags load={load} tone={tone} />
         </GlowCard>
-        <GlowCard accent="amber" label="Detected stack" className="md:col-span-2 lg:col-span-4">
+        <GlowCard accent="orange" label="Detected stack" className="md:col-span-2 lg:col-span-4">
           <Stack load={load} />
         </GlowCard>
       </div>
 
       <div className="mt-4">
-        <GlowCard accent="cyan" label="Summary">
-          <CardTitle accent="cyan" right={<ToneSelect tone={tone} />}>Summary</CardTitle>
+        <GlowCard accent="orange" label="Summary">
+          <CardTitle accent="orange" right={<ToneSelect tone={tone} />}>Summary</CardTitle>
           {load.state === "loading" ? <CardState kind="loading" /> : load.state === "error" ? <CardState kind="error">{load.message}</CardState>
-            : report && report.summary.length > 0 ? <p className="max-w-3xl leading-relaxed text-slate-300">{voice(tone, "intro")}{report.summary.join(" ")}</p>
+            : report && report.summary.length > 0 ? <p className="max-w-3xl leading-relaxed text-foreground">{voice(tone, "intro")}{report.summary.join(" ")}</p>
             : <CardState kind="empty">No summary yet.</CardState>}
         </GlowCard>
       </div>
@@ -95,9 +94,9 @@ function ReportPage() {
 
 function ToneSelect({ tone }: { tone: Tone }) {
   return (
-    <label className="flex items-center gap-2 text-xs text-slate-400">
+    <label className="flex items-center gap-2 text-xs text-muted-foreground">
       Tone
-      <select value={tone} onChange={(e) => setTone(e.target.value as Tone)} className="h-8 rounded-full border border-white/15 bg-night px-3 text-slate-200 focus-visible:outline-2 focus-visible:outline-cyan-300">
+      <select value={tone} onChange={(e) => setTone(e.target.value as Tone)} className="h-8 rounded-full border border-border bg-secondary px-3 text-foreground focus-visible:outline-2 focus-visible:outline-ring">
         <option value="serious">Serious</option>
         <option value="sarcastic">Sarcastic but fair</option>
         <option value="playful">Playful</option>
@@ -117,18 +116,18 @@ function JudgeCard({ load, id, criteria, mine, finalized, tone, allScored }: {
   const aiTotal = wsum ? drafts.reduce((s, d, i) => s + d.score * (criteria[i]?.weight ?? 0), 0) / wsum : null;
   return (
     <>
-      <CardTitle accent="indigo">Judge's decision</CardTitle>
+      <CardTitle accent="orange">Judge's decision</CardTitle>
       {load.state === "loading" ? <CardState kind="loading" /> : load.state === "error" ? <CardState kind="error">{load.message}</CardState>
         : criteria.length === 0 ? <CardState kind="empty">No rubric criteria. Add some on the <Link to="/rubric" className="underline">Rubric</Link> page.</CardState> : (
         <>
           <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-            <p className="text-4xl font-normal tabular-nums tracking-tight text-slate-50 sm:text-5xl">
+            <p className="text-4xl font-normal tabular-nums tracking-tight text-foreground sm:text-5xl">
               {total === null ? "Awaiting review" : total.toFixed(2)}
             </p>
-            {aiTotal !== null && <p className="text-sm tabular-nums text-slate-400">AI draft: {aiTotal.toFixed(1)}</p>}
+            {aiTotal !== null && <p className="text-sm tabular-nums text-muted-foreground">AI draft: {aiTotal.toFixed(1)}</p>}
           </div>
           <Chart criteria={criteria} drafts={drafts.map((d) => d.score)} finals={criteria.map((c) => mine[c.id])} />
-          <ul className="mt-4 divide-y divide-white/10">
+          <ul className="mt-4 divide-y divide-border">
             {criteria.map((c, i) => {
               const d = drafts[i];
               if (!d) return null;
@@ -136,18 +135,18 @@ function JudgeCard({ load, id, criteria, mine, finalized, tone, allScored }: {
               return (
                 <li key={c.id} className="grid grid-cols-[minmax(0,1fr)_auto] gap-3 py-3">
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-slate-100">{c.name} <span className="text-xs font-normal text-slate-500">· AI draft {d.score}</span></p>
-                    <p className="mt-0.5 text-sm text-slate-400">{voice(tone, "reason", d.reason)}</p>
-                    <details className="mt-1 text-xs text-slate-400">
-                      <summary className="cursor-pointer text-indigo-300 focus-visible:outline-2 focus-visible:outline-indigo-300">Evidence</summary>
+                    <p className="text-sm font-medium text-foreground">{c.name} <span className="text-xs font-normal text-foreground0">· AI draft {d.score}</span></p>
+                    <p className="mt-0.5 text-sm text-muted-foreground">{voice(tone, "reason", d.reason)}</p>
+                    <details className="mt-1 text-xs text-muted-foreground">
+                      <summary className="cursor-pointer text-accent-foreground focus-visible:outline-2 focus-visible:outline-ring">Evidence</summary>
                       <p className="mt-1">{d.evidence}</p>
                     </details>
                   </div>
-                  <label className="flex flex-col items-center rounded-2xl border border-indigo-300/30 bg-night px-3 py-1.5">
-                    <span className="text-[0.62rem] uppercase tracking-wider text-indigo-200">Judge's decision</span>
+                  <label className="flex flex-col items-center rounded-2xl border border-primary/40 bg-background/70 px-3 py-1.5">
+                    <span className="text-[0.62rem] uppercase tracking-wider text-accent-foreground">Judge's decision</span>
                     <input type="number" min={0} max={10} step={0.5} disabled={finalized} value={v ?? ""} placeholder="—"
                       onChange={(e) => setFinal(id, c.id, e.target.value === "" ? null : Math.min(10, Math.max(0, Number(e.target.value))))}
-                      className="w-14 bg-transparent text-center text-lg tabular-nums text-slate-50 focus:outline-hidden disabled:opacity-60" />
+                      className="w-14 bg-transparent text-center text-lg tabular-nums text-foreground focus:outline-hidden disabled:opacity-60" />
                   </label>
                 </li>
               );
@@ -155,12 +154,12 @@ function JudgeCard({ load, id, criteria, mine, finalized, tone, allScored }: {
           </ul>
           <div className="mt-auto flex flex-wrap gap-2 pt-4">
             {finalized ? (
-              <button onClick={() => setFinalized(false)} className="h-10 rounded-full border border-white/20 px-5 text-sm hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-indigo-300">Reopen for edits</button>
+              <button onClick={() => setFinalized(false)} className="h-10 rounded-full border border-border bg-secondary px-5 text-sm hover:bg-card focus-visible:outline-2 focus-visible:outline-ring">Reopen for edits</button>
             ) : (
               <button disabled={!allScored} onClick={() => setFinalized(true)} title={allScored ? "" : "Score every criterion first"}
-                className="h-10 rounded-full bg-indigo-400 px-5 text-sm font-medium text-night transition active:scale-[0.97] disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-300">Finalize</button>
+                className="h-10 rounded-full bg-primary px-5 text-sm font-medium text-foreground transition active:scale-[0.97] disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">Finalize</button>
             )}
-            <Link to="/changelog" className="inline-flex h-10 items-center rounded-full border border-white/20 px-5 text-sm hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-indigo-300">View change log</Link>
+            <Link to="/changelog" className="inline-flex h-10 items-center rounded-full border border-border bg-secondary px-5 text-sm hover:bg-card focus-visible:outline-2 focus-visible:outline-ring">View change log</Link>
           </div>
         </>
       )}
@@ -184,10 +183,10 @@ function Chart({ criteria, drafts, finals }: { criteria: Criterion[]; drafts: nu
     setHover(best);
   };
   const hc = hover !== null ? criteria[hover] : undefined;
-  const indigo = ACCENTS.indigo;
+  const accentRgb = ACCENTS.orange;
   return (
     <div className="relative mt-4">
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full touch-none rounded-2xl bg-night/60 focus-visible:outline-2 focus-visible:outline-indigo-300"
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full touch-none rounded-2xl bg-cream/60 focus-visible:outline-2 focus-visible:outline-ring"
         role="img" aria-label="AI draft versus judge's final score per criterion" tabIndex={0}
         onPointerMove={(e) => pick(e.clientX, e.currentTarget)} onPointerLeave={() => setHover(null)}
         onKeyDown={(e) => {
@@ -195,20 +194,20 @@ function Chart({ criteria, drafts, finals }: { criteria: Criterion[]; drafts: nu
           if (e.key === "ArrowLeft") setHover((h) => Math.max(0, (h ?? n) - 1));
         }}
         onBlur={() => setHover(null)}>
-        {[0, 5, 10].map((v) => <line key={v} x1={P} x2={W - P} y1={y(v)} y2={y(v)} stroke="rgba(255,255,255,0.06)" />)}
-        <polyline points={path(drafts)} fill="none" stroke="rgba(148,163,184,0.55)" strokeWidth={1.5} strokeDasharray="4 4" />
-        <polyline points={path(finals)} fill="none" stroke={`rgb(${indigo})`} strokeWidth={2.5} style={{ filter: `drop-shadow(0 0 6px rgba(${indigo},0.8))` }} />
-        {finals.map((v, i) => v !== undefined && <circle key={i} cx={x(i)} cy={y(v)} r={3.5} fill={`rgb(${indigo})`} />)}
-        {drafts.map((v, i) => <circle key={`d${i}`} cx={x(i)} cy={y(v)} r={2.5} fill="rgba(148,163,184,0.8)" />)}
-        {hover !== null && <line x1={x(hover)} x2={x(hover)} y1={P / 2} y2={H - P / 2} stroke="rgba(255,255,255,0.35)" />}
+        {[0, 5, 10].map((v) => <line key={v} x1={P} x2={W - P} y1={y(v)} y2={y(v)} stroke="rgba(23,23,23,0.08)" />)}
+        <polyline points={path(drafts)} fill="none" stroke="rgba(116,113,108,0.8)" strokeWidth={1.5} strokeDasharray="4 4" />
+        <polyline points={path(finals)} fill="none" stroke={`rgb(${accentRgb})`} strokeWidth={2.5} style={{ filter: `drop-shadow(0 0 6px rgba(${accentRgb},0.8))` }} />
+        {finals.map((v, i) => v !== undefined && <circle key={i} cx={x(i)} cy={y(v)} r={3.5} fill={`rgb(${accentRgb})`} />)}
+        {drafts.map((v, i) => <circle key={`d${i}`} cx={x(i)} cy={y(v)} r={2.5} fill="rgba(116,113,108,0.9)" />)}
+        {hover !== null && <line x1={x(hover)} x2={x(hover)} y1={P / 2} y2={H - P / 2} stroke="rgba(23,23,23,0.3)" />}
       </svg>
-      <div className="mt-2 flex gap-4 text-xs text-slate-400">
-        <span className="flex items-center gap-1.5"><span className="w-4 border-t border-dashed border-slate-400" />AI draft</span>
-        <span className="flex items-center gap-1.5"><span className="w-4 border-t-2 border-indigo-400" />Judge's final</span>
+      <div className="mt-2 flex gap-4 text-xs text-muted-foreground">
+        <span className="flex items-center gap-1.5"><span className="w-4 border-t border-dashed border-muted-foreground" />AI draft</span>
+        <span className="flex items-center gap-1.5"><span className="w-4 border-t-2 border-primary" />Judge's final</span>
       </div>
-      <p aria-live="polite" className={cn("pointer-events-none absolute left-2 top-2 rounded-xl border border-white/10 bg-night px-3 py-2 text-xs transition-opacity", hc ? "opacity-100" : "opacity-0")}>
+      <p aria-live="polite" className={cn("pointer-events-none absolute left-2 top-2 rounded-xl border border-border bg-popover px-3 py-2 text-xs shadow-glass transition-opacity", hc ? "opacity-100" : "opacity-0")}>
         {hc && hover !== null && <>
-          <span className="block font-medium text-slate-100">{hc.name}</span>
+          <span className="block font-medium text-foreground">{hc.name}</span>
           AI draft {drafts[hover]} · Judge {finals[hover] ?? "—"}
         </>}
       </p>
@@ -219,12 +218,12 @@ function Chart({ criteria, drafts, finals }: { criteria: Criterion[]; drafts: nu
 /* ---------------- Run log ---------------- */
 
 const lineStyle: Record<LogLineType, { mark: string; cls: string }> = {
-  cmd: { mark: "$", cls: "text-slate-100" },
-  ok: { mark: "✓", cls: "text-emerald-300" },
-  info: { mark: "·", cls: "text-slate-400" },
-  warn: { mark: "!", cls: "text-amber-300" },
-  error: { mark: "✗", cls: "text-red-400" },
-  result: { mark: "→", cls: "font-medium text-fuchsia-200" },
+  cmd: { mark: "$", cls: "text-foreground" },
+  ok: { mark: "✓", cls: "text-pass" },
+  info: { mark: "·", cls: "text-foreground/75" },
+  warn: { mark: "!", cls: "text-warn" },
+  error: { mark: "✗", cls: "text-fail" },
+  result: { mark: "→", cls: "font-medium text-accent-foreground" },
 };
 
 function RunLog({ load }: { load: Load }) {
@@ -241,12 +240,12 @@ function RunLog({ load }: { load: Load }) {
   const status = load.state === "ready" ? load.report.run.status : null;
   return (
     <>
-      <CardTitle accent="fuchsia" right={status && (
-        <span className={cn("rounded-full px-2.5 py-0.5 text-xs", status === "worked" ? "bg-emerald-400/15 text-emerald-300" : "bg-red-400/15 text-red-300")}>{status}</span>
+      <CardTitle accent="rust" right={status && (
+        <span className={cn("rounded-full px-2.5 py-0.5 text-xs", status === "worked" ? "bg-pass/12 text-pass" : "bg-fail/10 text-fail")}>{status}</span>
       )}>Sandbox run log</CardTitle>
       {load.state === "loading" ? <CardState kind="loading" /> : load.state === "error" ? <CardState kind="error">{load.message}</CardState>
         : lines.length === 0 ? <CardState kind="empty">No run log recorded.</CardState> : (
-        <div role="log" aria-label="Sandbox run output" className="flex-1 overflow-auto rounded-2xl bg-night p-4 font-mono text-xs leading-6">
+        <div role="log" aria-label="Sandbox run output" className="flex-1 overflow-auto rounded-2xl border border-border bg-cream p-4 font-mono text-xs leading-6">
           {lines.slice(0, shown).map((l, i) => (
             <div key={i} className={cn("grid grid-cols-[1rem_minmax(0,1fr)] gap-2", lineStyle[l.type].cls)}>
               <span aria-hidden>{lineStyle[l.type].mark}</span><span className="break-words">{l.text}</span>
@@ -261,9 +260,9 @@ function RunLog({ load }: { load: Load }) {
 /* ---------------- Rule checks ---------------- */
 
 const ring: Record<CheckResult, { stroke: string; full: boolean; word: string }> = {
-  pass: { stroke: "rgb(52,211,153)", full: true, word: "Pass" },
-  fail: { stroke: "rgb(248,113,113)", full: true, word: "Fail" },
-  unknown: { stroke: "rgba(148,163,184,0.35)", full: false, word: "Unknown" },
+  pass: { stroke: "var(--pass)", full: true, word: "Pass" },
+  fail: { stroke: "var(--fail)", full: true, word: "Fail" },
+  unknown: { stroke: "", full: false, word: "Unknown" },
 };
 
 function RuleChecks({ report }: { report: Report }) {
@@ -277,18 +276,18 @@ function RuleChecks({ report }: { report: Report }) {
             <li key={c.id}>
               <button type="button" onMouseEnter={() => setTip(c.evidence)} onMouseLeave={() => setTip(null)} onFocus={() => setTip(c.evidence)} onBlur={() => setTip(null)}
                 aria-label={`${c.label}: ${r.word}. ${c.evidence}`}
-                className="flex w-full flex-col items-center gap-1.5 rounded-xl p-1 focus-visible:outline-2 focus-visible:outline-emerald-300">
+                className="flex w-full flex-col items-center gap-1.5 rounded-xl p-1 focus-visible:outline-2 focus-visible:outline-ring">
                 <svg viewBox="0 0 36 36" className="size-10" aria-hidden>
-                  <circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="4" />
-                  {r.full && <circle cx="18" cy="18" r="14" fill="none" stroke={r.stroke} strokeWidth="4" />}
+                  <circle cx="18" cy="18" r="14" fill="none" stroke="var(--border)" strokeWidth="4" />
+                  {r.full && <circle cx="18" cy="18" r="14" fill="none" stroke={r.stroke} strokeWidth="4" strokeDasharray="88" transform="rotate(-90 18 18)" className="animate-ring motion-reduce:animate-none" />}
                 </svg>
-                <span className="text-center text-[0.65rem] leading-tight text-slate-400">{c.label}</span>
+                <span className="text-center text-[0.65rem] leading-tight text-muted-foreground">{c.label}</span>
               </button>
             </li>
           );
         })}
       </ul>
-      <p aria-live="polite" className="mt-3 min-h-8 text-xs text-slate-400">{tip ?? "Hover or tab to a check to see the evidence."}</p>
+      <p aria-live="polite" className="mt-3 min-h-8 text-xs text-muted-foreground">{tip ?? "Hover or tab to a check to see the evidence."}</p>
     </>
   );
 }
@@ -303,19 +302,19 @@ function Flags({ load, tone }: { load: Load; tone: Tone }) {
       {load.state === "loading" ? <CardState kind="loading" /> : load.state === "error" ? <CardState kind="error">{load.message}</CardState>
         : flags.length === 0 ? <CardState kind="empty">No flags found</CardState> : (
         <>
-          <p className="text-4xl tabular-nums text-amber-200">{flags.length}</p>
-          <p className="text-xs text-slate-500">{voice(tone, "flag")}</p>
+          <p className="text-4xl tabular-nums text-warn">{flags.length}</p>
+          <p className="text-xs text-foreground0">{voice(tone, "flag")}</p>
           <ul className="mt-3 space-y-2">
             {flags.map((f) => (
               <li key={f.text}>
-                <details className="group/f rounded-xl bg-night/70 p-2.5 text-xs">
-                  <summary className="flex cursor-pointer list-none gap-2 text-slate-300 focus-visible:outline-2 focus-visible:outline-amber-300">
+                <details className="group/f rounded-xl bg-cream/70 p-2.5 text-xs">
+                  <summary className="flex cursor-pointer list-none gap-2 text-foreground focus-visible:outline-2 focus-visible:outline-ring">
                     <span className="mt-0.5 flex shrink-0 gap-0.5" aria-label={`Severity ${f.severity} of 3`}>
-                      {[1, 2, 3].map((s) => <span key={s} className={cn("h-3 w-1 rounded-full", s <= f.severity ? "bg-amber-300" : "bg-white/10")} />)}
+                      {[1, 2, 3].map((s) => <span key={s} className={cn("h-3 w-1 rounded-full", s <= f.severity ? "bg-warn" : "bg-foreground/10")} />)}
                     </span>
                     {f.text}
                   </summary>
-                  <p className="mt-2 text-slate-400">{f.evidence}</p>
+                  <p className="mt-2 text-muted-foreground">{f.evidence}</p>
                 </details>
               </li>
             ))}
@@ -340,7 +339,7 @@ function Stack({ load }: { load: Load }) {
   const items = load.state === "ready" ? load.report.stack : [];
   return (
     <>
-      <CardTitle accent="amber">Detected stack</CardTitle>
+      <CardTitle accent="orange">Detected stack</CardTitle>
       {load.state === "loading" ? <CardState kind="loading" /> : load.state === "error" ? <CardState kind="error">{load.message}</CardState>
         : items.length === 0 ? <CardState kind="empty">No languages or tools detected.</CardState> : (
         <>
@@ -349,14 +348,14 @@ function Stack({ load }: { load: Load }) {
               <li key={t.name}>
                 <button type="button" onMouseEnter={() => setDesc(`${t.name}: ${t.desc}`)} onMouseLeave={() => setDesc(null)}
                   onFocus={() => setDesc(`${t.name}: ${t.desc}`)} onBlur={() => setDesc(null)}
-                  className="flex items-center gap-2 rounded-full border border-white/15 bg-night/70 px-3 py-1.5 text-sm text-slate-200 hover:border-amber-300/60 focus-visible:outline-2 focus-visible:outline-amber-300">
-                  <svg viewBox="0 0 24 24" className="size-4 text-amber-300" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>{icons[t.kind]}</svg>
+                  className="flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-sm text-foreground transition hover:-translate-y-0.5 hover:border-primary/50 hover:bg-accent focus-visible:-translate-y-0.5 focus-visible:bg-accent motion-reduce:transform-none focus-visible:outline-2 focus-visible:outline-ring">
+                  <svg viewBox="0 0 24 24" className="size-4 text-accent-foreground" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>{icons[t.kind]}</svg>
                   {t.name}
                 </button>
               </li>
             ))}
           </ul>
-          <p aria-live="polite" className="mt-3 text-sm text-slate-400">{desc ?? "Hover or tab to a tool to see what it does in this project."}</p>
+          <p aria-live="polite" className="mt-3 text-sm text-muted-foreground">{desc ?? "Hover or tab to a tool to see what it does in this project."}</p>
         </>
       )}
     </>

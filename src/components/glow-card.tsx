@@ -1,17 +1,16 @@
 import { useRef, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-export type Accent = "indigo" | "cyan" | "emerald" | "fuchsia" | "amber";
+export type Accent = "orange" | "rust" | "green" | "amber";
 export const ACCENTS: Record<Accent, string> = {
-  indigo: "129, 140, 248",
-  cyan: "34, 211, 238",
-  emerald: "52, 211, 153",
-  fuchsia: "232, 121, 249",
-  amber: "251, 191, 36",
+  orange: "255, 122, 47",
+  rust: "194, 65, 12",
+  green: "31, 138, 91",
+  amber: "217, 154, 30",
 };
 
 const GRID =
-  "linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px)";
+  "linear-gradient(rgba(23,23,23,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(23,23,23,0.07) 1px, transparent 1px)";
 
 /** Cursor position lives in CSS variables (--mx/--my) so moving never re-renders React. */
 export function GlowCard({ accent, className, children, label }: { accent: Accent; className?: string; children: ReactNode; label: string }) {
@@ -47,12 +46,12 @@ export function GlowCard({ accent, className, children, label }: { accent: Accen
       onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) off(); }}
       className={cn("group relative rounded-3xl", className)}
     >
-      <div aria-hidden className="absolute inset-0 rounded-3xl bg-white/10" />
+      <div aria-hidden className="absolute inset-0 rounded-3xl bg-foreground/[0.06] shadow-[var(--shadow-tile)]" />
       <div aria-hidden className={cn(layer, "inset-0 rounded-3xl")}
-        style={{ background: "radial-gradient(240px circle at var(--mx) var(--my), rgba(var(--rgb), 0.95), transparent 70%)" }} />
-      <div aria-hidden className="absolute inset-px overflow-hidden rounded-[23px] bg-night-card">
+        style={{ background: "radial-gradient(240px circle at var(--mx) var(--my), rgba(var(--rgb), 0.75), transparent 70%)" }} />
+      <div aria-hidden className="absolute inset-px overflow-hidden rounded-[23px] bg-card/85 backdrop-blur-sm">
         <div className={cn(layer, "inset-0")}
-          style={{ background: "radial-gradient(380px circle at var(--mx) var(--my), rgba(var(--rgb), 0.14), transparent 65%)" }} />
+          style={{ background: "radial-gradient(380px circle at var(--mx) var(--my), rgba(var(--rgb), 0.12), transparent 65%)" }} />
         <div className={cn(layer, "inset-0")}
           style={{
             backgroundImage: GRID,
@@ -68,7 +67,7 @@ export function GlowCard({ accent, className, children, label }: { accent: Accen
 export function CardTitle({ children, right, accent }: { children: ReactNode; right?: ReactNode; accent: Accent }) {
   return (
     <div className="mb-4 flex items-center justify-between gap-3">
-      <h3 className="flex items-center gap-2 text-sm font-medium text-slate-300">
+      <h3 className="flex items-center gap-2 text-sm font-medium text-foreground">
         <span className="size-1.5 rounded-full" style={{ background: `rgb(${ACCENTS[accent]})` }} />
         {children}
       </h3>
@@ -81,9 +80,9 @@ export function CardState({ kind, children }: { kind: "loading" | "empty" | "err
   if (kind === "loading")
     return (
       <div role="status" className="space-y-2" aria-label="Loading">
-        <div className="h-3 w-2/3 animate-pulse rounded bg-white/10 motion-reduce:animate-none" />
-        <div className="h-3 w-1/2 animate-pulse rounded bg-white/10 motion-reduce:animate-none" />
+        <div className="h-3 w-2/3 animate-pulse rounded bg-foreground/10 motion-reduce:animate-none" />
+        <div className="h-3 w-1/2 animate-pulse rounded bg-foreground/10 motion-reduce:animate-none" />
       </div>
     );
-  return <p className={cn("text-sm", kind === "error" ? "text-red-300" : "text-slate-400")}>{children}</p>;
+  return <p className={cn("text-sm", kind === "error" ? "text-fail" : "text-muted-foreground")}>{children}</p>;
 }

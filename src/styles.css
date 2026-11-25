@@ -34,8 +34,10 @@
   --color-accent-brand: var(--accent-brand);
   --color-glass: var(--glass);
   --shadow-glass: var(--shadow-soft);
-  --color-night: var(--night);
-  --color-night-card: var(--night-card);
+  --color-pass: var(--pass);
+  --color-warn: var(--warn);
+  --color-fail: var(--fail);
+  --color-cream: var(--cream);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -101,8 +103,11 @@
   --destructive: oklch(0.577 0.2 27);
   --destructive-foreground: oklch(0.99 0 0);
   --success: oklch(0.6 0.13 150);
-  --night: oklch(0.13 0.01 270);
-  --night-card: oklch(0.17 0.015 270);
+  --pass: oklch(0.55 0.11 160);
+  --warn: oklch(0.6 0.12 70);
+  --fail: oklch(0.55 0.18 25);
+  --cream: oklch(0.95 0.008 80);
+  --shadow-tile: inset 0 1px 0 oklch(1 0 0 / 0.9), 0 14px 34px -18px oklch(0.45 0.03 70 / 0.3);
   --border: oklch(0.87 0.009 80);
   --input: oklch(0.87 0.009 80);
   --ring: oklch(0.72 0.18 48);
@@ -190,3 +195,6 @@ body {
   font-weight: 500;
   color: var(--accent-brand);
 }
+
+@keyframes ring-fill { from { stroke-dashoffset: 88; } to { stroke-dashoffset: 0; } }
+@utility animate-ring { animation: ring-fill 900ms ease-out both; }
