@@ -1,10 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { ArrowRight, FolderGit2, Github, Link2, Trash2 } from "lucide-react";
 import { addProjects, analyzeProject, judgeStatus, removeProject, scanShowcase, splitUrls, useApi, type AnalysisStatus, type Discovered } from "@/lib/api";
 import { AnalyzeCard } from "@/components/analyze-card";
 import { Badge, PageHead, Pill } from "@/components/ui-bits";
-
-const FILTERS = ["all", "queued", "analyzing", "done", "failed"] as const;
 
 export const Route = createFileRoute("/app/")({
   validateSearch: (s: Record<string, unknown>): { q?: string; status?: string } => ({
@@ -28,11 +27,8 @@ const tone: Record<AnalysisStatus, "neutral" | "accent" | "good" | "bad"> = { qu
 
 function Entries() {
   const state = useApi();
-  const { q = "", status = "all" } = Route.useSearch();
-  const navigate = Route.useNavigate();
   const [picked, setPicked] = useState<Set<string>>(new Set());
-  const needle = q.toLowerCase();
-  const rows = state.projects.filter((p) => (status === "all" || p.status === status) && (!needle || p.name.toLowerCase().includes(needle) || p.repoUrl.toLowerCase().includes(needle)));
+  const rows = state.projects;
   const toggle = (id: string) => setPicked((s) => { const n = new Set(s); if (n.has(id)) n.delete(id); else n.add(id); return n; });
   const analyzeSelected = () => {
     for (const id of picked) void analyzeProject(id, { stageMs: 600 }).catch(() => undefined);
@@ -50,46 +46,46 @@ function Entries() {
         <ShowcaseCard />
       </div>
 
-      <section className="glass mt-6 p-3 sm:p-4" aria-label="Projects">
-        <div className="flex flex-col gap-3 p-2 sm:flex-row sm:items-center">
-          <input type="search" value={q} onChange={(e) => void navigate({ to: ".", search: { ...(status !== "all" ? { status } : {}), ...(e.target.value ? { q: e.target.value } : {}) }, replace: true })} placeholder="Search projects" aria-label="Search projects"
-            className="h-10 min-w-0 flex-1 rounded-full border border-border bg-well px-4 text-sm outline-hidden focus:border-primary" />
-          <select value={status} onChange={(e) => void navigate({ to: ".", search: { ...(q ? { q } : {}), ...(e.target.value !== "all" ? { status: e.target.value } : {}) }, replace: true })} aria-label="Filter by status"
-            className="h-10 rounded-full border border-border bg-secondary px-3 text-sm">
-            {FILTERS.map((f) => <option key={f} value={f}>{f === "all" ? "All statuses" : f}</option>)}
-          </select>
-          <Pill disabled={picked.size === 0} onClick={analyzeSelected}>Analyze selected{picked.size ? ` (${picked.size})` : ""}</Pill>
-        </div>
+      <section className="mt-6 overflow-hidden rounded-3xl border border-border bg-card shadow-glass" aria-label="Projects">
+        <header className="flex items-center justify-between gap-4 border-b border-border px-5 py-5 sm:px-6">
+          <div className="flex items-center gap-3">
+            <FolderGit2 className="size-5 text-primary" aria-hidden="true" />
+            <h2 className="text-base font-medium">Project queue</h2>
+          </div>
+          <span className="font-mono text-xs tabular-nums text-muted-foreground">{rows.length} projects</span>
+        </header>
         {state.projects.length === 0 ? (
           <div className="p-10 text-center">
             <p className="font-medium">No projects yet.</p>
             <p className="mt-1 text-sm text-muted-foreground">Paste repo URLs above or scan a showcase page to start.</p>
           </div>
-        ) : rows.length === 0 ? (
-          <p className="p-8 text-center text-sm text-muted-foreground">No projects match this search.</p>
         ) : (
-          <ul className="divide-y divide-border/70">
+          <ul className="divide-y divide-border">
             {rows.map((p) => (
-              <li key={p.id} className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 px-2 py-3 sm:grid-cols-[auto_minmax(0,1fr)_auto]">
-                <input type="checkbox" checked={picked.has(p.id)} onChange={() => toggle(p.id)} disabled={p.status === "analyzing"} aria-label={`Select ${p.name}`} className="size-4 accent-(--brand)" />
+              <li key={p.id} className={`grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-4 gap-y-3 px-5 py-5 transition-colors sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:px-6 ${picked.has(p.id) ? "bg-accent" : "hover:bg-secondary/40"}`}>
+                <input type="checkbox" checked={picked.has(p.id)} onChange={() => toggle(p.id)} disabled={p.status === "analyzing"} aria-label={`Select ${p.name}`} className="size-4 cursor-pointer accent-(--brand) focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring" />
                 <div className="min-w-0">
-                  <p className="truncate font-medium">{p.name}</p>
-                  <p className="truncate text-xs text-muted-foreground">{p.repoUrl}</p>
-                  {p.demoUrl && <p className="truncate text-xs text-muted-foreground">Demo: {p.demoUrl}</p>}
+                  <p className="break-words text-sm font-medium sm:text-base">{p.name}</p>
+                  <p className="mt-1.5 flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground"><Github className="size-3 shrink-0" aria-hidden="true" /><span className="truncate">{p.repoUrl}</span></p>
+                  {p.demoUrl && <p className="mt-1 flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground"><Link2 className="size-3 shrink-0" aria-hidden="true" /><span className="truncate">{p.demoUrl}</span></p>}
                 </div>
-                <div className="col-span-2 flex flex-wrap items-center gap-2 pl-7 sm:col-span-1 sm:pl-0">
+                <div className="col-start-2 flex flex-wrap items-center gap-2 sm:col-start-auto">
                   <Badge tone={tone[p.status]}>{p.status === "analyzing" ? "analyzing…" : p.status}</Badge>
                   <Badge tone="neutral">{judgeStatus(p.id, state)}</Badge>
                   {p.status === "done" ? (
-                    <Link to="/app/p/$id" params={{ id: p.id }} className="rounded-full px-3 py-1 text-sm text-primary hover:bg-accent">Report</Link>
+                    <Link to="/app/p/$id" params={{ id: p.id }} className="inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-sm text-primary hover:bg-accent focus-visible:outline-2 focus-visible:outline-ring">Report <ArrowRight className="size-3.5" aria-hidden="true" /></Link>
                   ) : (
-                    <button onClick={() => removeProject(p.id)} className="rounded-full px-2 py-1 text-sm text-muted-foreground hover:text-destructive" aria-label={`Remove ${p.name}`}>×</button>
+                    <Pill variant="outline" onClick={() => removeProject(p.id)} className="h-9 w-9 shrink-0 px-0 text-muted-foreground hover:text-destructive" aria-label={`Remove ${p.name}`} title={`Remove ${p.name}`}><Trash2 className="size-3.5" aria-hidden="true" /></Pill>
                   )}
                 </div>
               </li>
             ))}
           </ul>
         )}
+        <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-border bg-well/50 px-5 py-4 sm:px-6">
+          <span className="text-sm tabular-nums text-muted-foreground"><span className="font-medium text-foreground">{picked.size}</span> selected</span>
+          <Pill size="lg" disabled={picked.size === 0} onClick={analyzeSelected}>Analyze selected <ArrowRight className="size-4" aria-hidden="true" /></Pill>
+        </footer>
       </section>
     </>
   );
