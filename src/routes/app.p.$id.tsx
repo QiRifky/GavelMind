@@ -5,6 +5,7 @@ import { AnalyzeCard } from "@/components/analyze-card";
 import { CardState, CardTitle, GlowCard } from "@/components/glow-card";
 import { AiNotice, Badge } from "@/components/ui-bits";
 import { cn } from "@/lib/utils";
+import { HealthCard } from "@/components/health-card";
 import { BenchMatrix } from "@/components/ui/bench-matrix";
 
 export const Route = createFileRoute("/app/p/$id")({
@@ -57,10 +58,12 @@ function ReportPage() {
 }
 
 function Bento({ r, criteria }: { r: Report; criteria: Criterion[] }) {
+  const st = useApi();
   return (
     <div className="mt-6 grid gap-5 lg:grid-cols-3">
       <div className="grid gap-5 lg:col-span-2">
         <SummaryCard r={r} />
+        <HealthCard r={r} criteria={criteria} finals={finalsOf(r.projectId, st)} />
         <RulesCard r={r} />
         <MaterialCard r={r} />
         <DraftsCard r={r} criteria={criteria} />
