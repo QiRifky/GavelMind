@@ -14,6 +14,7 @@ import { Route as ChangelogRouteImport } from './routes/changelog'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as RubricRouteImport } from './routes/rubric'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppEventRouteImport } from './routes/app.event'
 import { Route as AppResultsRouteImport } from './routes/app.results'
 import { Route as AppRubricRouteImport } from './routes/app.rubric'
 import { Route as ReportIdRouteImport } from './routes/report.$id'
@@ -44,6 +45,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/app/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppEventRoute = AppEventRouteImport.update({
+  id: '/app/event',
+  path: '/app/event',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppResultsRoute = AppResultsRouteImport.update({
   id: '/app/results',
   path: '/app/results',
@@ -70,6 +76,7 @@ export interface FileRoutesByFullPath {
   '/changelog': typeof ChangelogRoute
   '/leaderboard': typeof LeaderboardRoute
   '/rubric': typeof RubricRoute
+  '/app/event': typeof AppEventRoute
   '/app/results': typeof AppResultsRoute
   '/app/rubric': typeof AppRubricRoute
   '/report/$id': typeof ReportIdRoute
@@ -81,6 +88,7 @@ export interface FileRoutesByTo {
   '/changelog': typeof ChangelogRoute
   '/leaderboard': typeof LeaderboardRoute
   '/rubric': typeof RubricRoute
+  '/app/event': typeof AppEventRoute
   '/app/results': typeof AppResultsRoute
   '/app/rubric': typeof AppRubricRoute
   '/report/$id': typeof ReportIdRoute
@@ -93,6 +101,7 @@ export interface FileRoutesById {
   '/changelog': typeof ChangelogRoute
   '/leaderboard': typeof LeaderboardRoute
   '/rubric': typeof RubricRoute
+  '/app/event': typeof AppEventRoute
   '/app/results': typeof AppResultsRoute
   '/app/rubric': typeof AppRubricRoute
   '/report/$id': typeof ReportIdRoute
@@ -106,6 +115,7 @@ export interface FileRouteTypes {
     | '/changelog'
     | '/leaderboard'
     | '/rubric'
+    | '/app/event'
     | '/app/results'
     | '/app/rubric'
     | '/report/$id'
@@ -117,6 +127,7 @@ export interface FileRouteTypes {
     | '/changelog'
     | '/leaderboard'
     | '/rubric'
+    | '/app/event'
     | '/app/results'
     | '/app/rubric'
     | '/report/$id'
@@ -128,6 +139,7 @@ export interface FileRouteTypes {
     | '/changelog'
     | '/leaderboard'
     | '/rubric'
+    | '/app/event'
     | '/app/results'
     | '/app/rubric'
     | '/report/$id'
@@ -140,6 +152,7 @@ export interface RootRouteChildren {
   ChangelogRoute: typeof ChangelogRoute
   LeaderboardRoute: typeof LeaderboardRoute
   RubricRoute: typeof RubricRoute
+  AppEventRoute: typeof AppEventRoute
   AppResultsRoute: typeof AppResultsRoute
   AppRubricRoute: typeof AppRubricRoute
   ReportIdRoute: typeof ReportIdRoute
@@ -184,6 +197,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/event': {
+      id: '/app/event'
+      path: '/app/event'
+      fullPath: '/app/event'
+      preLoaderRoute: typeof AppEventRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app/results': {
       id: '/app/results'
       path: '/app/results'
@@ -220,6 +240,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChangelogRoute: ChangelogRoute,
   LeaderboardRoute: LeaderboardRoute,
   RubricRoute: RubricRoute,
+  AppEventRoute: AppEventRoute,
   AppResultsRoute: AppResultsRoute,
   AppRubricRoute: AppRubricRoute,
   ReportIdRoute: ReportIdRoute,
@@ -229,3 +250,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

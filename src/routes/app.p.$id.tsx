@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { agreement, average, draftsFor, getReport, judgeStatus, judgeTotal, finalsOf, saveJudgeScore, summaryText, useApi, type CheckResult, type Criterion, type Report, type SummaryStyle } from "@/lib/api";
+import { agreement, average, draftsFor, getReport, judgeStatus, judgeTotal, finalsOf, saveJudgeScore, summaryText, useApi, reportForEvent, type CheckResult, type Criterion, type Report, type SummaryStyle } from "@/lib/api";
 import { AnalyzeCard } from "@/components/analyze-card";
 import { CardState, CardTitle, GlowCard } from "@/components/glow-card";
 import { AiNotice, Badge } from "@/components/ui-bits";
@@ -22,6 +22,7 @@ function ReportPage() {
   const stored = state.reports[id];
   const [load, setLoad] = useState<Load>({ k: "loading" });
   const [tick, setTick] = useState(0);
+  const report = load.k === "ok" ? reportForEvent(load.r, state.event) : null;
   useEffect(() => {
     let live = true;
     setLoad({ k: "loading" });
@@ -52,7 +53,8 @@ function ReportPage() {
       <AiNotice />
       {load.k === "loading" && <div className="glass mt-6 p-6"><CardState kind="loading" /></div>}
       {load.k === "error" && <div className="glass mt-6 p-6"><CardState kind="error">{load.m}</CardState><button className="mt-3 text-sm text-primary underline" onClick={() => setTick((t) => t + 1)}>Retry</button></div>}
-      {load.k === "ok" && <><div className="mt-6"><ReportOverview r={load.r} project={project} criteria={state.criteria} /></div><Bento r={load.r} criteria={state.criteria} /></>}
+      {state.event && <div className="mt-4 flex flex-wrap items-center gap-2 text-sm"><Link to="/app/event" className="text-primary">{state.event.name} ↗</Link><Badge tone={state.event.confirmed ? "good" : "accent"}>{state.event.confirmed ? "Rules confirmed · mock checks" : "Rules awaiting confirmation"}</Badge><span className="text-muted-foreground">Eligibility decisions remain with the judge.</span></div>}
+      {report && <><div className="mt-6"><ReportOverview r={report} project={project} criteria={state.criteria} /></div><Bento r={report} criteria={state.criteria} /></>}
     </>
   );
 }
@@ -102,7 +104,7 @@ function RulesCard({ r }: { r: Report }) {
         {r.checks.map((c) => (
           <li key={c.id} className="grid grid-cols-[auto_minmax(0,1fr)] gap-3">
             <span className={cn("mt-0.5 rounded-full px-2 py-0.5 text-xs font-medium", resultCls[c.result])}>{resultLabel[c.result]}</span>
-            <div className="min-w-0 text-sm"><p className="font-medium">{c.label}</p><p className="text-muted-foreground">{c.reason} <a href={c.evidenceUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline">Evidence ↗</a></p></div>
+            <div className="min-w-0 text-sm"><p className="font-medium">{c.label}</p><p className="text-muted-foreground">{c.reason} <a href={c.evidenceUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline">{c.id.startsWith("event-") ? "Event source" : "Evidence"} ↗</a></p></div>
           </li>
         ))}
       </ul>

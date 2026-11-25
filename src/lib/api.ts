@@ -18,6 +18,8 @@ export type LogLineType = "cmd" | "ok" | "info" | "warn" | "error" | "result";
 
 export interface Project { id: string; name: string; repoUrl: string; demoUrl?: string; status: AnalysisStatus }
 export interface Criterion { id: string; name: string; weight: number }
+export interface EventRule { id: string; label: string; enabled: boolean }
+export interface EventContext { name: string; url: string; rules: EventRule[]; confirmed: boolean }
 export interface LogLine { type: LogLineType; text: string }
 export interface StackItem { name: string; kind: "language" | "framework" | "database" | "tool" }
 export interface RuleCheck { id: string; label: string; result: CheckResult; reason: string; evidenceUrl: string }
@@ -40,7 +42,7 @@ export interface Report {
   models: string[];
 }
 export interface JudgeScore { score?: number; note?: string }
-export type ChangeKind = "score" | "note" | "rubric" | "finalized";
+export type ChangeKind = "score" | "note" | "rubric" | "finalized" | "event";
 export interface ChangeItem { id: number; at: number; kind: ChangeKind; what: string; oldValue: string; newValue: string }
 export interface Discovered { name: string; repoUrl: string; demoUrl?: string }
 export type AnalyzeStage = 0 | 1 | 2 | 3;
@@ -52,6 +54,7 @@ export const STAGES = [
 ] as const;
 
 interface State {
+  event: EventContext | null;
   projects: Project[];
   criteria: Criterion[];
   reports: Record<string, Report>;
@@ -155,6 +158,7 @@ const DEFAULT_CRITERIA: Criterion[] = [
   { id: "c4", name: "Demo clarity", weight: 25 },
 ];
 let state: State = {
+  event: null,
   projects: seed,
   criteria: DEFAULT_CRITERIA,
   reports: Object.fromEntries(seed.filter((p) => p.status === "done").map((p) => [p.id, makeReport(p)])),
@@ -190,6 +194,50 @@ function log(kind: ChangeKind, what: string, oldValue: string, newValue: string)
   set({ log: [{ id: ++logId, at: Date.now(), kind, what, oldValue, newValue }, ...state.log] });
 }
 let idSeq = 100;
+
+// ---------- Event (mock only; never fetches or interprets the supplied URL) ----------
+export function saveEvent(name: string, url: string): void {
+  let parsed: URL;
+  try { parsed = new URL(url.trim()); } catch { throw new Error("Enter a valid event URL."); }
+  if (!["https:", "http:"].includes(parsed.protocol) || !name.trim()) throw new Error("Enter an event name and a valid web URL.");
+  log("event", "Event context", state.event?.name ?? "—", name.trim());
+  set({ event: { name: name.trim(), url: url.trim(), rules: [], confirmed: false } });
+}
+export async function extractEventRules(): Promise<void> {
+  const event = state.event;
+  if (!event) throw new Error("Save an event first.");
+  await wait(600);
+  if (state.event !== event) return;
+  set({ event: { ...event, confirmed: false, rules: [
+    { id: "event-window", label: "Project work must take place during the event period", enabled: true },
+    { id: "event-public", label: "Provide a public source-code repository", enabled: true },
+    { id: "event-demo", label: "Provide a demo video or live demo", enabled: true },
+    { id: "event-sdk", label: "Use the technology required by the event", enabled: true },
+  ] } });
+}
+export function updateEventRules(rules: EventRule[]): void {
+  if (!state.event) return;
+  set({ event: { ...state.event, rules: rules.map((r) => ({ ...r })), confirmed: false } });
+}
+export function confirmEventRules(): boolean {
+  const event = state.event;
+  if (!event || !event.rules.some((r) => r.enabled) || event.rules.some((r) => r.enabled && !r.label.trim())) return false;
+  log("event", `${event.name} · rules confirmed`, "Draft", event.rules.filter((r) => r.enabled).map((r) => r.label).join("; "));
+  set({ event: { ...event, confirmed: true } });
+  return true;
+}
+export const newEventRuleId = () => `event-rule-${++idSeq}`;
+/** Confirmed rules replace legacy sample event claims. No evidence means warning, not failure. */
+export function reportForEvent(report: Report, event: EventContext | null): Report {
+  if (!event) return report;
+  const checks: RuleCheck[] = event.confirmed ? event.rules.filter((r) => r.enabled).map((r) => ({
+    id: r.id, label: r.label, result: "warn", reason: "Not verified — mock analysis cannot establish eligibility. Judge review required.", evidenceUrl: event.url,
+  })) : [];
+  return { ...report, checks: [...checks, ...report.checks.filter((c) => c.id === "runs")] };
+}
+export function eventRubricSuggestions(): Criterion[] {
+  return DEFAULT_CRITERIA.map((c) => ({ ...c }));
+}
 
 // ---------- Projects ----------
 export async function listProjects(): Promise<Project[]> {
