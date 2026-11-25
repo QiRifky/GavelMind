@@ -229,3 +229,17 @@ body {
 @keyframes orb-spin { to { transform: rotate(360deg); } }
 @utility animate-orb-breathe { animation: orb-breathe 3.2s ease-in-out infinite; }
 @utility animate-orb-spin { animation: orb-spin 6s linear infinite; }
+
+/* Landing page stays full bleed; the workspace keeps its existing constrained shell. */
+.landing-page { letter-spacing: 0; }
+.landing-hero { min-height: 590px; }
+.landing-hero-inner { padding-top: 76px; padding-bottom: 66px; }
+.landing-hero-image { object-position: center; }
+@media (min-width: 1600px) {
+  .landing-hero-image { object-fit: contain; object-position: right center; }
+}
+@media (max-width: 767px) {
+  .landing-hero { min-height: 510px; }
+  .landing-hero-inner { padding-top: 44px; padding-bottom: 38px; }
+  .landing-hero-image { opacity: 0.2; object-position: 68% center; }
+}

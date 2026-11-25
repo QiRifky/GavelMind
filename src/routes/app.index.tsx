@@ -17,6 +17,8 @@ export const Route = createFileRoute("/app/")({
       { name: "description", content: "Add hackathon projects and let GavelMind prepare material for your review." },
       { property: "og:title", content: "Entries — GavelMind" },
       { property: "og:description", content: "Add hackathon projects and let GavelMind prepare material for your review." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Entries,

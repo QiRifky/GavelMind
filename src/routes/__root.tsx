@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
   type ErrorComponentProps,
@@ -12,6 +13,8 @@ import { useEffect, useState, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { Button } from "@/components/ui/button";
+import { ArrowUpRight } from "lucide-react";
 
 function NotFoundComponent() {
   return (
@@ -124,12 +127,13 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const isLanding = useRouterState({ select: (s) => s.location.pathname === "/" });
 
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Nav />
-      <main className="mx-auto max-w-6xl px-4 pb-20 pt-8 sm:px-6 sm:pt-12">
+      <main className={isLanding ? "" : "mx-auto max-w-6xl px-4 pb-20 pt-8 sm:px-6 sm:pt-12"}>
         <Outlet />
       </main>
     </QueryClientProvider>
@@ -143,6 +147,7 @@ const links = [
 ] as const;
 
 function Nav() {
+  const isLanding = useRouterState({ select: (s) => s.location.pathname === "/" });
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
@@ -154,18 +159,18 @@ function Nav() {
   return (
     <nav className={`sticky top-0 z-30 border-b transition-colors ${scrolled || open ? "border-border bg-(--nav-scrolled) backdrop-blur-md" : "border-transparent bg-transparent"}`}>
       <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 sm:px-6">
-        <Link to="/app" className="flex items-center gap-2 text-lg font-medium tracking-tight">
+        <Link to="/" className="flex items-center gap-2 text-lg font-medium">
           <svg viewBox="0 0 24 24" className="size-6 text-primary" fill="currentColor" aria-hidden><rect x="4" y="3" width="11" height="6" rx="2" transform="rotate(-35 9.5 6)"/><rect x="10" y="9" width="3" height="11" rx="1.5" transform="rotate(-35 11.5 14.5)"/><rect x="13" y="19" width="9" height="2.5" rx="1.25"/></svg>
           Gavel Mind
         </Link>
-        <div className="hidden flex-1 items-center gap-1 md:flex">
+        {isLanding ? <div className="ml-auto flex items-center gap-6"><span className="hidden text-xs text-muted-foreground sm:block">Built for the human behind the score.</span><Button asChild variant="outline" className="rounded-full"><Link to="/app">Open app <ArrowUpRight /></Link></Button></div> : <><div className="hidden flex-1 items-center gap-1 md:flex">
           {links.map((l) => (
             <Link key={l.to} to={l.to} activeOptions={{ exact: true }} className="rounded-full px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground" activeProps={{ className: "bg-secondary text-foreground shadow-glass" }}>{l.label}</Link>
           ))}
         </div>
-        <button className="ml-auto rounded-full border border-border px-3 py-1.5 text-sm md:hidden" onClick={() => setOpen(!open)} aria-expanded={open}>Menu</button>
+        <Button variant="outline" className="ml-auto rounded-full md:hidden" onClick={() => setOpen(!open)} aria-expanded={open}>Menu</Button></>}
       </div>
-      {open && (
+      {open && !isLanding && (
         <div className="flex flex-col gap-1 px-4 pb-3 md:hidden">
           {links.map((l) => (
             <Link key={l.to} to={l.to} onClick={() => setOpen(false)} className="rounded-xl px-3 py-2 text-sm hover:bg-secondary">{l.label}</Link>

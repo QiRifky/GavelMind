@@ -4,7 +4,7 @@ import { canSaveRubric, finalsOf, judgeTotal, newCriterionId, saveRubric, useApi
 import { PageHead, Pill } from "@/components/ui-bits";
 
 export const Route = createFileRoute("/app/rubric")({
-  head: () => ({ meta: [{ title: "Rubric — GavelMind" }, { name: "description", content: "Set the criteria and weights you judge with." }] }),
+  head: () => ({ meta: [{ title: "Rubric — GavelMind" }, { name: "description", content: "Set the criteria and weights you judge with." }, { property: "og:title", content: "Rubric — GavelMind" }, { property: "og:description", content: "Set the criteria and weights you judge with." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
   component: Rubric,
 });
 

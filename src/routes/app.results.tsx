@@ -5,7 +5,7 @@ import { AiNotice, Badge, PageHead, Pill } from "@/components/ui-bits";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/app/results")({
-  head: () => ({ meta: [{ title: "Results — GavelMind" }, { name: "description", content: "Leaderboard ranked only by the judge's final scores, export and change log." }] }),
+  head: () => ({ meta: [{ title: "Results — GavelMind" }, { name: "description", content: "Leaderboard ranked only by the judge's final scores, export and change log." }, { property: "og:title", content: "Results — GavelMind" }, { property: "og:description", content: "Leaderboard ranked only by the judge's final scores, export and change log." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
   component: Results,
 });
 

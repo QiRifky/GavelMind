@@ -9,7 +9,7 @@ import { ReportOverview } from "@/components/report-overview";
 import { BenchMatrix } from "@/components/ui/bench-matrix";
 
 export const Route = createFileRoute("/app/p/$id")({
-  head: () => ({ meta: [{ title: "Project report — GavelMind" }, { name: "description", content: "Prepared material, AI draft scores and your final decisions for one project." }] }),
+  head: () => ({ meta: [{ title: "Project report — GavelMind" }, { name: "description", content: "Prepared material, AI draft scores and your final decisions for one project." }, { property: "og:title", content: "Project report — GavelMind" }, { property: "og:description", content: "Prepared material, AI draft scores and your final decisions for one project." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
   component: ReportPage,
 });
 

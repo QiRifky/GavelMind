@@ -32,7 +32,8 @@ use the editor.
 - All app data goes through src/lib/api.ts (in-memory mock store via useSyncExternalStore); no backend or auth, by user request.
 - Leaderboard ranks only by judge final scores (judgeTotal); AI drafts never rank or declare a winner.
 - Summary style (Neutral/Concise/Detailed via summaryText()) changes wording only, never numbers.
-- Pages live under /app (Entries, /app/p/$id report, /app/rubric, /app/results); old paths are 301 redirects so links keep working.
+- The public landing page lives at /; workspace pages stay under /app, and other legacy paths redirect to preserve links.
+- The root shell uses pathname-based styling for the full-bleed landing page while always rendering Outlet, so workspace layouts stay unchanged.
 - AI model names come from Report.models in api.ts, never hard-coded in components.
 - App theme is dark (#191919 base); every color is a CSS variable in the :root block of src/styles.css — no hex in components, so palette changes touch one place.
 - Report page uses the glow bento style (GlowCard glows on mouse only; accents from --glow-* vars; pass/warn/fail colors only for status).
