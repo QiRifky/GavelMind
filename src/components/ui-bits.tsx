@@ -1,16 +1,14 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-export function Pill({ variant = "primary", size = "md", className, ...p }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "outline" | "ink"; size?: "md" | "lg" }) {
+export function Pill({ variant = "primary", className, ...p }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "outline" | "ink" }) {
   return (
     <button
       {...p}
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-full text-sm font-medium transition active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
-        size === "md" && "h-10 px-5",
-        size === "lg" && "h-11 px-6",
+        "inline-flex h-10 items-center justify-center gap-2 rounded-full px-5 text-sm font-medium transition active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
         variant === "primary" && "bg-primary text-primary-foreground hover:brightness-105",
-        variant === "outline" && "border border-border bg-transparent text-foreground hover:bg-secondary hover:border-foreground/25",
+        variant === "outline" && "border border-border bg-secondary text-foreground hover:bg-card",
         variant === "ink" && "bg-foreground text-background hover:opacity-90",
         className,
       )}
@@ -42,7 +40,7 @@ export function Badge({ tone, children }: { tone: "neutral" | "accent" | "good" 
     <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
       tone === "neutral" && "bg-muted text-muted-foreground",
       tone === "accent" && "bg-accent text-accent-foreground",
-      tone === "good" && "bg-success/12 text-success",
-      tone === "bad" && "bg-destructive/12 text-destructive")}>{children}</span>
+      tone === "good" && "bg-success/15 text-success",
+      tone === "bad" && "bg-destructive/10 text-destructive")}>{children}</span>
   );
 }

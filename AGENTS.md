@@ -31,11 +31,4 @@ use the editor.
 
 - All app data goes through src/lib/api.ts (in-memory mock store via useSyncExternalStore); no backend or auth, by user request.
 - Leaderboard ranks only by judge final scores (judgeTotal); AI drafts never rank or declare a winner.
-- App theme is dark (#191919 base); every color is a CSS variable in the :root block of src/styles.css — no hex in components, so palette changes touch one place.
-- Report card page uses the glow bento style (GlowCard; accents read from --glow-* vars; status colors pass/warn/fail only for status).
-- AI drafts come from several models (state.models in api.ts, never hard-coded names); the aggregated draft is their average and is reference-only.
-- Rubric weights must total exactly 100 to save (weightsValid/saveRubric); the rubric page edits a local draft until Save.
-- Exports (src/lib/export.ts) are built in the browser from judge finals, rubric and change log only, and always carry the "AI scores are drafts" note.
-- Every card on every page uses the shared bento tile look (glass/tile utilities in styles.css; GlowCard uses the same radius); why: all pages read as one family, matching the Bento Component Board project.
-
-- No assistant tone selector, no copilot, no separate change-log page; the change log lives on the Leaderboard. Why: matches Bento Component Board, user removed them.
+- Assistant tone changes wording only (voice()), never numbers.
