@@ -4,6 +4,7 @@ import { ArrowRight, FolderGit2, Github, Link2, Trash2 } from "lucide-react";
 import { addProjects, analyzeProject, judgeStatus, removeProject, scanShowcase, splitUrls, useApi, type AnalysisStatus, type Discovered } from "@/lib/api";
 import { AnalyzeCard } from "@/components/analyze-card";
 import { Badge, PageHead, Pill } from "@/components/ui-bits";
+import { ShinyButton } from "@/components/ui/shiny-button";
 
 export const Route = createFileRoute("/app/")({
   validateSearch: (s: Record<string, unknown>): { q?: string; status?: string } => ({
@@ -128,7 +129,7 @@ function ShowcaseCard() {
       <div className="mt-3 flex flex-col gap-3 sm:flex-row">
         <input id="showcase" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://event.dev/showcase"
           className="h-10 min-w-0 sm:flex-1 rounded-full border border-border bg-well px-4 font-mono text-sm outline-hidden focus:border-primary" />
-        <Pill variant="outline" disabled={!url.trim() || st.k === "loading"} onClick={() => void scan()}>{st.k === "loading" ? "Scanning…" : "Scan"}</Pill>
+        <ShinyButton className="h-10" label={st.k === "loading" ? "Scanning…" : "Scan"} disabled={!url.trim() || st.k === "loading"} onClick={() => void scan()} />
       </div>
       {st.k === "error" && <p className="mt-3 text-sm text-fail">{st.m} <button className="underline" onClick={() => void scan()}>Retry</button></p>}
       {st.k === "loading" && <div className="mt-4 space-y-2"><div className="h-3 w-2/3 animate-pulse rounded bg-foreground/10" /><div className="h-3 w-1/2 animate-pulse rounded bg-foreground/10" /></div>}
