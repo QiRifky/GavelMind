@@ -4,6 +4,7 @@ import { ArrowRight, Check, Link2, Plus, Sparkles, Trash2 } from "lucide-react";
 import { Badge, Pill } from "@/components/ui-bits";
 import { Button } from "@/components/ui/button";
 import { EventDetailsDialog } from "@/components/event-details-dialog";
+import { WorkflowNav } from "@/components/workflow-nav";
 import { confirmEventRules, eventRubricSuggestions, extractEventRules, newEventRuleId, saveRubric, updateEventRules, useApi } from "@/lib/api";
 
 export const Route = createFileRoute("/app/event")({
@@ -31,6 +32,7 @@ function EventPage() {
     finally { setBusy(false); }
   };
   return <>
+    <WorkflowNav current="event" />
     <div role="note" className="mb-6 border-l-2 border-primary bg-accent p-4 text-sm text-accent-foreground">Mock mode · The event URL is not read. Rule drafts and rubric suggestions are examples, not extracted event requirements. Changes reset on reload.</div>
     <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
       <div className="min-w-0">

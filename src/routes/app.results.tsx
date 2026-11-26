@@ -3,6 +3,7 @@ import { useState } from "react";
 import { exportResults, finalize, finalsOf, judgeTotal, reopen, useApi, type ExportFormat } from "@/lib/api";
 import { AiNotice, Badge, Pill } from "@/components/ui-bits";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { WorkflowNav } from "@/components/workflow-nav";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
@@ -32,6 +33,7 @@ function Results() {
 
   return (
     <>
+      <WorkflowNav current="results" />
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4"><span className="text-sm text-muted-foreground">{ranked.length}/{rows.length} projects scored · {waiting.length} awaiting review</span>{nextReview && <Button asChild variant="outline" className="rounded-full"><Link to="/app/p/$id" params={{ id: nextReview.p.id }}>Continue judging <ArrowRight /></Link></Button>}</div>
       <div className="mb-5 flex flex-wrap items-center gap-3">
         <Badge tone={state.finalized ? "good" : "accent"}>{state.finalized ? "Final" : "Draft, not final"}</Badge>
