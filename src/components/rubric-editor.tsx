@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Trash2 } from "lucide-react";
 import { CRITERION_PRESETS, canSaveRubric, finalsOf, judgeTotal, newCriterionId, saveRubric, useApi, weightTotal, type Criterion } from "@/lib/api";
 import { StatsBento } from "@/components/ui/stats-bento";
 import { Pill } from "@/components/ui-bits";
@@ -57,7 +58,7 @@ export function RubricEditor() {
                         </SelectContent>
                       </Select>
                     )}
-                    <button aria-label={`Remove ${c.name || "criterion"}`} onClick={() => { setSaved(false); setDraft((d) => d.filter((x) => x.id !== c.id)); }} className="rounded-full px-3 py-1 text-sm text-muted-foreground hover:text-destructive">Remove</button>
+                    <button aria-label={`Remove ${c.name || "criterion"}`} title={`Remove ${c.name || "criterion"}`} onClick={() => { setSaved(false); setDraft((d) => d.filter((x) => x.id !== c.id)); }} className="shrink-0 rounded-full p-2 text-destructive transition hover:bg-destructive/10"><Trash2 className="size-4" aria-hidden="true" /></button>
                   </div>
                   <div className="mt-3 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
                     <input type="range" min={0} max={100} step={5} value={c.weight} aria-label={`${c.name || "Unnamed criterion"} weight`} onChange={(e) => edit(c.id, { weight: Number(e.target.value) })} className="w-full accent-(--brand)" />
