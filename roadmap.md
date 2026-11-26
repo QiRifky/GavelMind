@@ -1,5 +1,10 @@
 # Landing page
 
+# Folder event dialog
+
+- [x] Move event details into a create/edit dialog and nest workflow navigation under the active folder.
+- [x] Verify folder creation, editing, switching, navigation, and phone layout.
+
 # Entries and guided workflow
 
 - [x] Combine single analysis, bulk URLs, and showcase import into one persistent tabbed input.

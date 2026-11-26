@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { CriterionEvaluation } from "@/components/criterion-evaluation";
 import { CardState, CardTitle, GlowCard } from "@/components/glow-card";
 import { AiNotice, Badge } from "@/components/ui-bits";
+import { WorkflowNav } from "@/components/workflow-nav";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app/p/$id")({
@@ -49,6 +50,7 @@ function ReportPage() {
           <Badge tone={state.finalized ? "good" : "accent"}>{state.finalized ? "Final" : "Draft, not final"}</Badge>
         </div>
       </header>
+      <WorkflowNav current="entries" />
       <AiNotice />
       {load.k === "loading" && <div className="glass mt-6 p-6"><CardState kind="loading" /></div>}
       {load.k === "error" && <div className="glass mt-6 p-6"><CardState kind="error">{load.m}</CardState><Button variant="outline" className="mt-3 rounded-full" onClick={() => setTick((t) => t + 1)}>Retry</Button></div>}

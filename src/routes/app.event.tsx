@@ -3,8 +3,9 @@ import { useState } from "react";
 import { ArrowRight, Check, Link2, Plus, Sparkles, Trash2 } from "lucide-react";
 import { Badge, PageHead, Pill } from "@/components/ui-bits";
 import { Button } from "@/components/ui/button";
+import { EventDetailsDialog } from "@/components/event-details-dialog";
 import { WorkflowNav } from "@/components/workflow-nav";
-import { confirmEventRules, eventRubricSuggestions, extractEventRules, newEventRuleId, saveEvent, saveRubric, updateEventRules, useApi } from "@/lib/api";
+import { confirmEventRules, eventRubricSuggestions, extractEventRules, newEventRuleId, saveRubric, updateEventRules, useApi } from "@/lib/api";
 
 export const Route = createFileRoute("/app/event")({
   head: () => ({ meta: [
@@ -19,17 +20,14 @@ export const Route = createFileRoute("/app/event")({
 
 function EventPage() {
   const { event } = useApi();
-  const [name, setName] = useState(event?.name ?? "");
-  const [url, setUrl] = useState(event?.url ?? "");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [applied, setApplied] = useState(false);
-  const dirty = name.trim() !== event?.name || url.trim() !== event?.url;
   const suggestions = eventRubricSuggestions();
   const input = "h-11 w-full min-w-0 rounded-xl border border-border bg-well px-3 text-sm focus-visible:outline-2 focus-visible:outline-ring";
   const extract = async () => {
     setError(""); setBusy(true);
-    try { if (!event || dirty) saveEvent(name, url); await extractEventRules(); }
+    try { await extractEventRules(); }
     catch (e) { setError(e instanceof Error ? e.message : "Couldn't prepare rules."); }
     finally { setBusy(false); }
   };
@@ -39,14 +37,12 @@ function EventPage() {
     <div role="note" className="mb-6 border-l-2 border-primary bg-accent p-4 text-sm text-accent-foreground">Mock mode · The event URL is not read. Rule drafts and rubric suggestions are examples, not extracted event requirements. Changes reset on reload.</div>
     <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
       <div className="min-w-0">
-        <form onSubmit={(e) => { e.preventDefault(); void extract(); }} className="space-y-4 border-b border-border pb-6">
-          <p className="eyebrow font-mono">Event details</p>
-          <div><label htmlFor="event-name" className="mb-2 block text-sm">Event name</label><input id="event-name" required disabled={busy} value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Build Together 2026" className={input} /></div>
-          <div><label htmlFor="event-url" className="mb-2 block text-sm">Event / rules URL</label><input id="event-url" type="url" required disabled={busy} value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://" className={`${input} font-mono`} /></div>
-          <div className="flex flex-wrap gap-3"><Pill type="submit" disabled={busy}><Sparkles className="size-4" />{busy ? "Preparing sample rules…" : "Prepare sample rule draft"}</Pill>{event && <Badge tone={event.confirmed ? "good" : "accent"}>{event.confirmed ? "Confirmed by judge" : "Draft, not final"}</Badge>}</div>
+        <section className="space-y-4 border-b border-border pb-6">
+          <div className="flex flex-wrap items-center justify-between gap-3"><p className="eyebrow font-mono">Event details</p><EventDetailsDialog key={event?.name ?? "empty"} edit /></div>
+          {event ? <div><h2 className="break-words text-xl">{event.name}</h2><a href={event.url} target="_blank" rel="noreferrer" className="mt-2 block break-all text-sm text-primary hover:underline">{event.url}</a></div> : <p className="text-sm text-muted-foreground">No event details yet.</p>}
+          <div className="flex flex-wrap gap-3"><Pill disabled={busy || !event} onClick={() => void extract()}><Sparkles className="size-4" />{busy ? "Preparing sample rules…" : "Prepare sample rule draft"}</Pill>{event && <Badge tone={event.confirmed ? "good" : "accent"}>{event.confirmed ? "Confirmed by judge" : "Draft, not final"}</Badge>}</div>
           {error && <p role="alert" className="text-sm text-fail">{error}</p>}
-          {event && dirty && <p className="text-sm text-warn">Unsaved event details. Preparing a new draft replaces the current rules.</p>}
-        </form>
+        </section>
         <section aria-label="Eligibility rules" className="mt-6">
           <div className="mb-4 flex items-center justify-between gap-3"><h2 className="text-lg">Eligibility rules</h2><span className="font-mono text-xs text-muted-foreground">{event?.rules.filter((r) => r.enabled).length ?? 0} active</span></div>
           {!event?.rules.length && <p className="py-6 text-sm text-muted-foreground">No rules prepared yet.</p>}
@@ -55,7 +51,7 @@ function EventPage() {
             <input aria-label={`Rule ${i + 1}`} disabled={busy} value={r.label} onChange={(e) => updateEventRules(event.rules.map((x) => x.id === r.id ? { ...x, label: e.target.value } : x))} className={`${input} flex-1`} />
             <Button type="button" variant="ghost" size="icon" disabled={busy} aria-label={`Remove rule ${i + 1}`} title="Remove rule" onClick={() => updateEventRules(event.rules.filter((x) => x.id !== r.id))}><Trash2 className="size-4" /></Button>
           </li>)}</ul>
-          {event && <div className="mt-5 flex flex-wrap gap-3"><Pill variant="outline" disabled={busy} onClick={() => updateEventRules([...event.rules, { id: newEventRuleId(), label: "", enabled: true }])}><Plus className="size-4" />Add rule</Pill><Pill disabled={busy || dirty || event.confirmed || !event.rules.some((r) => r.enabled) || event.rules.some((r) => r.enabled && !r.label.trim())} onClick={() => confirmEventRules()}><Check className="size-4" />Confirm rules</Pill></div>}
+          {event && <div className="mt-5 flex flex-wrap gap-3"><Pill variant="outline" disabled={busy} onClick={() => updateEventRules([...event.rules, { id: newEventRuleId(), label: "", enabled: true }])}><Plus className="size-4" />Add rule</Pill><Pill disabled={busy || event.confirmed || !event.rules.some((r) => r.enabled) || event.rules.some((r) => r.enabled && !r.label.trim())} onClick={() => confirmEventRules()}><Check className="size-4" />Confirm rules</Pill></div>}
         </section>
       </div>
       <aside className="min-w-0 space-y-6 border-t border-border pt-6 lg:border-t-0 lg:border-l lg:pl-8 lg:pt-0">

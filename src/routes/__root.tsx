@@ -14,7 +14,8 @@ import { useEffect, useState, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Button } from "@/components/ui/button";
-import { ArrowUpRight } from "lucide-react";
+import { folderName, useApi } from "@/lib/api";
+import { FolderOpen, ArrowUpRight } from "lucide-react";
 
 function NotFoundComponent() {
   return (
@@ -140,16 +141,10 @@ function RootComponent() {
   );
 }
 
-const links = [
-  { to: "/app/event", label: "Event" },
-  { to: "/app", label: "Entries" },
-  { to: "/app/rubric", label: "Rubric" },
-  { to: "/app/results", label: "Results" },
-] as const;
-
 function Nav() {
   const isLanding = useRouterState({ select: (s) => s.location.pathname === "/" });
-  const [open, setOpen] = useState(false);
+  const state = useApi();
+  const active = state.folders.find((f) => f.id === state.activeFolderId);
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -158,26 +153,15 @@ function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   return (
-    <nav className={`sticky top-0 z-30 border-b transition-colors ${scrolled || open ? "border-border bg-(--nav-scrolled) backdrop-blur-md" : "border-transparent bg-transparent"}`}>
+    <nav className={`sticky top-0 z-30 border-b transition-colors ${scrolled ? "border-border bg-(--nav-scrolled) backdrop-blur-md" : "border-transparent bg-transparent"}`}>
       <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 sm:px-6">
         <Link to="/" className="flex items-center gap-2 text-lg font-medium">
           <svg viewBox="0 0 24 24" className="size-6 text-primary" fill="currentColor" aria-hidden><rect x="4" y="3" width="11" height="6" rx="2" transform="rotate(-35 9.5 6)"/><rect x="10" y="9" width="3" height="11" rx="1.5" transform="rotate(-35 11.5 14.5)"/><rect x="13" y="19" width="9" height="2.5" rx="1.25"/></svg>
           Gavel Mind
         </Link>
-        {isLanding ? <div className="ml-auto flex items-center gap-6"><span className="hidden text-xs text-muted-foreground sm:block">Built for the human behind the score.</span><Button asChild variant="outline" className="rounded-full"><Link to="/app">Open app <ArrowUpRight /></Link></Button></div> : <><div className="hidden flex-1 items-center gap-1 md:flex">
-          {links.map((l) => (
-            <Link key={l.to} to={l.to} activeOptions={{ exact: true }} className="rounded-full px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground" activeProps={{ className: "bg-secondary text-foreground shadow-glass" }}>{l.label}</Link>
-          ))}
-        </div>
-        <Button variant="outline" className="ml-auto rounded-full md:hidden" onClick={() => setOpen(!open)} aria-expanded={open}>Menu</Button></>}
+        {isLanding ? <div className="ml-auto flex items-center gap-6"><span className="hidden text-xs text-muted-foreground sm:block">Built for the human behind the score.</span><Button asChild variant="outline" className="rounded-full"><Link to="/app">Open app <ArrowUpRight /></Link></Button></div> : <Button asChild variant="ghost" className="ml-auto min-w-0 max-w-[55%] rounded-full"><Link to="/app/event"><FolderOpen className="size-4 shrink-0 text-primary" /><span className="truncate">{active ? folderName(active, state) : "Event folders"}</span></Link></Button>}
       </div>
-      {open && !isLanding && (
-        <div className="flex flex-col gap-1 px-4 pb-3 md:hidden">
-          {links.map((l) => (
-            <Link key={l.to} to={l.to} onClick={() => setOpen(false)} className="rounded-xl px-3 py-2 text-sm hover:bg-secondary">{l.label}</Link>
-          ))}
-        </div>
-      )}
+
     </nav>
   );
 }
