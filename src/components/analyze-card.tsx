@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { DonutBreakdown } from "@/components/ui/donut-breakdown";
 import { ShinyButton } from "@/components/ui/shiny-button";
-import { InputHandoffBeam } from "@/components/ui/input-handoff-beam";
 import { ArrowRight, RotateCcw, CheckCheck } from "lucide-react";
 
 type Phase = { k: "idle" } | { k: "running"; stage: AnalyzeStage } | { k: "done"; report: Report; name: string } | { k: "error"; message: string };
@@ -43,10 +42,8 @@ export function AnalyzeCard({ initialUrl = "", className }: { initialUrl?: strin
         <form className="animate-in fade-in duration-300" onSubmit={(e) => { e.preventDefault(); void run(); }}>
           <label htmlFor="analyze-url" className="eyebrow font-mono">Project URL</label>
           <div className="mt-3 flex flex-col gap-3 sm:flex-row">
-            <InputHandoffBeam className="sm:flex-1">
-              <input id="analyze-url" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://github.com/team/project"
-                className="h-11 w-full min-w-0 rounded-2xl border border-border bg-well px-4 font-mono text-sm outline-hidden transition placeholder:text-muted-foreground/60 focus:border-primary" />
-            </InputHandoffBeam>
+            <input id="analyze-url" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://github.com/team/project"
+              className="h-11 min-w-0 sm:flex-1 rounded-2xl border border-border bg-well px-4 font-mono text-sm outline-hidden transition placeholder:text-muted-foreground/60 focus:border-primary" />
             <ShinyButton label="Analyze →" type="submit" disabled={!url.trim()} />
           </div>
         </form>
