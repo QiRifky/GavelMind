@@ -25,3 +25,8 @@
 - [x] Combine AI evidence and judge inputs per criterion, with compact overview and collapsible technical material.
 - [x] Remove duplicate AI tables and add previous/next project navigation.
 - [x] Verify scoring, notes, navigation, phone layout, and existing tests.
+
+# AI border animation
+
+- [x] Replace the AI ribbon with the uploaded border-beam line animation in the existing AI blocks.
+- [x] Verify analysis, report, phone layout, and reduced motion.
