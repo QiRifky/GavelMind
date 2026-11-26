@@ -35,7 +35,7 @@ function Results() {
   return (
     <>
       <WorkflowNav current="results" />
-      <StepBody className="lg:flex lg:flex-col lg:overflow-hidden">
+      <StepBody className="flex flex-col gap-4">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4"><span className="text-sm text-muted-foreground">{ranked.length}/{rows.length} projects scored · {waiting.length} awaiting review</span>{nextReview && <Button asChild variant="outline" className="rounded-full"><Link to="/app/p/$id" params={{ id: nextReview.p.id }}>Continue judging <ArrowRight /></Link></Button>}</div>
       <div className="mb-5 flex flex-wrap items-center gap-3">
         <Badge tone={state.finalized ? "good" : "accent"}>{state.finalized ? "Final" : "Draft, not final"}</Badge>
@@ -48,7 +48,7 @@ function Results() {
       <div className="mt-4"><StatsBento hero={{ badge: "Reviewed", value: `${ranked.length}/${rows.length}`, caption: "Ranked by judge final scores only" }} trend={{ label: "Judge totals", value: ranked[0]?.total?.toFixed(2) ?? "—", bars: ranked.map((r) => r.total ?? 0) }} tiles={[{ label: "Awaiting", value: waiting.length }, { label: "Edits logged", value: state.log.length }]} /></div>
 
       <div className="mt-4 grid gap-4 lg:min-h-0 lg:flex-1 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-      <section className="bento p-3 sm:p-4 lg:overflow-y-auto" aria-label="Leaderboard">
+      <section className="bento p-3 sm:p-4 " aria-label="Leaderboard">
         {rows.length === 0 && <p className="p-8 text-center text-sm text-muted-foreground">No projects yet. <Link to="/app/entries" className="text-primary">Add some</Link>.</p>}
         <ol className="divide-y divide-border/70">
           {ranked.map((r, i) => (
@@ -68,7 +68,7 @@ function Results() {
         </ol>
       </section>
 
-      <section className="bento p-5 sm:p-6 lg:overflow-y-auto" aria-label="Change log">
+      <section className="bento p-5 sm:p-6 " aria-label="Change log">
         <p className="eyebrow font-mono">Change log</p>
         {state.log.length === 0 ? <p className="mt-3 text-sm text-muted-foreground">No edits yet. Score changes, notes, rubric edits and finalizing appear here.</p> : (
           <ul className="mt-3 divide-y divide-border/70">

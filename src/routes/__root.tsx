@@ -140,7 +140,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       {!hideNav && <Nav />}
-      <main className={isLanding ? "" : hideNav ? "mx-auto max-w-6xl px-4 pb-10 pt-4 sm:px-6 lg:flex lg:h-dvh lg:flex-col lg:overflow-hidden lg:pb-4" : "mx-auto max-w-6xl px-4 pb-20 pt-8 sm:px-6 sm:pt-12"}>
+      <main className={isLanding ? "" : hideNav ? "mx-auto max-w-6xl px-4 pb-10 pt-4 sm:px-6" : "mx-auto max-w-6xl px-4 pb-20 pt-8 sm:px-6 sm:pt-12"}>
         <Outlet />
       </main>
     </QueryClientProvider>

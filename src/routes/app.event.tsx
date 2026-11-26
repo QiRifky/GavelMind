@@ -35,11 +35,11 @@ function EventPage() {
   };
   return <>
     <WorkflowNav current="event" />
-    <StepBody className="lg:flex lg:flex-col lg:overflow-hidden">
+    <StepBody className="flex flex-col gap-4">
     <div role="note" className="mb-4 shrink-0 border-l-2 border-primary bg-accent px-4 py-2 text-xs text-accent-foreground">Mock mode · The event URL is not read. Rule drafts and rubric suggestions are examples, not extracted event requirements. Changes reset on reload.</div>
     <StatsBento hero={{ badge: "Active rules", value: active, caption: event?.name ?? "No event yet" }} trend={{ label: "Suggested rubric", value: `${suggestions.length} criteria`, bars: suggestions.map((c) => c.weight) }} tiles={[{ label: event?.confirmed ? "Confirmed" : "Draft", value: event?.confirmed ? "✓" : "—" }, { label: "Projects", value: projects.length }]} />
     <div className="grid gap-4 lg:min-h-0 lg:flex-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
-      <section aria-label="Event details" className="flex min-w-0 flex-col bento  lg:min-h-0 lg:overflow-y-auto">
+      <section aria-label="Event details" className="flex min-w-0 flex-col bento ">
         <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4"><p className="eyebrow font-mono">Event details</p><EventDetailsDialog key={event?.name ?? "empty"} edit /></header>
         <div className="space-y-4 px-5 py-5">
           {event ? <div><h2 className="break-words text-xl">{event.name}</h2><a href={event.url} target="_blank" rel="noreferrer" className="mt-2 flex items-start gap-2 break-all text-sm text-primary hover:underline"><Link2 className="mt-0.5 size-4 shrink-0" />{event.url}</a></div> : <p className="text-sm text-muted-foreground">No event details yet. Add a name and event link first.</p>}
@@ -51,7 +51,7 @@ function EventPage() {
       </section>
       <section aria-label="Eligibility rules" className="flex min-w-0 flex-col bento  lg:min-h-0">
         <header className="flex items-center justify-between gap-3 border-b border-border px-5 py-4"><h2 className="text-lg">Eligibility rules</h2><span className="font-mono text-xs text-muted-foreground">{event?.rules.filter((r) => r.enabled).length ?? 0} active</span></header>
-        <div className="flex-1 px-5 py-4 lg:min-h-0 lg:overflow-y-auto">
+        <div className="flex-1 px-5 py-4">
           {!event?.rules.length && <div className="flex h-full min-h-40 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border text-center"><Sparkles className="size-6 text-primary" /><p className="text-sm">No rules prepared yet.</p><p className="max-w-xs text-xs text-muted-foreground">Prepare a sample rule draft or add rules yourself, then confirm them.</p></div>}
           <ul className="space-y-3">{event?.rules.map((r, i) => <li key={r.id} className="flex items-center gap-3 border-b border-border pb-3">
             <input type="checkbox" aria-label={`Enable rule ${i + 1}`} checked={r.enabled} disabled={busy} onChange={(e) => updateEventRules(event.rules.map((x) => x.id === r.id ? { ...x, enabled: e.target.checked } : x))} className="size-4 shrink-0 accent-(--brand) focus-visible:outline-2 focus-visible:outline-ring" />

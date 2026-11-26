@@ -32,5 +32,5 @@ export function WorkflowNav({ current }: { current: Step }) {
 }
 /** Scrollable body under the workflow header; on laptops the page itself never scrolls. */
 export function StepBody({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={cn("lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:pr-1", className)}>{children}</div>;
+  return <div className={cn("", className)}>{children}</div>;
 }
