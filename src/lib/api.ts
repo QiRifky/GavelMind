@@ -62,7 +62,12 @@ interface State {
   log: ChangeItem[];
   finalized: boolean;
   winners: string[];
+  /** Event folders; each keeps its own isolated workspace. */
+  folders: EventFolder[];
+  activeFolderId: string;
 }
+export interface EventFolder { id: string; name: string; createdAt: number }
+type Workspace = Omit<State, "folders" | "activeFolderId">;
 
 // ---------- Mock generators ----------
 function hash(s: string) {
@@ -166,6 +171,8 @@ let state: State = {
   log: [],
   finalized: false,
   winners: [],
+  folders: [{ id: "f1", name: "Sample hackathon", createdAt: 0 }],
+  activeFolderId: "f1",
 };
 const listeners = new Set<() => void>();
 const set = (patch: Partial<State>) => {
@@ -194,6 +201,39 @@ function log(kind: ChangeKind, what: string, oldValue: string, newValue: string)
   set({ log: [{ id: ++logId, at: Date.now(), kind, what, oldValue, newValue }, ...state.log] });
 }
 let idSeq = 100;
+
+// ---------- Event folders: switching swaps the whole workspace so events never mix ----------
+const stored = new Map<string, Workspace>();
+const workspaceOf = (s: State): Workspace => { const { folders: _f, activeFolderId: _a, ...w } = s; return w; };
+export const folderName = (f: EventFolder, s: State = state) => (f.id === s.activeFolderId ? s.event?.name : stored.get(f.id)?.event?.name) || f.name;
+export function folderStats(id: string, s: State = state) {
+  const w = id === s.activeFolderId ? s : stored.get(id);
+  const projects = w?.projects ?? [];
+  return { projects: projects.length, ready: projects.filter((p) => p.status === "done").length, confirmed: Boolean(w?.event?.confirmed), finalized: Boolean(w?.finalized) };
+}
+export function switchFolder(id: string): void {
+  if (id === state.activeFolderId || !state.folders.some((f) => f.id === id)) return;
+  stored.set(state.activeFolderId, workspaceOf(state));
+  const next = stored.get(id);
+  if (!next) return;
+  stored.delete(id);
+  set({ ...next, activeFolderId: id });
+}
+export function createFolder(name: string): string {
+  const clean = name.trim() || `Event ${state.folders.length + 1}`;
+  const id = `f${++idSeq}`;
+  stored.set(id, { event: null, projects: [], criteria: DEFAULT_CRITERIA, reports: {}, judge: {}, log: [], finalized: false, winners: [] });
+  set({ folders: [...state.folders, { id, name: clean, createdAt: Date.now() }] });
+  switchFolder(id);
+  return id;
+}
+export function deleteFolder(id: string): void {
+  if (state.folders.length <= 1) return;
+  const rest = state.folders.filter((f) => f.id !== id);
+  if (id === state.activeFolderId) { const target = rest[0]!; switchFolder(target.id); }
+  stored.delete(id);
+  set({ folders: state.folders.filter((f) => f.id !== id) });
+}
 
 // ---------- Event (mock only; never fetches or interprets the supplied URL) ----------
 export function saveEvent(name: string, url: string): void {

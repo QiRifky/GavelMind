@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Check, ArrowRight } from "lucide-react";
 import { useApi, weightTotal } from "@/lib/api";
 import { cn } from "@/lib/utils";
+import { EventFolders } from "@/components/event-folders";
 
 type Step = "event" | "entries" | "rubric" | "results";
 
@@ -16,6 +17,8 @@ export function WorkflowNav({ current }: { current: Step }) {
     { id: "results", to: "/app/results", label: "Results", status: state.finalized ? "Final" : "Draft, not final", done: state.finalized },
   ] as const;
   return (
+    <>
+    <EventFolders />
     <nav aria-label="Event workflow" className="mb-6 grid grid-cols-2 gap-x-4 gap-y-3 border-y border-border py-4 sm:grid-cols-4">
       {steps.map((step, i) => (
         <Link key={step.id} to={step.to} aria-current={current === step.id ? "step" : undefined} className={cn("group flex min-w-0 items-start gap-2 rounded-md p-2 text-muted-foreground transition-colors hover:bg-secondary focus-visible:outline-2 focus-visible:outline-ring", current === step.id && "bg-accent text-accent-foreground")}>
@@ -24,5 +27,6 @@ export function WorkflowNav({ current }: { current: Step }) {
         </Link>
       ))}
     </nav>
+    </>
   );
 }

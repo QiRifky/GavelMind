@@ -45,3 +45,4 @@ use the editor.
 - ShinyButton wraps the shared Button with token-based gleam styling and native button props so animated CTAs preserve form submission and disabled behavior.
 - Entries uses persistent Radix tabs for single analysis, bulk URLs, and showcase import; hidden panels retain state so switching modes never cancels work or loses input.
 - WorkflowNav shares the existing Event → Entries → Rubric → Results order and reads session status from the mock store; page footers link to existing next-step and completed-report views without changing scoring rules.
+- Event folders swap the whole mock workspace (event, projects, rubric, scores, results) in api.ts so events never mix; EventFolders renders inside WorkflowNav on every workspace step.
