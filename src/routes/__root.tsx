@@ -15,6 +15,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Button } from "@/components/ui/button";
 import { folderName, useApi } from "@/lib/api";
+import logo from "@/assets/gavel-logo.png.asset.json";
 import { FolderOpen, ArrowUpRight } from "lucide-react";
 
 /** Workflow steps inside an event folder: the top bar is hidden there, the step nav already shows the location. */
@@ -106,7 +107,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&display=swap" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", type: "image/png", href: "/favicon.png" },
     ],
   }),
   shellComponent: RootShell,
@@ -161,7 +162,7 @@ function Nav() {
     <nav className={`sticky top-0 z-30 border-b transition-colors ${scrolled ? "border-border bg-(--nav-scrolled) backdrop-blur-md" : "border-transparent bg-transparent"}`}>
       <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 sm:px-6">
         <Link to="/" className="flex items-center gap-2 text-lg font-medium">
-          <svg viewBox="0 0 24 24" className="size-6 text-primary" fill="currentColor" aria-hidden><rect x="4" y="3" width="11" height="6" rx="2" transform="rotate(-35 9.5 6)"/><rect x="10" y="9" width="3" height="11" rx="1.5" transform="rotate(-35 11.5 14.5)"/><rect x="13" y="19" width="9" height="2.5" rx="1.25"/></svg>
+          <img src={logo.url} alt="" aria-hidden className="size-6 shrink-0 object-contain" />
           Gavel Mind
         </Link>
         {isLanding ? <div className="ml-auto flex items-center gap-6"><span className="hidden text-xs text-muted-foreground sm:block">Built for the human behind the score.</span><Button asChild variant="outline" className="rounded-full"><Link to="/app">Open app <ArrowUpRight /></Link></Button></div> : <Button asChild variant="ghost" className="ml-auto min-w-0 max-w-[55%] rounded-full"><Link to="/app"><FolderOpen className="size-4 shrink-0 text-primary" /><span className="truncate">{active ? folderName(active, state) : "Event folders"}</span></Link></Button>}
