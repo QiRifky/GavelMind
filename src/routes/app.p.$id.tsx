@@ -1,11 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { getReport, judgeStatus, judgeTotal, finalsOf, summaryText, useApi, reportForEvent, type CheckResult, type Criterion, type Report, type SummaryStyle } from "@/lib/api";
-import { AlertTriangle, ArrowLeft, ArrowRight, ArrowUpRight, Check, ChevronDown, Minus, X } from "lucide-react";
+import { AlertTriangle, ArrowLeft, ArrowRight, ArrowUpRight, Check, Minus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CriterionDeck } from "@/components/criterion-deck";
 import { CardState, CardTitle, GlowCard } from "@/components/glow-card";
-import { AiNotice, Badge } from "@/components/ui-bits";
+import { Badge } from "@/components/ui-bits";
 import { WorkflowNav } from "@/components/workflow-nav";
 import { cn } from "@/lib/utils";
 
@@ -37,24 +37,19 @@ function ReportPage() {
     <>
       <header className="mb-6 grid grid-cols-[minmax(0,1fr)] gap-3 sm:flex sm:items-end sm:justify-between">
         <div className="min-w-0">
-          <Link to="/app/entries" className="text-sm text-muted-foreground hover:text-foreground">← Entries</Link>
-          <h1 className="mt-2 break-words text-2xl sm:text-3xl">{project.name}</h1>
+          <h1 className="break-words text-2xl sm:text-3xl">{project.name}</h1>
           <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
             <a href={project.repoUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline">Repository ↗</a>
             {project.demoUrl && <a href={project.demoUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline">Demo ↗</a>}
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Badge tone={project.status === "done" ? "good" : project.status === "failed" ? "bad" : "accent"}>{project.status}</Badge>
           <Badge tone="neutral">{judgeStatus(id, state)}</Badge>
-          <Badge tone={state.finalized ? "good" : "accent"}>{state.finalized ? "Final" : "Draft, not final"}</Badge>
         </div>
       </header>
       <WorkflowNav current="judging" />
-      <AiNotice />
       {load.k === "loading" && <div className="glass mt-6 p-6"><CardState kind="loading" /></div>}
       {load.k === "error" && <div className="glass mt-6 p-6"><CardState kind="error">{load.m}</CardState><Button variant="outline" className="mt-3 rounded-full" onClick={() => setTick((t) => t + 1)}>Retry</Button></div>}
-      {state.event && <div className="mt-4 flex flex-wrap items-center gap-2 text-sm"><Link to="/app/event" className="text-primary">{state.event.name} ↗</Link><Badge tone={state.event.confirmed ? "good" : "accent"}>{state.event.confirmed ? "Rules confirmed · mock checks" : "Rules awaiting confirmation"}</Badge><span className="text-muted-foreground">Eligibility decisions remain with the judge.</span></div>}
       {report && <Bento key={project.id} r={report} criteria={state.criteria} />}
     </>
   );
@@ -62,7 +57,6 @@ function ReportPage() {
 
 function Bento({ r, criteria }: { r: Report; criteria: Criterion[] }) {
   const state = useApi();
-  const [materialOpen, setMaterialOpen] = useState(false);
   const finals = finalsOf(r.projectId, state);
   const decided = criteria.filter((c) => finals[c.id] !== undefined).length;
   const total = judgeTotal(finals, criteria);
@@ -72,15 +66,7 @@ function Bento({ r, criteria }: { r: Report; criteria: Criterion[] }) {
   const next = projects[current + 1];
   const reviewed = state.projects.filter((p) => judgeTotal(finalsOf(p.id, state), criteria) !== null).length;
   return (
-    <div className="mt-6 space-y-5">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-y border-border py-3 text-sm"><span className="font-mono">Project {current + 1} of {projects.length}</span><span className="text-muted-foreground">{reviewed}/{state.projects.length} scored · Saved for this session{state.finalized ? " · Final" : " · Not final"}</span></div>
-      <section aria-label="Technical evidence" className="border-y border-border py-3">
-        <Button variant="ghost" className="h-auto w-full justify-between gap-4 rounded-lg py-3 text-left" aria-expanded={materialOpen} aria-controls="technical-material" onClick={() => setMaterialOpen(!materialOpen)}>
-          <span className="whitespace-normal"><span className="block font-medium">Collected material & technical evidence</span><span className="mt-1 block text-xs text-muted-foreground">Repository · demo · sandbox run: {r.material.repository.run.status}</span></span>
-          <ChevronDown className={materialOpen ? "rotate-180" : ""} />
-        </Button>
-        {materialOpen && <div id="technical-material" className="mt-3"><MaterialCard r={r} /></div>}
-      </section>
+    <div className="mt-6 space-y-6">
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
       <ContextDeck r={r} />
       <section aria-label="Criterion evaluations" className="min-w-0 space-y-5">
@@ -95,7 +81,6 @@ function Bento({ r, criteria }: { r: Report; criteria: Criterion[] }) {
         <CriterionDeck report={r} criteria={criteria} />
       </section>
       </div>
-      <BreakdownCard r={r} criteria={criteria} />
       <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5">
         <div><p className="text-xs text-muted-foreground">Judge's total · {state.finalized ? "final" : "draft, not final"}</p><p className="mt-1 font-mono text-lg tabular-nums">{total === null ? "Awaiting judge review" : `${total.toFixed(2)} / 10`}</p></div>
         <nav aria-label="Project navigation" className="flex flex-wrap gap-2">
@@ -109,11 +94,11 @@ function Bento({ r, criteria }: { r: Report; criteria: Criterion[] }) {
 }
 
 function ContextDeck({ r }: { r: Report }) {
-  const [tab, setTab] = useState<"summary" | "rules">("summary");
-  const tabs = [{ id: "summary", label: "Summary" }, { id: "rules", label: "Rules check" }] as const;
+  const [tab, setTab] = useState<"summary" | "rules" | "material">("summary");
+  const tabs = [{ id: "summary", label: "Summary" }, { id: "rules", label: "Rules check" }, { id: "material", label: "Evidence" }] as const;
   return (
     <section aria-label="Project context" className="min-w-0 space-y-4">
-      <div role="tablist" aria-label="Context cards" className="flex flex-wrap gap-2">
+      <div role="tablist" aria-label="Context cards" className="flex min-h-[4.25rem] flex-wrap items-end gap-2">
         {tabs.map((t) => (
           <Button key={t.id} type="button" role="tab" aria-selected={tab === t.id} variant={tab === t.id ? "default" : "outline"} className="rounded-full" onClick={() => setTab(t.id)}>{t.label}</Button>
         ))}
@@ -122,6 +107,7 @@ function ContextDeck({ r }: { r: Report }) {
         <div aria-hidden="true" className="pointer-events-none absolute inset-x-2.5 top-0 bottom-0 rounded-card border border-border bg-secondary shadow-glass sm:inset-x-5" />
         <div role="tabpanel" hidden={tab !== "summary"} className="criterion-deck-front relative z-10 rounded-card bg-card"><SummaryCard r={r} /></div>
         <div role="tabpanel" hidden={tab !== "rules"} className="criterion-deck-front relative z-10 rounded-card bg-card"><RulesCard r={r} /></div>
+        <div role="tabpanel" hidden={tab !== "material"} className="criterion-deck-front relative z-10 rounded-card bg-card"><MaterialCard r={r} /></div>
       </div>
     </section>
   );
@@ -236,32 +222,3 @@ function MaterialCard({ r }: { r: Report }) {
   );
 }
 
-function BreakdownCard({ r, criteria }: { r: Report; criteria: Criterion[] }) {
-  const state = useApi();
-  const finals = finalsOf(r.projectId, state);
-  const total = judgeTotal(finals, criteria);
-  return (
-    <GlowCard accent="orange" label="Scoring breakdown">
-      <CardTitle accent="orange">Scoring breakdown</CardTitle>
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[24rem] text-sm">
-          <thead><tr className="text-left text-xs text-muted-foreground"><th className="py-1 font-normal">Criterion</th><th className="font-normal">Weight</th><th className="font-normal">Judge final</th><th className="text-right font-normal">Contribution</th></tr></thead>
-          <tbody>
-            {criteria.map((c) => {
-              const f = finals[c.id];
-              return (
-                <tr key={c.id} className="border-t border-border/60">
-                  <td className="py-2">{c.name}</td><td className="font-mono">{c.weight}%</td>
-                  <td className="font-mono">{f ?? "—"}</td>
-                  <td className="text-right font-mono">{f === undefined ? "—" : ((f * c.weight) / 100).toFixed(2)}</td>
-                </tr>
-              );
-            })}
-            <tr className="border-t border-border"><td className="py-2 font-medium" colSpan={3}>Total (judge's scores only)</td><td className="text-right font-mono text-primary">{total === null ? "Awaiting judge review" : total.toFixed(2)}</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p className="mt-3 text-xs text-muted-foreground">Formula: for each criterion, multiply the judge's final score by its weight, add them up, and divide by the total weight. AI drafts are never part of the total.</p>
-    </GlowCard>
-  );
-}
