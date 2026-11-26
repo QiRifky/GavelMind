@@ -161,7 +161,7 @@ function Nav() {
   return (
     <nav className={`sticky top-0 z-30 border-b transition-colors ${scrolled ? "border-border bg-(--nav-scrolled) backdrop-blur-md" : "border-transparent bg-transparent"}`}>
       <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 sm:px-6">
-        <Link to="/" className="flex items-center gap-2 text-lg font-medium text-primary">
+        <Link to="/" className="flex items-center gap-2 text-lg font-medium">
           <img src={logo.url} alt="" aria-hidden className="size-6 shrink-0 object-contain" />
           GavelMind.
         </Link>
