@@ -74,10 +74,6 @@ function Bento({ r, criteria }: { r: Report; criteria: Criterion[] }) {
   return (
     <div className="mt-6 space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3 border-y border-border py-3 text-sm"><span className="font-mono">Project {current + 1} of {projects.length}</span><span className="text-muted-foreground">{reviewed}/{state.projects.length} scored · Saved for this session{state.finalized ? " · Final" : " · Not final"}</span></div>
-      <div className="grid items-stretch gap-5 lg:grid-cols-2">
-        <SummaryCard r={r} />
-        <RulesCard r={r} />
-      </div>
       <section aria-label="Technical evidence" className="border-y border-border py-3">
         <Button variant="ghost" className="h-auto w-full justify-between gap-4 rounded-lg py-3 text-left" aria-expanded={materialOpen} aria-controls="technical-material" onClick={() => setMaterialOpen(!materialOpen)}>
           <span className="whitespace-normal"><span className="block font-medium">Collected material & technical evidence</span><span className="mt-1 block text-xs text-muted-foreground">Repository · demo · sandbox run: {r.material.repository.run.status}</span></span>
@@ -85,8 +81,13 @@ function Bento({ r, criteria }: { r: Report; criteria: Criterion[] }) {
         </Button>
         {materialOpen && <div id="technical-material" className="mt-3"><MaterialCard r={r} /></div>}
       </section>
-      <section aria-label="Criterion evaluations" className="space-y-5">
-        <div className="flex flex-wrap items-end justify-between gap-4 pt-3">
+      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
+      <div className="grid gap-5">
+        <SummaryCard r={r} />
+        <RulesCard r={r} />
+      </div>
+      <section aria-label="Criterion evaluations" className="min-w-0 space-y-5">
+        <div className="flex flex-wrap items-end justify-between gap-4">
           <div><p className="font-mono text-xs uppercase text-primary">Judging workspace</p><h2 className="mt-2 text-2xl font-medium">Your evaluation</h2></div>
           <div className="text-right"><p className="font-mono text-lg tabular-nums">{decided}<span className="text-muted-foreground">/{criteria.length}</span></p><p className="text-xs text-muted-foreground">Criteria scored</p></div>
         </div>
@@ -96,6 +97,7 @@ function Bento({ r, criteria }: { r: Report; criteria: Criterion[] }) {
         {criteria.length === 0 && <CardState kind="empty">No criteria in the rubric yet.</CardState>}
         <CriterionDeck report={r} criteria={criteria} />
       </section>
+      </div>
       <BreakdownCard r={r} criteria={criteria} />
       <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5">
         <div><p className="text-xs text-muted-foreground">Judge's total · {state.finalized ? "final" : "draft, not final"}</p><p className="mt-1 font-mono text-lg tabular-nums">{total === null ? "Awaiting judge review" : `${total.toFixed(2)} / 10`}</p></div>

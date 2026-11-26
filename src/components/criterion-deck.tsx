@@ -38,7 +38,7 @@ export function CriterionDeck({ report, criteria }: { report: Report; criteria: 
         {activeIndex + 1 < criteria.length && <div aria-hidden="true" className="pointer-events-none absolute inset-x-2.5 top-0 bottom-4 rounded-card border border-border bg-secondary shadow-glass sm:inset-x-5" />}
         {criteria.map((criterion, index) => (
           <div key={`${report.projectId}-${criterion.id}`} hidden={index !== activeIndex}
-            className="criterion-deck-front relative z-10 min-h-[35rem] rounded-card bg-card md:min-h-[23rem]"
+            className="criterion-deck-front relative z-10 rounded-card bg-card"
             role="group" aria-label={`Criterion ${index + 1} of ${criteria.length}: ${criterion.name}`}>
             <CriterionEvaluation report={report} criterion={criterion} index={index} />
           </div>

@@ -25,7 +25,7 @@ export function CriterionEvaluation({ report, criterion, index }: { report: Repo
         </div>
         <span className="flex items-center gap-1.5 text-xs text-muted-foreground">{value?.score !== undefined && <Check className="size-4 text-primary" />}{value?.score !== undefined ? "Score saved" : "Awaiting your score"}</span>
       </div>
-      <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)] md:gap-7">
+      <div className="grid gap-5">
         <HandoffBeam phase="idle" radius={0} className="min-w-0 pb-7">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <p className="text-xs font-medium uppercase text-muted-foreground">AI draft · suggestions only</p>
@@ -46,7 +46,7 @@ export function CriterionEvaluation({ report, criterion, index }: { report: Repo
             </div>)}
           </div>}
         </HandoffBeam>
-        <div className="min-w-0 border-t border-border pt-5 md:border-t-0 md:border-l md:pt-0 md:pl-7">
+        <div className="min-w-0 border-t border-border pt-5">
           <label htmlFor={`s-${criterion.id}`} className="flex items-center gap-2 text-sm font-medium"><Scale className="size-4 text-primary" />Judge's decision</label>
           <div className="relative mt-3">
             <input id={`s-${criterion.id}`} aria-label={`${criterion.name} final score`} type="number" min={0} max={10} step={0.5} disabled={state.finalized} value={value?.score ?? ""} placeholder="—"
