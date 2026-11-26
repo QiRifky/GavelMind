@@ -34,19 +34,14 @@ function EventPage() {
   return <>
     <PageHead eyebrow="Event" title="Set the ground rules.">Name the event and confirm the eligibility rules before judging starts.</PageHead>
     <WorkflowNav current="event" />
-    <p role="note" className="mb-5 text-xs text-muted-foreground"><span className="mr-2 rounded-full bg-accent px-2 py-0.5 font-mono text-accent-foreground">Mock</span>The event URL is not read; rule drafts and rubric suggestions are examples. Changes reset on reload.</p>
+    <div role="note" className="mb-6 border-l-2 border-primary bg-accent p-4 text-sm text-accent-foreground">Mock mode · The event URL is not read. Rule drafts and rubric suggestions are examples, not extracted event requirements. Changes reset on reload.</div>
     <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
       <div className="min-w-0">
-        <section className="rounded-lg border border-border bg-card p-4 shadow-glass">
-          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
-            <div className="min-w-0">
-              <p className="eyebrow font-mono">Event</p>
-              {event ? <><h2 className="mt-1 break-words text-lg">{event.name}</h2><a href={event.url} target="_blank" rel="noreferrer" className="mt-1 flex items-start gap-1.5 break-all text-sm text-primary hover:underline"><Link2 className="mt-0.5 size-4 shrink-0" />{event.url}</a></> : <p className="mt-1 text-sm text-muted-foreground">No event details yet.</p>}
-            </div>
-            <EventDetailsDialog key={event?.name ?? "empty"} edit />
-          </div>
-          <div className="mt-4 flex flex-wrap items-center gap-3"><Pill disabled={busy || !event} onClick={() => void extract()}><Sparkles className="size-4" />{busy ? "Preparing sample rules…" : "Prepare sample rule draft"}</Pill>{event && <Badge tone={event.confirmed ? "good" : "accent"}>{event.confirmed ? "Confirmed by judge" : "Draft, not final"}</Badge>}</div>
-          {error && <p role="alert" className="mt-3 text-sm text-fail">{error}</p>}
+        <section className="space-y-4 border-b border-border pb-6">
+          <div className="flex flex-wrap items-center justify-between gap-3"><p className="eyebrow font-mono">Event details</p><EventDetailsDialog key={event?.name ?? "empty"} edit /></div>
+          {event ? <div><h2 className="break-words text-xl">{event.name}</h2><a href={event.url} target="_blank" rel="noreferrer" className="mt-2 block break-all text-sm text-primary hover:underline">{event.url}</a></div> : <p className="text-sm text-muted-foreground">No event details yet.</p>}
+          <div className="flex flex-wrap gap-3"><Pill disabled={busy || !event} onClick={() => void extract()}><Sparkles className="size-4" />{busy ? "Preparing sample rules…" : "Prepare sample rule draft"}</Pill>{event && <Badge tone={event.confirmed ? "good" : "accent"}>{event.confirmed ? "Confirmed by judge" : "Draft, not final"}</Badge>}</div>
+          {error && <p role="alert" className="text-sm text-fail">{error}</p>}
         </section>
         <section aria-label="Eligibility rules" className="mt-6">
           <div className="mb-4 flex items-center justify-between gap-3"><h2 className="text-lg">Eligibility rules</h2><span className="font-mono text-xs text-muted-foreground">{event?.rules.filter((r) => r.enabled).length ?? 0} active</span></div>
@@ -60,8 +55,9 @@ function EventPage() {
         </section>
       </div>
       <aside className="min-w-0 space-y-6 border-t border-border pt-6 lg:border-t-0 lg:border-l lg:pl-8 lg:pt-0">
-        {event?.rules.length ? <section><p className="eyebrow font-mono">Suggested rubric · sample</p><dl className="mt-4 space-y-3">{suggestions.map((c) => <div key={c.id} className="flex justify-between gap-3 text-sm"><dt>{c.name}</dt><dd className="font-mono text-primary">{c.weight}%</dd></div>)}</dl><Pill variant="outline" className="mt-5" onClick={() => { if (window.confirm("Replace the current rubric with these sample criteria and weights?")) setApplied(saveRubric(suggestions)); }}>Apply sample rubric</Pill>{applied && <p role="status" className="mt-3 text-sm text-pass">Rubric updated.</p>}</section> : null}
-        <p className="text-sm text-muted-foreground">Rules and eligibility findings are drafts for judge review. Only the judge makes the final decision.</p>
+        <section><p className="eyebrow font-mono">Event source</p>{event ? <><h2 className="mt-3 break-words text-xl">{event.name}</h2><a href={event.url} target="_blank" rel="noreferrer" className="mt-3 flex items-start gap-2 break-all text-sm text-primary"><Link2 className="mt-0.5 size-4 shrink-0" />{event.url}</a></> : <p className="mt-3 text-sm text-muted-foreground">No event selected.</p>}</section>
+        {event?.rules.length ? <section className="border-t border-border pt-6"><p className="eyebrow font-mono">Suggested rubric · sample</p><dl className="mt-4 space-y-3">{suggestions.map((c) => <div key={c.id} className="flex justify-between gap-3 text-sm"><dt>{c.name}</dt><dd className="font-mono text-primary">{c.weight}%</dd></div>)}</dl><Pill variant="outline" className="mt-5" onClick={() => { if (window.confirm("Replace the current rubric with these sample criteria and weights?")) setApplied(saveRubric(suggestions)); }}>Apply sample rubric</Pill>{applied && <p role="status" className="mt-3 text-sm text-pass">Rubric updated.</p>}</section> : null}
+        <p className="border-t border-border pt-5 text-sm text-muted-foreground">Rules and eligibility findings are drafts for judge review. Only the judge makes the final decision.</p>
       </aside>
     </div>
     <footer className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5"><Badge tone={event?.confirmed ? "good" : "neutral"}>{event?.confirmed ? "Rules confirmed by judge" : "Rules awaiting confirmation"}</Badge>{event?.confirmed && <Button asChild className="rounded-full"><Link to="/app/entries">Continue to entries <ArrowRight /></Link></Button>}</footer>
