@@ -100,6 +100,9 @@
   /* Glow accents as "r, g, b" for rgba(var(--rgb), a) */
   --glow-orange: 255, 122, 47;
   --glow-ember: 251, 146, 60;
+  --beam-edge: rgb(255 122 47 / 0);
+  --beam-core: var(--brand);
+  --beam-tip: #ffd1a1;
   --glow-green: 52, 211, 153;
   --glow-amber: 251, 191, 36;
   --grid-line: rgb(255 255 255 / 0.08);
@@ -146,6 +149,9 @@
   --sidebar-border: var(--line);
   --sidebar-ring: var(--brand);
 }
+
+.handoff-beam { position: relative; isolation: isolate; min-width: 0; overflow: hidden; }
+.handoff-beam-canvas { position: absolute; inset: auto 0 0; width: 100%; pointer-events: none; }
 
 .dark {
   color-scheme: dark;

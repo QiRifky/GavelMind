@@ -1,5 +1,10 @@
 # Landing page
 
+# AI activity beam
+
+- [x] Integrate the orange beam in analysis and report AI drafts without changing judging logic.
+- [x] Verify analysis, scoring, mobile layout, and reduced motion.
+
 # Analysis-ready design
 
 - [x] Replace the analysis summary with a dark interactive donut and criterion legend.

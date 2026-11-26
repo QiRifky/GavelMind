@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { addProjects, analyzeProject, average, draftsFor, snapshot, STAGES, type AnalyzeStage, type Report } from "@/lib/api";
-import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { HandoffBeam } from "@/components/ui/handoff-beam";
 import { Pill } from "@/components/ui-bits";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -10,12 +10,11 @@ import { ArrowRight, RotateCcw, CheckCheck } from "lucide-react";
 
 type Phase = { k: "idle" } | { k: "running"; stage: AnalyzeStage } | { k: "done"; report: Report; name: string } | { k: "error"; message: string };
 
-/** Input card → glowing orb while analyzing → result summary. */
+/** Input card → activity beam while analyzing → result summary. */
 export function AnalyzeCard({ initialUrl = "", className }: { initialUrl?: string; className?: string }) {
   const [url, setUrl] = useState(initialUrl);
   const [phase, setPhase] = useState<Phase>({ k: "idle" });
   const ctrl = useRef<AbortController | null>(null);
-  const reduced = useReducedMotion();
 
   async function run() {
     const u = url.trim();
@@ -36,7 +35,8 @@ export function AnalyzeCard({ initialUrl = "", className }: { initialUrl?: strin
   }
 
   return (
-    <section aria-label="Analyze a project" aria-live="polite" className={cn("glass overflow-hidden p-5 sm:p-6", className)}>
+    <HandoffBeam phase={phase.k === "running" ? "thinking" : "idle"} className={cn("glass", className)}>
+    <section aria-label="Analyze a project" aria-live="polite" className="p-5 pb-8 sm:p-6 sm:pb-9">
       {phase.k === "idle" && (
         <form className="animate-in fade-in duration-300" onSubmit={(e) => { e.preventDefault(); void run(); }}>
           <label htmlFor="analyze-url" className="eyebrow font-mono">Project URL</label>
@@ -50,15 +50,11 @@ export function AnalyzeCard({ initialUrl = "", className }: { initialUrl?: strin
 
       {phase.k === "running" && (
         <div className="flex flex-col items-center py-4 text-center animate-in fade-in zoom-in-90 duration-500">
-          {reduced ? (
             <div className="w-full max-w-sm">
               <div className="h-2 overflow-hidden rounded-full bg-well" role="progressbar" aria-valuemin={0} aria-valuemax={4} aria-valuenow={phase.stage + 1}>
                 <div className="h-full rounded-full bg-primary" style={{ width: `${((phase.stage + 1) / 4) * 100}%` }} />
               </div>
             </div>
-          ) : (
-            <Orb stage={phase.stage} />
-          )}
           <p key={phase.stage} className="mt-5 text-base font-medium animate-in fade-in duration-500">
             {STAGES[phase.stage].label} <span className="font-mono text-xs text-muted-foreground">{phase.stage + 1}/4</span>
           </p>
@@ -80,22 +76,7 @@ export function AnalyzeCard({ initialUrl = "", className }: { initialUrl?: strin
         </div>
       )}
     </section>
-  );
-}
-
-function Orb({ stage }: { stage: AnalyzeStage }) {
-  const C = 2 * Math.PI * 78;
-  return (
-    <div className="relative size-44" aria-hidden>
-      <div className="absolute inset-4 rounded-full animate-orb-breathe" style={{ background: "radial-gradient(circle at 40% 35%, rgba(var(--glow-ember), 0.95), rgba(var(--glow-orange), 0.55) 45%, transparent 72%)", filter: "blur(6px)" }} />
-      <div className="absolute inset-6 rounded-full animate-orb-spin" style={{ background: "conic-gradient(from 0deg, transparent 0 70%, rgba(255,255,255,0.35) 85%, transparent 100%)", mixBlendMode: "overlay" }} />
-      <div className="absolute inset-0 rounded-full" style={{ boxShadow: "0 0 70px 10px rgba(var(--glow-orange), 0.25)" }} />
-      <svg viewBox="0 0 176 176" className="absolute inset-0 -rotate-90">
-        <circle cx="88" cy="88" r="78" fill="none" stroke="var(--line)" strokeWidth="2" />
-        <circle cx="88" cy="88" r="78" fill="none" stroke="var(--brand)" strokeWidth="2" strokeLinecap="round"
-          strokeDasharray={C} strokeDashoffset={C * (1 - (stage + 1) / 4)} style={{ transition: "stroke-dashoffset 900ms ease" }} />
-      </svg>
-    </div>
+    </HandoffBeam>
   );
 }
 

@@ -3,6 +3,7 @@ import { Check, ChevronDown, Eraser, Scale } from "lucide-react";
 import { agreement, average, draftsFor, saveJudgeScore, useApi, type Criterion, type Report } from "@/lib/api";
 import { GlowCard } from "@/components/glow-card";
 import { Button } from "@/components/ui/button";
+import { HandoffBeam } from "@/components/ui/handoff-beam";
 
 /** One criterion keeps the judge's decision beside its supporting AI material. */
 export function CriterionEvaluation({ report, criterion, index }: { report: Report; criterion: Criterion; index: number }) {
@@ -25,7 +26,7 @@ export function CriterionEvaluation({ report, criterion, index }: { report: Repo
         <span className="flex items-center gap-1.5 text-xs text-muted-foreground">{value?.score !== undefined && <Check className="size-4 text-primary" />}{value?.score !== undefined ? "Score saved" : "Awaiting your score"}</span>
       </div>
       <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)] md:gap-7">
-        <div className="min-w-0">
+        <HandoffBeam phase="idle" radius={0} className="min-w-0 pb-7">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <p className="text-xs font-medium uppercase text-muted-foreground">AI draft · suggestions only</p>
             <span className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground">{agreed ? "Models agree" : "Models differ"}</span>
@@ -44,7 +45,7 @@ export function CriterionEvaluation({ report, criterion, index }: { report: Repo
               <p className="mt-2 break-words font-mono text-xs text-muted-foreground">Evidence: {d.evidence}</p>
             </div>)}
           </div>}
-        </div>
+        </HandoffBeam>
         <div className="min-w-0 border-t border-border pt-5 md:border-t-0 md:border-l md:pt-0 md:pl-7">
           <label htmlFor={`s-${criterion.id}`} className="flex items-center gap-2 text-sm font-medium"><Scale className="size-4 text-primary" />Judge's decision</label>
           <div className="relative mt-3">
