@@ -67,9 +67,7 @@ function Bento({ r, criteria }: { r: Report; criteria: Criterion[] }) {
   const reviewed = state.projects.filter((p) => judgeTotal(finalsOf(p.id, state), criteria) !== null).length;
   return (
     <div className="mt-6 space-y-6">
-      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
-      <ContextDeck r={r} />
-      <section aria-label="Criterion evaluations" className="min-w-0 space-y-5">
+      <div className="space-y-4">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div><p className="font-mono text-xs uppercase text-primary">Judging workspace</p><h2 className="mt-2 text-2xl font-medium">Your evaluation</h2></div>
           <div className="text-right"><p className="font-mono text-lg tabular-nums">{decided}<span className="text-muted-foreground">/{criteria.length}</span></p><p className="text-xs text-muted-foreground">Criteria scored</p></div>
@@ -77,6 +75,10 @@ function Bento({ r, criteria }: { r: Report; criteria: Criterion[] }) {
         <div role="progressbar" aria-label="Review progress" aria-valuemin={0} aria-valuemax={criteria.length || 1} aria-valuenow={decided} className="flex h-1.5 gap-1.5">
           {criteria.map((c) => <span key={c.id} className={cn("flex-1 rounded-full", finals[c.id] !== undefined ? "bg-primary" : "bg-secondary")} />)}
         </div>
+      </div>
+      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
+      <ContextDeck r={r} />
+      <section aria-label="Criterion evaluations" className="min-w-0 space-y-4">
         {criteria.length === 0 && <CardState kind="empty">No criteria in the rubric yet.</CardState>}
         <CriterionDeck report={r} criteria={criteria} />
       </section>
@@ -98,7 +100,7 @@ function ContextDeck({ r }: { r: Report }) {
   const tabs = [{ id: "summary", label: "Summary" }, { id: "rules", label: "Rules check" }, { id: "material", label: "Evidence" }] as const;
   return (
     <section aria-label="Project context" className="min-w-0 space-y-4">
-      <div role="tablist" aria-label="Context cards" className="flex min-h-[4.25rem] flex-wrap items-end gap-2">
+      <div role="tablist" aria-label="Context cards" className="flex flex-wrap gap-2">
         {tabs.map((t) => (
           <Button key={t.id} type="button" role="tab" aria-selected={tab === t.id} variant={tab === t.id ? "default" : "outline"} className="rounded-full" onClick={() => setTab(t.id)}>{t.label}</Button>
         ))}
