@@ -35,7 +35,8 @@ function ReportPage() {
 
   return (
     <>
-      <header className="mb-6 grid grid-cols-[minmax(0,1fr)] gap-3 sm:flex sm:items-end sm:justify-between">
+      <WorkflowNav current="judging" />
+      <header className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-3 sm:flex sm:items-end sm:justify-between">
         <div className="min-w-0">
           <h1 className="break-words text-2xl sm:text-3xl">{project.name}</h1>
           <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
@@ -47,7 +48,6 @@ function ReportPage() {
           <Badge tone="neutral">{judgeStatus(id, state)}</Badge>
         </div>
       </header>
-      <WorkflowNav current="judging" />
       {load.k === "loading" && <div className="glass mt-6 p-6"><CardState kind="loading" /></div>}
       {load.k === "error" && <div className="glass mt-6 p-6"><CardState kind="error">{load.m}</CardState><Button variant="outline" className="mt-3 rounded-full" onClick={() => setTick((t) => t + 1)}>Retry</Button></div>}
       {report && <Bento key={project.id} r={report} criteria={state.criteria} />}
