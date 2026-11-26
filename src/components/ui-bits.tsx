@@ -30,7 +30,7 @@ export function PageHead({ eyebrow, title, children }: { eyebrow: string; title:
 
 export function AiNotice() {
   return (
-    <div role="note" className="flex items-start gap-3 rounded-2xl border border-primary/30 bg-accent px-4 py-3 text-sm text-accent-foreground">
+    <div role="note" className="flex items-start gap-3 rounded-card border border-primary/30 bg-accent px-4 py-3 text-sm text-accent-foreground">
       <span className="mt-1 size-2 shrink-0 rounded-full bg-primary" />
       AI scores are suggestions to help you decide. The final decision is yours.
     </div>

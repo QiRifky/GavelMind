@@ -41,7 +41,7 @@ export function EventDetailsDialog({ edit = false, trigger }: { edit?: boolean; 
     <DialogTrigger asChild>{trigger ?? <Button variant="ghost" size="sm" className="shrink-0 rounded-full text-muted-foreground">
       {edit ? <Pencil className="size-4" /> : <FolderPlus className="size-4" />}{edit ? "Edit event details" : "New event folder"}
     </Button>}</DialogTrigger>
-    <DialogContent className="max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] overflow-y-auto rounded-lg border-border bg-card shadow-glass">
+    <DialogContent className="max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] overflow-y-auto rounded-card sm:rounded-card border-border bg-card shadow-glass">
       <DialogHeader><div className="mb-3 flex size-10 items-center justify-center rounded-lg bg-accent text-primary"><FolderPlus className="size-5" /></div><DialogTitle>{edit ? "Edit event details" : "New event folder"}</DialogTitle><DialogDescription>{edit ? "Event details" : "Event details · New workspace"}</DialogDescription></DialogHeader>
       <form onSubmit={(e) => void submit(e)} className="space-y-5">
         <div><label htmlFor="folder-event-name" className="mb-2 block text-sm">Event name</label><input id="folder-event-name" required disabled={busy} value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Build Together 2026" className={input} /></div>

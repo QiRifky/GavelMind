@@ -26,7 +26,7 @@ export function RubricEditor() {
           {draft.length === 0 && <p className="mb-4 text-sm text-muted-foreground">No criteria. Add one to start.</p>}
           <ul className="space-y-4">
             {draft.map((c) => (
-              <li key={c.id} className="rounded-3xl bg-well p-4">
+              <li key={c.id} className="rounded-card bg-well p-4">
                 <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
                   <input aria-label="Criterion name" value={c.name} onChange={(e) => edit(c.id, { name: e.target.value })} className="h-10 min-w-0 rounded-xl border border-border bg-transparent px-3 outline-hidden focus:border-primary" />
                   <button aria-label={`Remove ${c.name}`} onClick={() => { setSaved(false); setDraft((d) => d.filter((x) => x.id !== c.id)); }} className="rounded-full px-3 py-1 text-sm text-muted-foreground hover:text-destructive">Remove</button>
@@ -58,8 +58,8 @@ export function RubricEditor() {
                 {withFinals.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
               </select>
               <dl className="mt-4 grid grid-cols-2 gap-3">
-                <div className="rounded-2xl bg-well p-3"><dt className="text-xs text-muted-foreground">Current total</dt><dd className="mt-1 font-mono">{fmt(judgeTotal(finals, state.criteria))}</dd></div>
-                <div className="rounded-2xl bg-well p-3"><dt className="text-xs text-muted-foreground">With these edits</dt><dd className="mt-1 font-mono text-primary">{fmt(judgeTotal(finals, draft))}</dd></div>
+                <div className="rounded-card bg-well p-3"><dt className="text-xs text-muted-foreground">Current total</dt><dd className="mt-1 font-mono">{fmt(judgeTotal(finals, state.criteria))}</dd></div>
+                <div className="rounded-card bg-well p-3"><dt className="text-xs text-muted-foreground">With these edits</dt><dd className="mt-1 font-mono text-primary">{fmt(judgeTotal(finals, draft))}</dd></div>
               </dl>
               <p className="mt-3 text-xs text-muted-foreground">Uses only your final scores. New criteria without a score keep the total pending.</p>
             </div>

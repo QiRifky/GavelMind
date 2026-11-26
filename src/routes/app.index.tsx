@@ -34,7 +34,7 @@ function Folders() {
         })}
         <EventDetailsDialog trigger={
           <button type="button" className="group flex h-full flex-col items-start rounded-xl text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring">
-            <span className="flex h-40 w-60 flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-border text-muted-foreground transition-colors group-hover:border-primary group-hover:text-primary motion-reduce:transition-none">
+            <span className="flex h-40 w-60 flex-col items-center justify-center gap-4 rounded-card border border-dashed border-border text-muted-foreground transition-colors group-hover:border-primary group-hover:text-primary motion-reduce:transition-none">
               <FolderPlus className="size-16" aria-hidden="true" />
               <span className="text-sm font-medium text-primary">New event folder</span>
             </span>

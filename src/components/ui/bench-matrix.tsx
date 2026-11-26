@@ -43,7 +43,7 @@ export function BenchMatrix({ models, groups, meta, footnote, decimals = 1, benc
     <div ref={ref} className={entered ? "vbm-enter" : ""}>
       <style>{MOTION_CSS}</style>
       {meta ? <p className="mb-2.5 text-right text-xs text-muted-foreground">{meta}</p> : null}
-      <div className="rounded-xl border border-border bg-well text-foreground">
+      <div className="overflow-hidden rounded-card border border-border bg-well text-foreground">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[560px] border-collapse tabular-nums" onMouseLeave={() => setHoverCol(null)}>
             <thead>

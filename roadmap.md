@@ -1,5 +1,10 @@
 # Landing page
 
+# Card corners
+
+- [x] Apply the shared card radius across card surfaces, deck layers, dialogs, and the folder creation tile.
+- [x] Verify laptop and phone layouts and existing tests.
+
 # Stacked criterion cards
 
 - [x] Replace the vertical criterion list with a layered deck and criterion navigation, preserving judging inputs.

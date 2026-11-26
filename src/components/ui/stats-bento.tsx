@@ -12,7 +12,7 @@ export function StatsBento({ hero, trend, tiles }: Props) {
   const max = Math.max(1, ...trend.bars);
   return (
     <div className="mb-4 grid shrink-0 grid-cols-2 gap-3 lg:grid-cols-6">
-      <div className="relative col-span-2 flex items-center justify-between gap-4 overflow-hidden rounded-3xl bg-primary px-6 py-4 text-primary-foreground">
+      <div className="relative col-span-2 flex items-center justify-between gap-4 overflow-hidden rounded-card bg-primary px-6 py-4 text-primary-foreground">
         <div aria-hidden className="bento-stripes pointer-events-none absolute inset-0" />
         <div className="relative min-w-0">
           <span className="inline-block rounded-full bg-primary-foreground/10 px-3 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-primary-foreground/70">{hero.badge}</span>
@@ -20,7 +20,7 @@ export function StatsBento({ hero, trend, tiles }: Props) {
         </div>
         <p className="relative shrink-0 text-4xl tracking-tighter tabular-nums">{hero.value}</p>
       </div>
-      <div className="col-span-2 flex items-center justify-between gap-4 rounded-3xl border border-border bg-muted px-6 py-4">
+      <div className="col-span-2 flex items-center justify-between gap-4 rounded-card border border-border bg-muted px-6 py-4">
         <div className="min-w-0">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">{trend.label}</p>
           <p className="mt-1 text-2xl tabular-nums text-foreground">{trend.value}</p>
@@ -30,7 +30,7 @@ export function StatsBento({ hero, trend, tiles }: Props) {
         </div>
       </div>
       {tiles.map((t) => (
-        <div key={t.label} className="flex flex-col justify-center rounded-3xl border border-border bg-card px-5 py-4 text-center">
+        <div key={t.label} className="flex flex-col justify-center rounded-card border border-border bg-card px-5 py-4 text-center">
           <p className="truncate text-xl tabular-nums text-foreground">{t.value}</p>
           <p className="truncate text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">{t.label}</p>
         </div>

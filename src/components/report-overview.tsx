@@ -31,7 +31,7 @@ export function ReportOverview({ r, project, criteria }: { r: Report; project: P
   const bars = Array.from({ length: BARS }, (_, i) => ({ i, v: i < filled ? 1 : 0 }));
 
   return (
-    <section aria-label="Report overview" className="glass rounded-3xl p-4 sm:p-5">
+    <section aria-label="Report overview" className="glass rounded-card p-4 sm:p-5">
       <div className="grid gap-5 lg:grid-cols-5">
         <div className="flex flex-col justify-between gap-6 lg:col-span-3">
           <p className="font-mono text-xs uppercase tracking-[0.14em] text-primary">Report overview</p>
@@ -44,7 +44,7 @@ export function ReportOverview({ r, project, criteria }: { r: Report; project: P
           </div>
           <ul className="grid gap-3 sm:grid-cols-2">
             {metrics.map((m) => (
-              <li key={m.title} className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 rounded-2xl border border-border bg-well px-4 py-3">
+              <li key={m.title} className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 rounded-card border border-border bg-well px-4 py-3">
                 <span className={cn("flex size-9 items-center justify-center rounded-lg", m.warn ? "bg-warn/15 text-warn" : "bg-primary/15 text-primary")}><m.icon className="size-5" /></span>
                 <div className="min-w-0">
                   <p className="truncate text-sm text-muted-foreground">{m.title}</p>
@@ -55,7 +55,7 @@ export function ReportOverview({ r, project, criteria }: { r: Report; project: P
           </ul>
         </div>
 
-        <div className="flex flex-col justify-between gap-3 rounded-2xl border border-border bg-well p-4 lg:col-span-2">
+        <div className="flex flex-col justify-between gap-3 rounded-card border border-border bg-well p-4 lg:col-span-2">
           <p className="text-lg font-semibold">Judge's final score</p>
           <div className="h-40 w-full" role="img" aria-label={`Rubric weights: ${slices.map((s) => `${s.name} ${s.value}%`).join(", ")}`}>
             <ResponsiveContainer width="100%" height="100%">
@@ -83,7 +83,7 @@ export function ReportOverview({ r, project, criteria }: { r: Report; project: P
         </div>
       </div>
 
-      <div className="mt-5 grid gap-4 rounded-2xl border border-border bg-well p-4 lg:grid-cols-5">
+      <div className="mt-5 grid gap-4 rounded-card border border-border bg-well p-4 lg:grid-cols-5">
         <div className="flex flex-col justify-center gap-2">
           <p className="text-lg font-semibold">Review progress</p>
           <p className="font-mono text-5xl tabular-nums">{reviewPct}%</p>

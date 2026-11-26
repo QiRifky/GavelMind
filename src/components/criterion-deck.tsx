@@ -34,11 +34,11 @@ export function CriterionDeck({ report, criteria }: { report: Report; criteria: 
         ))}
       </nav>
       <div className="relative isolate pb-8" aria-roledescription="card deck" aria-label="Criterion cards">
-        {activeIndex + 2 < criteria.length && <div aria-hidden="true" className="pointer-events-none absolute inset-x-5 top-0 bottom-0 rounded-3xl border border-border bg-card shadow-glass sm:inset-x-10" />}
-        {activeIndex + 1 < criteria.length && <div aria-hidden="true" className="pointer-events-none absolute inset-x-2.5 top-0 bottom-4 rounded-3xl border border-border bg-secondary shadow-glass sm:inset-x-5" />}
+        {activeIndex + 2 < criteria.length && <div aria-hidden="true" className="pointer-events-none absolute inset-x-5 top-0 bottom-0 rounded-card border border-border bg-card shadow-glass sm:inset-x-10" />}
+        {activeIndex + 1 < criteria.length && <div aria-hidden="true" className="pointer-events-none absolute inset-x-2.5 top-0 bottom-4 rounded-card border border-border bg-secondary shadow-glass sm:inset-x-5" />}
         {criteria.map((criterion, index) => (
           <div key={`${report.projectId}-${criterion.id}`} hidden={index !== activeIndex}
-            className="criterion-deck-front relative z-10 min-h-[35rem] rounded-3xl bg-card md:min-h-[23rem]"
+            className="criterion-deck-front relative z-10 min-h-[35rem] rounded-card bg-card md:min-h-[23rem]"
             role="group" aria-label={`Criterion ${index + 1} of ${criteria.length}: ${criterion.name}`}>
             <CriterionEvaluation report={report} criterion={criterion} index={index} />
           </div>

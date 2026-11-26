@@ -11,7 +11,7 @@ export function EventFolders({ children }: { children?: ReactNode }) {
   const stats = folderStats(state.activeFolderId, state);
 
   return (
-    <section aria-label="Event folders" className="mb-4 shrink-0 overflow-hidden rounded-lg border border-border bg-card shadow-glass">
+    <section aria-label="Event folders" className="mb-4 shrink-0 overflow-hidden rounded-card border border-border bg-card shadow-glass">
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-3 py-2.5 sm:px-4">
           <div className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1">
             <Link to="/app" aria-label="All event folders" title="All event folders" className="inline-flex shrink-0 items-center gap-1.5 rounded-full px-2 py-1 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground"><ArrowLeft className="size-4" aria-hidden="true" /><span className="hidden sm:inline">All folders</span></Link>

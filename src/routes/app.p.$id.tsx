@@ -119,11 +119,11 @@ function SummaryCard({ r }: { r: Report }) {
         </select>}>Summary</CardTitle>
       <div className="space-y-3 text-sm leading-relaxed">{summaryText(r, style).map((t) => <p key={t}>{t}</p>)}</div>
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
-        <div className="flex h-full flex-col rounded-2xl bg-well p-4">
+        <div className="flex h-full flex-col rounded-card bg-well p-4">
           <p className="flex items-center gap-1.5 text-xs text-muted-foreground"><Check className="size-3.5 shrink-0 text-pass" />What it does</p>
           <p className="mt-2 text-sm leading-relaxed">{r.does}</p>
         </div>
-        <div className="flex h-full flex-col rounded-2xl bg-well p-4">
+        <div className="flex h-full flex-col rounded-card bg-well p-4">
           <p className="flex items-center gap-1.5 text-xs text-muted-foreground"><Minus className="size-3.5 shrink-0" />What it does not do</p>
           <p className="mt-2 text-sm leading-relaxed">{r.doesNot}</p>
         </div>
@@ -196,7 +196,7 @@ function MaterialCard({ r }: { r: Report }) {
           <div><p className="text-xs text-muted-foreground">Stack</p><p className="mt-1">{r.stack.map((s) => s.name).join(", ")}</p><Source s="package.json" /></div>
           <div>
             <p className="text-xs text-muted-foreground">Sandbox run · <span className={m.repository.run.status === "worked" ? "text-pass" : m.repository.run.status === "error" ? "text-warn" : "text-fail"}>{m.repository.run.status}</span></p>
-            <pre className="mt-2 max-h-56 overflow-auto rounded-2xl bg-well p-3 font-mono text-xs leading-relaxed">{m.repository.run.log.map((l, i) => <div key={i} className={logCls[l.type]}>{l.type === "cmd" ? "$ " : ""}{l.text}</div>)}</pre>
+            <pre className="mt-2 max-h-56 overflow-auto rounded-card bg-well p-3 font-mono text-xs leading-relaxed">{m.repository.run.log.map((l, i) => <div key={i} className={logCls[l.type]}>{l.type === "cmd" ? "$ " : ""}{l.text}</div>)}</pre>
             <p className="mt-2 text-muted-foreground">{m.repository.run.evidence}</p><Source s="GavelMind sandbox" />
           </div>
         </div>
@@ -208,7 +208,7 @@ function MaterialCard({ r }: { r: Report }) {
           {m.demo.transcript && (
             <div className="mt-2">
               <Button variant="link" className="px-0" aria-expanded={open} onClick={() => setOpen(!open)}>{open ? "Hide transcript" : "Show transcript"}</Button>
-              {open && <p className="mt-2 rounded-2xl bg-well p-3 text-muted-foreground">{m.demo.transcript}</p>}
+              {open && <p className="mt-2 rounded-card bg-well p-3 text-muted-foreground">{m.demo.transcript}</p>}
             </div>
           )}
           <Source s={m.demo.source} />
