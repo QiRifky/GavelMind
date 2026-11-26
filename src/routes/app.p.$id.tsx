@@ -31,13 +31,13 @@ function ReportPage() {
     return () => { live = false; };
   }, [id, stored, tick]);
 
-  if (!project) return <div className="glass p-8 text-center"><p className="font-medium">Project not found.</p><Link to="/app" className="mt-3 inline-block text-primary">Back to entries</Link></div>;
+  if (!project) return <div className="glass p-8 text-center"><p className="font-medium">Project not found.</p><Link to="/app/entries" className="mt-3 inline-block text-primary">Back to entries</Link></div>;
 
   return (
     <>
       <header className="mb-6 grid grid-cols-[minmax(0,1fr)] gap-3 sm:flex sm:items-end sm:justify-between">
         <div className="min-w-0">
-          <Link to="/app" className="text-sm text-muted-foreground hover:text-foreground">← Entries</Link>
+          <Link to="/app/entries" className="text-sm text-muted-foreground hover:text-foreground">← Entries</Link>
           <h1 className="mt-2 break-words text-2xl sm:text-3xl">{project.name}</h1>
           <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
             <a href={project.repoUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline">Repository ↗</a>

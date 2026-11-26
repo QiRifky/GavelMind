@@ -14,6 +14,7 @@ import { Route as ChangelogRouteImport } from './routes/changelog'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as RubricRouteImport } from './routes/rubric'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppEntriesRouteImport } from './routes/app.entries'
 import { Route as AppEventRouteImport } from './routes/app.event'
 import { Route as AppResultsRouteImport } from './routes/app.results'
 import { Route as AppRubricRouteImport } from './routes/app.rubric'
@@ -43,6 +44,11 @@ const RubricRoute = RubricRouteImport.update({
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/app/',
   path: '/app/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppEntriesRoute = AppEntriesRouteImport.update({
+  id: '/app/entries',
+  path: '/app/entries',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppEventRoute = AppEventRouteImport.update({
@@ -76,6 +82,7 @@ export interface FileRoutesByFullPath {
   '/changelog': typeof ChangelogRoute
   '/leaderboard': typeof LeaderboardRoute
   '/rubric': typeof RubricRoute
+  '/app/entries': typeof AppEntriesRoute
   '/app/event': typeof AppEventRoute
   '/app/results': typeof AppResultsRoute
   '/app/rubric': typeof AppRubricRoute
@@ -88,6 +95,7 @@ export interface FileRoutesByTo {
   '/changelog': typeof ChangelogRoute
   '/leaderboard': typeof LeaderboardRoute
   '/rubric': typeof RubricRoute
+  '/app/entries': typeof AppEntriesRoute
   '/app/event': typeof AppEventRoute
   '/app/results': typeof AppResultsRoute
   '/app/rubric': typeof AppRubricRoute
@@ -101,6 +109,7 @@ export interface FileRoutesById {
   '/changelog': typeof ChangelogRoute
   '/leaderboard': typeof LeaderboardRoute
   '/rubric': typeof RubricRoute
+  '/app/entries': typeof AppEntriesRoute
   '/app/event': typeof AppEventRoute
   '/app/results': typeof AppResultsRoute
   '/app/rubric': typeof AppRubricRoute
@@ -115,6 +124,7 @@ export interface FileRouteTypes {
     | '/changelog'
     | '/leaderboard'
     | '/rubric'
+    | '/app/entries'
     | '/app/event'
     | '/app/results'
     | '/app/rubric'
@@ -127,6 +137,7 @@ export interface FileRouteTypes {
     | '/changelog'
     | '/leaderboard'
     | '/rubric'
+    | '/app/entries'
     | '/app/event'
     | '/app/results'
     | '/app/rubric'
@@ -139,6 +150,7 @@ export interface FileRouteTypes {
     | '/changelog'
     | '/leaderboard'
     | '/rubric'
+    | '/app/entries'
     | '/app/event'
     | '/app/results'
     | '/app/rubric'
@@ -152,6 +164,7 @@ export interface RootRouteChildren {
   ChangelogRoute: typeof ChangelogRoute
   LeaderboardRoute: typeof LeaderboardRoute
   RubricRoute: typeof RubricRoute
+  AppEntriesRoute: typeof AppEntriesRoute
   AppEventRoute: typeof AppEventRoute
   AppResultsRoute: typeof AppResultsRoute
   AppRubricRoute: typeof AppRubricRoute
@@ -197,6 +210,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/entries': {
+      id: '/app/entries'
+      path: '/app/entries'
+      fullPath: '/app/entries'
+      preLoaderRoute: typeof AppEntriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app/event': {
       id: '/app/event'
       path: '/app/event'
@@ -240,6 +260,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChangelogRoute: ChangelogRoute,
   LeaderboardRoute: LeaderboardRoute,
   RubricRoute: RubricRoute,
+  AppEntriesRoute: AppEntriesRoute,
   AppEventRoute: AppEventRoute,
   AppResultsRoute: AppResultsRoute,
   AppRubricRoute: AppRubricRoute,

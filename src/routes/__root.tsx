@@ -159,7 +159,7 @@ function Nav() {
           <svg viewBox="0 0 24 24" className="size-6 text-primary" fill="currentColor" aria-hidden><rect x="4" y="3" width="11" height="6" rx="2" transform="rotate(-35 9.5 6)"/><rect x="10" y="9" width="3" height="11" rx="1.5" transform="rotate(-35 11.5 14.5)"/><rect x="13" y="19" width="9" height="2.5" rx="1.25"/></svg>
           Gavel Mind
         </Link>
-        {isLanding ? <div className="ml-auto flex items-center gap-6"><span className="hidden text-xs text-muted-foreground sm:block">Built for the human behind the score.</span><Button asChild variant="outline" className="rounded-full"><Link to="/app">Open app <ArrowUpRight /></Link></Button></div> : <Button asChild variant="ghost" className="ml-auto min-w-0 max-w-[55%] rounded-full"><Link to="/app/event"><FolderOpen className="size-4 shrink-0 text-primary" /><span className="truncate">{active ? folderName(active, state) : "Event folders"}</span></Link></Button>}
+        {isLanding ? <div className="ml-auto flex items-center gap-6"><span className="hidden text-xs text-muted-foreground sm:block">Built for the human behind the score.</span><Button asChild variant="outline" className="rounded-full"><Link to="/app">Open app <ArrowUpRight /></Link></Button></div> : <Button asChild variant="ghost" className="ml-auto min-w-0 max-w-[55%] rounded-full"><Link to="/app"><FolderOpen className="size-4 shrink-0 text-primary" /><span className="truncate">{active ? folderName(active, state) : "Event folders"}</span></Link></Button>}
       </div>
 
     </nav>

@@ -60,6 +60,6 @@ function EventPage() {
         <p className="border-t border-border pt-5 text-sm text-muted-foreground">Rules and eligibility findings are drafts for judge review. Only the judge makes the final decision.</p>
       </aside>
     </div>
-    <footer className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5"><Badge tone={event?.confirmed ? "good" : "neutral"}>{event?.confirmed ? "Rules confirmed by judge" : "Rules awaiting confirmation"}</Badge>{event?.confirmed && <Button asChild className="rounded-full"><Link to="/app">Continue to entries <ArrowRight /></Link></Button>}</footer>
+    <footer className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5"><Badge tone={event?.confirmed ? "good" : "neutral"}>{event?.confirmed ? "Rules confirmed by judge" : "Rules awaiting confirmation"}</Badge>{event?.confirmed && <Button asChild className="rounded-full"><Link to="/app/entries">Continue to entries <ArrowRight /></Link></Button>}</footer>
   </>;
 }

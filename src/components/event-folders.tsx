@@ -1,10 +1,8 @@
 import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
-import { Folder, FolderOpen, Trash2, ExternalLink } from "lucide-react";
-import { deleteFolder, folderName, folderStats, switchFolder, useApi } from "@/lib/api";
+import { ArrowLeft, Trash2, ExternalLink } from "lucide-react";
+import { deleteFolder, folderName, folderStats, useApi } from "@/lib/api";
 import { Button } from "@/components/ui/button";
-import { EventDetailsDialog } from "@/components/event-details-dialog";
-import { cn } from "@/lib/utils";
 
 /** Event folder switcher: every page shows which event's workspace is open. */
 export function EventFolders({ children }: { children?: ReactNode }) {
@@ -14,20 +12,8 @@ export function EventFolders({ children }: { children?: ReactNode }) {
 
   return (
     <section aria-label="Event folders" className="mb-6 overflow-hidden rounded-lg border border-border bg-card shadow-glass">
-      <div className="flex gap-2 overflow-x-auto border-b border-border bg-well/50 p-2">
-        {state.folders.map((f) => {
-          const on = f.id === state.activeFolderId;
-          const s = folderStats(f.id, state);
-          return (
-            <Button variant="ghost" key={f.id} type="button" onClick={() => switchFolder(f.id)} aria-pressed={on}
-              className={cn("flex min-w-0 shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-ring", on ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-secondary")}>
-              {on ? <FolderOpen className="size-4 shrink-0 text-primary" aria-hidden="true" /> : <Folder className="size-4 shrink-0" aria-hidden="true" />}
-              <span className="max-w-48 truncate font-medium">{folderName(f, state)}</span>
-              <span className="font-mono text-xs tabular-nums opacity-70">{s.projects}</span>
-            </Button>
-          );
-        })}
-        <EventDetailsDialog />
+      <div className="flex items-center gap-2 border-b border-border bg-well/50 px-3 py-2">
+        <Link to="/app" className="inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-sm text-muted-foreground hover:text-foreground"><ArrowLeft className="size-4" aria-hidden="true" />All event folders</Link>
       </div>
       {active && (
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-5 py-4">
