@@ -1,12 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { agreement, average, draftsFor, getReport, judgeStatus, judgeTotal, finalsOf, saveJudgeScore, summaryText, useApi, reportForEvent, type CheckResult, type Criterion, type Report, type SummaryStyle } from "@/lib/api";
-import { AnalyzeCard } from "@/components/analyze-card";
+import { getReport, judgeStatus, judgeTotal, finalsOf, summaryText, useApi, reportForEvent, type CheckResult, type Criterion, type Report, type SummaryStyle } from "@/lib/api";
+import { ArrowLeft, ArrowRight, ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { CriterionEvaluation } from "@/components/criterion-evaluation";
 import { CardState, CardTitle, GlowCard } from "@/components/glow-card";
 import { AiNotice, Badge } from "@/components/ui-bits";
 import { cn } from "@/lib/utils";
-import { ReportOverview } from "@/components/report-overview";
-import { BenchMatrix } from "@/components/ui/bench-matrix";
 
 export const Route = createFileRoute("/app/p/$id")({
   head: () => ({ meta: [{ title: "Project report — GavelMind" }, { name: "description", content: "Prepared material, AI draft scores and your final decisions for one project." }, { property: "og:title", content: "Project report — GavelMind" }, { property: "og:description", content: "Prepared material, AI draft scores and your final decisions for one project." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
@@ -37,7 +37,7 @@ function ReportPage() {
       <header className="mb-6 grid grid-cols-[minmax(0,1fr)] gap-3 sm:flex sm:items-end sm:justify-between">
         <div className="min-w-0">
           <Link to="/app" className="text-sm text-muted-foreground hover:text-foreground">← Entries</Link>
-          <h1 className="mt-2 truncate text-[clamp(1.8rem,1rem+2vw,2.6rem)] tracking-[-0.03em]">{project.name}</h1>
+          <h1 className="mt-2 break-words text-2xl sm:text-3xl">{project.name}</h1>
           <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
             <a href={project.repoUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline">Repository ↗</a>
             {project.demoUrl && <a href={project.demoUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline">Demo ↗</a>}
@@ -49,28 +49,58 @@ function ReportPage() {
           <Badge tone={state.finalized ? "good" : "accent"}>{state.finalized ? "Final" : "Draft, not final"}</Badge>
         </div>
       </header>
-      <AnalyzeCard key={project.repoUrl} initialUrl={project.repoUrl} className="mb-6" />
       <AiNotice />
       {load.k === "loading" && <div className="glass mt-6 p-6"><CardState kind="loading" /></div>}
-      {load.k === "error" && <div className="glass mt-6 p-6"><CardState kind="error">{load.m}</CardState><button className="mt-3 text-sm text-primary underline" onClick={() => setTick((t) => t + 1)}>Retry</button></div>}
+      {load.k === "error" && <div className="glass mt-6 p-6"><CardState kind="error">{load.m}</CardState><Button variant="outline" className="mt-3 rounded-full" onClick={() => setTick((t) => t + 1)}>Retry</Button></div>}
       {state.event && <div className="mt-4 flex flex-wrap items-center gap-2 text-sm"><Link to="/app/event" className="text-primary">{state.event.name} ↗</Link><Badge tone={state.event.confirmed ? "good" : "accent"}>{state.event.confirmed ? "Rules confirmed · mock checks" : "Rules awaiting confirmation"}</Badge><span className="text-muted-foreground">Eligibility decisions remain with the judge.</span></div>}
-      {report && <><div className="mt-6"><ReportOverview r={report} project={project} criteria={state.criteria} /></div><Bento r={report} criteria={state.criteria} /></>}
+      {report && <Bento key={project.id} r={report} criteria={state.criteria} />}
     </>
   );
 }
 
 function Bento({ r, criteria }: { r: Report; criteria: Criterion[] }) {
+  const state = useApi();
+  const [materialOpen, setMaterialOpen] = useState(false);
+  const finals = finalsOf(r.projectId, state);
+  const decided = criteria.filter((c) => finals[c.id] !== undefined).length;
+  const total = judgeTotal(finals, criteria);
+  const projects = state.projects.filter((p) => p.status === "done" || p.id === r.projectId);
+  const current = projects.findIndex((p) => p.id === r.projectId);
+  const previous = projects[current - 1];
+  const next = projects[current + 1];
   return (
-    <div className="mt-6 grid gap-5 lg:grid-cols-3">
-      <div className="grid gap-5 lg:col-span-2">
+    <div className="mt-6 space-y-5">
+      <div className="grid items-stretch gap-5 lg:grid-cols-2">
         <SummaryCard r={r} />
         <RulesCard r={r} />
-        <MaterialCard r={r} />
-        <DraftsCard r={r} criteria={criteria} />
-        <ModelMatrixCard r={r} criteria={criteria} />
-        <BreakdownCard r={r} criteria={criteria} />
       </div>
-      <div className="lg:sticky lg:top-20 lg:self-start"><JudgePanel r={r} criteria={criteria} /></div>
+      <section aria-label="Technical evidence" className="border-y border-border py-3">
+        <Button variant="ghost" className="h-auto w-full justify-between gap-4 rounded-lg py-3 text-left" aria-expanded={materialOpen} aria-controls="technical-material" onClick={() => setMaterialOpen(!materialOpen)}>
+          <span className="whitespace-normal"><span className="block font-medium">Collected material & technical evidence</span><span className="mt-1 block text-xs text-muted-foreground">Repository · demo · sandbox run: {r.material.repository.run.status}</span></span>
+          <ChevronDown className={materialOpen ? "rotate-180" : ""} />
+        </Button>
+        {materialOpen && <div id="technical-material" className="mt-3"><MaterialCard r={r} /></div>}
+      </section>
+      <section aria-label="Criterion evaluations" className="space-y-5">
+        <div className="flex flex-wrap items-end justify-between gap-4 pt-3">
+          <div><p className="font-mono text-xs uppercase text-primary">Judging workspace</p><h2 className="mt-2 text-2xl font-medium">Your evaluation</h2></div>
+          <div className="text-right"><p className="font-mono text-lg tabular-nums">{decided}<span className="text-muted-foreground">/{criteria.length}</span></p><p className="text-xs text-muted-foreground">Criteria scored</p></div>
+        </div>
+        <div role="progressbar" aria-label="Review progress" aria-valuemin={0} aria-valuemax={criteria.length || 1} aria-valuenow={decided} className="flex h-1.5 gap-1.5">
+          {criteria.map((c) => <span key={c.id} className={cn("flex-1 rounded-full", finals[c.id] !== undefined ? "bg-primary" : "bg-secondary")} />)}
+        </div>
+        {criteria.length === 0 && <CardState kind="empty">No criteria in the rubric yet.</CardState>}
+        {criteria.map((c, i) => <CriterionEvaluation key={`${r.projectId}-${c.id}`} report={r} criterion={c} index={i} />)}
+      </section>
+      <BreakdownCard r={r} criteria={criteria} />
+      <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5">
+        <div><p className="text-xs text-muted-foreground">Judge's total · {state.finalized ? "final" : "draft, not final"}</p><p className="mt-1 font-mono text-lg tabular-nums">{total === null ? "Awaiting judge review" : `${total.toFixed(2)} / 10`}</p></div>
+        <nav aria-label="Project navigation" className="flex flex-wrap gap-2">
+          {previous ? <Button asChild variant="outline" className="rounded-full"><Link to="/app/p/$id" params={{ id: previous.id }}><ArrowLeft />Previous project</Link></Button> : <Button variant="outline" className="rounded-full" disabled><ArrowLeft />Previous project</Button>}
+          {next ? <Button asChild className="rounded-full"><Link to="/app/p/$id" params={{ id: next.id }}>Next project<ArrowRight /></Link></Button> : <Button variant="outline" className="rounded-full" disabled>Next project<ArrowRight /></Button>}
+          <Button asChild variant="ghost" className="rounded-full"><Link to="/app/results">Results<ArrowRight /></Link></Button>
+        </nav>
+      </footer>
     </div>
   );
 }
@@ -124,9 +154,9 @@ function MaterialCard({ r }: { r: Report }) {
       <CardTitle accent="amber">Collected material</CardTitle>
       <div role="tablist" className="mb-4 flex flex-wrap gap-1">
         {(["description", "repository", "demo"] as const).map((t) => (
-          <button key={t} role="tab" aria-selected={tab === t} onClick={() => setTab(t)} className={cn("rounded-full px-3 py-1.5 text-sm", tab === t ? "bg-secondary text-foreground" : "text-muted-foreground hover:text-foreground")}>
+          <Button variant="ghost" key={t} role="tab" aria-selected={tab === t} onClick={() => setTab(t)} className={cn("rounded-full px-3 py-1.5 text-sm", tab === t ? "bg-secondary text-foreground" : "text-muted-foreground hover:text-foreground")}>
             {t === "description" ? "Description" : t === "repository" ? "Repository" : "Demo video"}
-          </button>
+          </Button>
         ))}
       </div>
       {tab === "description" && <div className="text-sm"><p>{m.description.text}</p><Source s={m.description.source} /></div>}
@@ -147,7 +177,7 @@ function MaterialCard({ r }: { r: Report }) {
           <p className="mt-2">Transcript: <span className="text-muted-foreground">{m.demo.transcriptStatus}</span></p>
           {m.demo.transcript && (
             <div className="mt-2">
-              <button className="text-primary" aria-expanded={open} onClick={() => setOpen(!open)}>{open ? "Hide transcript" : "Show transcript"}</button>
+              <Button variant="link" className="px-0" aria-expanded={open} onClick={() => setOpen(!open)}>{open ? "Hide transcript" : "Show transcript"}</Button>
               {open && <p className="mt-2 rounded-2xl bg-well p-3 text-muted-foreground">{m.demo.transcript}</p>}
             </div>
           )}
@@ -155,96 +185,6 @@ function MaterialCard({ r }: { r: Report }) {
         </div>
       )}
     </GlowCard>
-  );
-}
-
-function DraftsCard({ r, criteria }: { r: Report; criteria: Criterion[] }) {
-  if (criteria.length === 0) return <GlowCard accent="rust" label="Draft scores"><CardState kind="empty">No criteria in the rubric yet.</CardState></GlowCard>;
-  return (
-    <GlowCard accent="rust" label="AI draft scores">
-      <CardTitle accent="rust" right={<span className="text-xs text-muted-foreground">Suggestions only</span>}>AI draft scores</CardTitle>
-      <div className="space-y-5">
-        {criteria.map((c) => {
-          const ds = draftsFor(r, c);
-          const scores = ds.map((d) => d.score);
-          const agree = agreement(scores);
-          return (
-            <div key={c.id}>
-              <div className="flex flex-wrap items-center gap-2">
-                <p className="font-medium">{c.name}</p>
-                <span className="font-mono text-sm text-primary">avg {average(scores)}</span>
-                <span className={cn("rounded-full px-2 py-0.5 text-xs", agree ? "bg-pass/15 text-pass" : "bg-warn/15 text-warn")}>{agree ? "Models agree" : "Models disagree"}</span>
-              </div>
-              <div className="mt-2 overflow-x-auto">
-                <table className="w-full min-w-[28rem] text-sm">
-                  <thead><tr className="text-left text-xs text-muted-foreground"><th className="py-1 pr-3 font-normal">Model</th><th className="py-1 pr-3 font-normal">Draft</th><th className="py-1 font-normal">Reason · evidence</th></tr></thead>
-                  <tbody>
-                    {ds.map((d) => (
-                      <tr key={d.model} className="border-t border-border/60 align-top">
-                        <td className="py-2 pr-3 whitespace-nowrap">{d.model}</td>
-                        <td className="py-2 pr-3 font-mono">{d.score}</td>
-                        <td className="py-2">{d.reason} <span className="font-mono text-xs text-muted-foreground">{d.evidence}</span></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </GlowCard>
-  );
-}
-
-function ModelMatrixCard({ r, criteria }: { r: Report; criteria: Criterion[] }) {
-  if (criteria.length === 0) return null;
-  const models = r.models.map((m) => ({ id: m, label: m, vendor: "AI draft" }));
-  const rows = criteria.map((c) => {
-    const ds = draftsFor(r, c);
-    const scores = ds.map((d) => d.score);
-    return { bench: c.name, note: `weight ${c.weight} · avg ${average(scores)} · ${agreement(scores) ? "models agree" : "models disagree"}`, values: scores, decimals: 0 };
-  });
-  return (
-    <GlowCard accent="orange" label="Model comparison">
-      <CardTitle accent="orange" right={<span className="text-xs text-muted-foreground">Suggestions only</span>}>Model comparison</CardTitle>
-      <BenchMatrix models={models} groups={[{ label: "rubric", rows }]} benchColLabel="criterion" meta={`${criteria.length} criteria · ${r.models.length} models`} footnote="Bold marks the highest draft per criterion. These are AI suggestions; your final score decides." />
-    </GlowCard>
-  );
-}
-
-function JudgePanel({ r, criteria }: { r: Report; criteria: Criterion[] }) {
-  const { judge, finalized } = useApi();
-  const mine = judge[r.projectId] ?? {};
-  return (
-    <section aria-label="Judge's decision" className="glass p-5">
-      <p className="eyebrow font-mono">Judge's decision</p>
-      <p className="mt-1 text-sm text-muted-foreground">{finalized ? "Results are final; scores are locked." : "Saved automatically."}</p>
-      <div className="mt-4 space-y-4">
-        {criteria.map((c) => {
-          const draft = average(draftsFor(r, c).map((d) => d.score));
-          const v = mine[c.id];
-          return (
-            <GlowCard key={c.id} accent="orange" label={`${c.name} final score`}>
-              <div className="flex items-center justify-between gap-2">
-                <label htmlFor={`s-${c.id}`} className="text-sm font-medium">{c.name}</label>
-                <span className="text-xs text-muted-foreground">AI draft {draft}</span>
-              </div>
-              <input id={`s-${c.id}`} type="number" min={0} max={10} step={0.5} disabled={finalized} value={v?.score ?? ""} placeholder="0–10"
-                onChange={(e) => saveJudgeScore(r.projectId, c.id, { score: e.target.value === "" ? null : Number(e.target.value) })}
-                className="mt-2 h-10 w-full rounded-xl border border-border bg-well px-3 font-mono outline-hidden focus:border-primary" />
-              <textarea aria-label={`${c.name} note`} disabled={finalized} defaultValue={v?.note ?? ""} placeholder="Note (optional)" rows={2}
-                onBlur={(e) => saveJudgeScore(r.projectId, c.id, { note: e.target.value.trim() })}
-                className="mt-2 w-full resize-y rounded-xl border border-border bg-well px-3 py-2 text-sm outline-hidden focus:border-primary" />
-              <div className="mt-2 flex gap-2">
-                <button disabled={finalized} onClick={() => saveJudgeScore(r.projectId, c.id, { score: Math.round(draft * 2) / 2 })} className="rounded-full border border-border px-3 py-1 text-xs hover:bg-secondary disabled:opacity-50">Use AI draft</button>
-                <button disabled={finalized} onClick={() => saveJudgeScore(r.projectId, c.id, { score: null })} className="rounded-full px-3 py-1 text-xs text-muted-foreground hover:text-foreground disabled:opacity-50">Clear</button>
-              </div>
-            </GlowCard>
-          );
-        })}
-      </div>
-    </section>
   );
 }
 
@@ -256,21 +196,20 @@ function BreakdownCard({ r, criteria }: { r: Report; criteria: Criterion[] }) {
     <GlowCard accent="orange" label="Scoring breakdown">
       <CardTitle accent="orange">Scoring breakdown</CardTitle>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[30rem] text-sm">
-          <thead><tr className="text-left text-xs text-muted-foreground"><th className="py-1 font-normal">Criterion</th><th className="font-normal">Weight</th><th className="font-normal">AI draft</th><th className="font-normal">Judge final</th><th className="text-right font-normal">Contribution</th></tr></thead>
+        <table className="w-full min-w-[24rem] text-sm">
+          <thead><tr className="text-left text-xs text-muted-foreground"><th className="py-1 font-normal">Criterion</th><th className="font-normal">Weight</th><th className="font-normal">Judge final</th><th className="text-right font-normal">Contribution</th></tr></thead>
           <tbody>
             {criteria.map((c) => {
               const f = finals[c.id];
               return (
                 <tr key={c.id} className="border-t border-border/60">
                   <td className="py-2">{c.name}</td><td className="font-mono">{c.weight}%</td>
-                  <td className="font-mono text-muted-foreground">{average(draftsFor(r, c).map((d) => d.score))}</td>
                   <td className="font-mono">{f ?? "—"}</td>
                   <td className="text-right font-mono">{f === undefined ? "—" : ((f * c.weight) / 100).toFixed(2)}</td>
                 </tr>
               );
             })}
-            <tr className="border-t border-border"><td className="py-2 font-medium" colSpan={4}>Total (judge's scores only)</td><td className="text-right font-mono text-primary">{total === null ? "Awaiting judge review" : total.toFixed(2)}</td></tr>
+            <tr className="border-t border-border"><td className="py-2 font-medium" colSpan={3}>Total (judge's scores only)</td><td className="text-right font-mono text-primary">{total === null ? "Awaiting judge review" : total.toFixed(2)}</td></tr>
           </tbody>
         </table>
       </div>
