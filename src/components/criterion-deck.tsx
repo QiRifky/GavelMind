@@ -20,7 +20,7 @@ export function CriterionDeck({ report, criteria }: { report: Report; criteria: 
   };
 
   return (
-    <div className="space-y-4">
+    <div className="flex flex-1 flex-col gap-4">
       <nav aria-label="Criterion navigation" className="flex flex-wrap gap-2">
         {criteria.map((criterion, index) => (
           <Button key={criterion.id} type="button" variant={index === activeIndex ? "default" : "outline"}
@@ -32,12 +32,12 @@ export function CriterionDeck({ report, criteria }: { report: Report; criteria: 
           </Button>
         ))}
       </nav>
-      <div className="relative isolate pb-8" aria-roledescription="card deck" aria-label="Criterion cards">
+      <div className="relative isolate flex flex-1 flex-col pb-8" aria-roledescription="card deck" aria-label="Criterion cards">
         {activeIndex + 2 < criteria.length && <div aria-hidden="true" className="pointer-events-none absolute inset-x-5 top-0 bottom-0 rounded-card border border-border bg-card shadow-glass sm:inset-x-10" />}
         {activeIndex + 1 < criteria.length && <div aria-hidden="true" className="pointer-events-none absolute inset-x-2.5 top-0 bottom-4 rounded-card border border-border bg-secondary shadow-glass sm:inset-x-5" />}
         {criteria.map((criterion, index) => (
           <div key={`${report.projectId}-${criterion.id}`} hidden={index !== activeIndex}
-            className="criterion-deck-front relative z-10 rounded-card bg-card"
+            className="criterion-deck-front relative z-10 flex-1 rounded-card bg-card [&>section]:h-full"
             role="group" aria-label={`Criterion ${index + 1} of ${criteria.length}: ${criterion.name}`}>
             <CriterionEvaluation report={report} criterion={criterion} index={index} />
           </div>

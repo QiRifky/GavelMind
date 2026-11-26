@@ -76,9 +76,9 @@ function Bento({ r, criteria }: { r: Report; criteria: Criterion[] }) {
           {criteria.map((c) => <span key={c.id} className={cn("flex-1 rounded-full", finals[c.id] !== undefined ? "bg-primary" : "bg-secondary")} />)}
         </div>
       </div>
-      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
       <ContextDeck r={r} />
-      <section aria-label="Criterion evaluations" className="min-w-0 space-y-4">
+      <section aria-label="Criterion evaluations" className="flex min-w-0 flex-col">
         {criteria.length === 0 && <CardState kind="empty">No criteria in the rubric yet.</CardState>}
         <CriterionDeck report={r} criteria={criteria} />
       </section>
@@ -99,17 +99,18 @@ function ContextDeck({ r }: { r: Report }) {
   const [tab, setTab] = useState<"summary" | "rules" | "material">("summary");
   const tabs = [{ id: "summary", label: "Summary" }, { id: "rules", label: "Rules check" }, { id: "material", label: "Evidence" }] as const;
   return (
-    <section aria-label="Project context" className="min-w-0 space-y-4">
+    <section aria-label="Project context" className="flex min-w-0 flex-col gap-4">
       <div role="tablist" aria-label="Context cards" className="flex flex-wrap gap-2">
         {tabs.map((t) => (
           <Button key={t.id} type="button" role="tab" aria-selected={tab === t.id} variant={tab === t.id ? "default" : "outline"} className="rounded-full" onClick={() => setTab(t.id)}>{t.label}</Button>
         ))}
       </div>
-      <div className="relative isolate pb-4" aria-roledescription="card deck">
-        <div aria-hidden="true" className="pointer-events-none absolute inset-x-2.5 top-0 bottom-0 rounded-card border border-border bg-secondary shadow-glass sm:inset-x-5" />
-        <div role="tabpanel" hidden={tab !== "summary"} className="criterion-deck-front relative z-10 rounded-card bg-card"><SummaryCard r={r} /></div>
-        <div role="tabpanel" hidden={tab !== "rules"} className="criterion-deck-front relative z-10 rounded-card bg-card"><RulesCard r={r} /></div>
-        <div role="tabpanel" hidden={tab !== "material"} className="criterion-deck-front relative z-10 rounded-card bg-card"><MaterialCard r={r} /></div>
+      <div className="relative isolate flex flex-1 flex-col pb-8" aria-roledescription="card deck">
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-5 top-0 bottom-0 rounded-card border border-border bg-card shadow-glass sm:inset-x-10" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-2.5 top-0 bottom-4 rounded-card border border-border bg-secondary shadow-glass sm:inset-x-5" />
+        <div role="tabpanel" hidden={tab !== "summary"} className="criterion-deck-front relative z-10 flex-1 rounded-card bg-card [&>section]:h-full"><SummaryCard r={r} /></div>
+        <div role="tabpanel" hidden={tab !== "rules"} className="criterion-deck-front relative z-10 flex-1 rounded-card bg-card [&>section]:h-full"><RulesCard r={r} /></div>
+        <div role="tabpanel" hidden={tab !== "material"} className="criterion-deck-front relative z-10 flex-1 rounded-card bg-card [&>section]:h-full"><MaterialCard r={r} /></div>
       </div>
     </section>
   );
