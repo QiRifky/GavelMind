@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Check, ArrowRight } from "lucide-react";
+import { Check } from "lucide-react";
 import { useApi, weightTotal } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { EventFolders } from "@/components/event-folders";
@@ -18,11 +18,11 @@ export function WorkflowNav({ current }: { current: Step }) {
   ] as const;
   return (
     <EventFolders>
-    <nav aria-label="Event workflow" className="grid grid-cols-2 gap-x-3 gap-y-2 border-t border-border p-3 sm:grid-cols-4">
+    <nav aria-label="Event workflow" className="grid w-full grid-cols-2 gap-1 sm:grid-cols-4 lg:flex lg:w-auto">
       {steps.map((step, i) => (
-        <Link key={step.id} to={step.to} aria-current={current === step.id ? "step" : undefined} className={cn("group flex min-w-0 items-start gap-2 rounded-md p-2 text-muted-foreground transition-colors hover:bg-secondary focus-visible:outline-2 focus-visible:outline-ring", current === step.id && "bg-accent text-accent-foreground")}>
-          <span className={cn("mt-0.5 font-mono text-xs", step.done && "text-pass")}>{step.done ? <Check className="size-4" aria-label="Complete" /> : `0${i + 1}`}</span>
-          <span className="min-w-0"><span className="flex items-center gap-2 text-sm font-medium">{step.label}{current === step.id && <ArrowRight className="size-3" aria-hidden="true" />}</span><span className="mt-1 block text-xs text-muted-foreground">{step.status}</span></span>
+        <Link key={step.id} to={step.to} aria-current={current === step.id ? "step" : undefined} className={cn("group flex min-w-0 items-center gap-2 rounded-full px-3 py-1.5 text-muted-foreground transition-colors hover:bg-secondary focus-visible:outline-2 focus-visible:outline-ring", current === step.id && "bg-accent text-accent-foreground")}>
+          <span className={cn("font-mono text-xs", step.done && "text-pass")}>{step.done ? <Check className="size-4" aria-label="Complete" /> : `0${i + 1}`}</span>
+          <span className="min-w-0 text-sm font-medium" title={step.status}>{step.label}<span className="sr-only">, {step.status}</span></span>
         </Link>
       ))}
     </nav>
