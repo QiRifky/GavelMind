@@ -36,7 +36,7 @@ function Results() {
     <>
       <WorkflowNav current="results" />
       <StepBody className="flex flex-col gap-4">
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4"><span className="text-sm text-muted-foreground">{ranked.length}/{rows.length} projects scored · {waiting.length} awaiting review</span>{nextReview && <Button asChild variant="outline" className="rounded-full"><Link to="/app/p/$id" params={{ id: nextReview.p.id }}>Continue judging <ArrowRight /></Link></Button>}</div>
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4"><span className="text-sm text-muted-foreground">{ranked.length}/{rows.length} projects scored · {waiting.length} awaiting review</span>{nextReview && <Button asChild variant="outline" className="rounded-full"><Link to="/app/p/$id" params={{ id: nextReview.p.id }}>Back to judging <ArrowRight /></Link></Button>}</div>
       <div className="mb-5 flex flex-wrap items-center gap-3">
         <Badge tone={state.finalized ? "good" : "accent"}>{state.finalized ? "Final" : "Draft, not final"}</Badge>
         {state.finalized ? <Pill variant="outline" onClick={reopen}>Reopen</Pill> : <Pill disabled={ranked.length === 0} onClick={() => { setWinners(new Set()); setOpen(true); }}>Finalize…</Pill>}

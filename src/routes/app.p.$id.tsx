@@ -50,7 +50,7 @@ function ReportPage() {
           <Badge tone={state.finalized ? "good" : "accent"}>{state.finalized ? "Final" : "Draft, not final"}</Badge>
         </div>
       </header>
-      <WorkflowNav current="entries" />
+      <WorkflowNav current="judging" />
       <AiNotice />
       {load.k === "loading" && <div className="glass mt-6 p-6"><CardState kind="loading" /></div>}
       {load.k === "error" && <div className="glass mt-6 p-6"><CardState kind="error">{load.m}</CardState><Button variant="outline" className="mt-3 rounded-full" onClick={() => setTick((t) => t + 1)}>Retry</Button></div>}
@@ -102,7 +102,7 @@ function Bento({ r, criteria }: { r: Report; criteria: Criterion[] }) {
         <nav aria-label="Project navigation" className="flex flex-wrap gap-2">
           {previous ? <Button asChild variant="outline" className="rounded-full"><Link to="/app/p/$id" params={{ id: previous.id }}><ArrowLeft />Previous project</Link></Button> : <Button variant="outline" className="rounded-full" disabled><ArrowLeft />Previous project</Button>}
           {next ? <Button asChild className="rounded-full"><Link to="/app/p/$id" params={{ id: next.id }}>Next project<ArrowRight /></Link></Button> : <Button variant="outline" className="rounded-full" disabled>Next project<ArrowRight /></Button>}
-          <Button asChild variant="ghost" className="rounded-full"><Link to="/app/results">{reviewed === state.projects.length ? "All scored · View results" : "View draft results"}<ArrowRight /></Link></Button>
+          <Button asChild variant="ghost" className="rounded-full"><Link to="/app/results">{reviewed === state.projects.length ? "All scored · Continue to results" : "Continue to results"}<ArrowRight /></Link></Button>
         </nav>
       </footer>
     </div>

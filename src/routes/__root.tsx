@@ -134,7 +134,7 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const isLanding = pathname === "/";
-  const hideNav = WORKSPACE_STEP_PATHS.includes(pathname);
+  const hideNav = WORKSPACE_STEP_PATHS.includes(pathname) || pathname.startsWith("/app/p/");
 
   return (
     <QueryClientProvider client={queryClient}>
