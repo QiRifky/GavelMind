@@ -140,7 +140,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       {!hideNav && <Nav />}
-      <main className={isLanding ? "" : hideNav ? "mx-auto max-w-6xl px-4 pb-10 pt-4 sm:px-6" : "mx-auto max-w-6xl px-4 pb-20 pt-8 sm:px-6 sm:pt-12"}>
+      <main className={isLanding ? "" : hideNav ? "px-4 pb-10 pt-4 sm:px-6" : "px-4 pb-20 pt-8 sm:px-6 sm:pt-12"}>
         <Outlet />
       </main>
     </QueryClientProvider>
@@ -160,7 +160,7 @@ function Nav() {
   }, []);
   return (
     <nav className={`sticky top-0 z-30 border-b transition-colors ${scrolled ? "border-border bg-(--nav-scrolled) backdrop-blur-md" : "border-transparent bg-transparent"}`}>
-      <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 sm:px-6">
+      <div className="flex items-center gap-4 px-4 py-3 sm:px-6">
         <Link to="/" className="flex items-center gap-2 text-lg font-medium">
           <img src={logo.url} alt="" aria-hidden className="size-6 shrink-0 object-contain" />
           GavelMind<span className="-ml-2 text-primary">.</span>

@@ -25,7 +25,7 @@ function LandingPage() {
     <div className="landing-page">
       <section className="landing-hero relative isolate overflow-hidden">
         <img src={hero.url} alt="A titanium and amber glass judge's gavel on a charcoal sound block" className="landing-hero-image absolute inset-0 -z-10 h-full w-full object-cover" fetchPriority="high" />
-        <div className="landing-hero-inner mx-auto max-w-6xl px-5 sm:px-6">
+        <div className="landing-hero-inner px-5 sm:px-6">
           <p className="flex items-center gap-2 text-xs font-medium text-accent-foreground"><span className="size-1.5 rounded-full bg-primary" /> THE HACKATHON JUDGING WORKSPACE</p>
           <h1 className="mt-6 text-5xl font-medium leading-none sm:text-7xl">GavelMind<span className="text-primary">.</span></h1>
           <h2 className="mt-6 text-3xl font-normal leading-tight sm:text-4xl">AI prepares.<br /><span className="text-muted-foreground">You decide.</span></h2>
@@ -39,7 +39,7 @@ function LandingPage() {
       </section>
 
       <div className="border-y border-border bg-card/40">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-8 gap-y-4 px-5 py-6 sm:px-6">
+        <div className="flex flex-wrap items-center justify-between gap-x-8 gap-y-4 px-5 py-6 sm:px-6">
           <span className="flex items-center gap-2 text-sm"><ShieldCheck className="size-4 text-primary" /> Human judgment, at the center.</span>
           <div className="flex flex-wrap gap-x-7 gap-y-3 text-xs text-muted-foreground">
             <span className="flex items-center gap-2"><Check className="size-3.5" /> Evidence alongside scores</span>
@@ -49,7 +49,7 @@ function LandingPage() {
         </div>
       </div>
 
-      <section className="mx-auto max-w-6xl px-5 py-16 sm:px-6 sm:py-20" aria-labelledby="review-heading">
+      <section className="px-5 py-16 sm:px-6 sm:py-20" aria-labelledby="review-heading">
         <div className="flex flex-wrap items-end justify-between gap-5">
           <div><p className="text-xs font-medium text-primary">FROM SUBMISSION TO DECISION</p><h2 id="review-heading" className="mt-3 text-3xl font-normal sm:text-4xl">A clearer path to your final call.</h2></div>
           <p className="max-w-xs text-sm leading-6 text-muted-foreground">Let AI organize the material.<br />Give the projects your full attention.</p>
@@ -62,7 +62,7 @@ function LandingPage() {
       </section>
 
       {project && report && <section className="border-y border-border bg-well/50" aria-labelledby="sample-heading">
-        <div className="mx-auto grid max-w-6xl gap-10 px-5 py-16 sm:px-6 lg:grid-cols-[1fr_1.3fr] lg:items-center">
+        <div className="grid gap-10 px-5 py-16 sm:px-6 lg:grid-cols-[1fr_1.3fr] lg:items-center">
           <div><p className="text-xs font-medium text-primary">A LOOK INSIDE</p><h2 id="sample-heading" className="mt-3 text-3xl leading-tight sm:text-4xl">Prepared by AI.<br />Reviewed by you.</h2><p className="mt-5 max-w-sm text-sm leading-7 text-muted-foreground">Draft scores are a starting point, never a verdict. Compare the material, weigh the evidence, and record your own judgment.</p><Button asChild variant="outline" className="mt-6 h-11 rounded-full"><Link to="/app/p/$id" params={{ id: project.id }}>Open sample report <ArrowUpRight /></Link></Button></div>
           <div className="overflow-hidden rounded-card border border-border bg-card shadow-glass">
             <div className="flex items-center justify-between gap-4 border-b border-border px-5 py-4"><div className="flex min-w-0 items-center gap-2 text-sm"><GitBranch className="size-4 shrink-0 text-primary" /><span className="truncate">{project.name}</span></div><span className="shrink-0 text-xs text-muted-foreground">Sample report</span></div>
@@ -72,11 +72,11 @@ function LandingPage() {
         </div>
       </section>}
 
-      <section className="mx-auto flex max-w-6xl flex-col gap-6 px-5 py-16 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+      <section className="flex flex-col gap-6 px-5 py-16 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <div><div className="mb-3 flex items-center gap-2 text-xs text-primary"><SlidersHorizontal className="size-4" /> YOUR RUBRIC. YOUR CALL.</div><h2 className="text-3xl">The next great project is waiting.</h2></div>
         <Button asChild size="lg" className="h-12 w-fit rounded-full"><Link to="/app">Start reviewing <ArrowRight /></Link></Button>
       </section>
-      <footer className="border-t border-border"><div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-6 text-xs text-muted-foreground sm:px-6"><Link to="/" className="text-sm text-foreground">Gavel Mind<span className="text-primary">.</span></Link><span>AI assists. Humans decide.</span><Link to="/app" className="hover:text-foreground">Enter workspace ↗</Link></div></footer>
+      <footer className="border-t border-border"><div className="flex flex-wrap items-center justify-between gap-4 px-5 py-6 text-xs text-muted-foreground sm:px-6"><Link to="/" className="text-sm text-foreground">Gavel Mind<span className="text-primary">.</span></Link><span>AI assists. Humans decide.</span><Link to="/app" className="hover:text-foreground">Enter workspace ↗</Link></div></footer>
     </div>
   );
 }
