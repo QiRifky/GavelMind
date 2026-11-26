@@ -27,7 +27,7 @@ function LandingPage() {
         <img src={hero.url} alt="A titanium and amber glass judge's gavel on a charcoal sound block" className="landing-hero-image absolute inset-0 -z-10 h-full w-full object-cover" fetchPriority="high" />
         <div className="landing-hero-inner mx-auto max-w-6xl px-5 sm:px-6">
           <p className="flex items-center gap-2 text-xs font-medium text-accent-foreground"><span className="size-1.5 rounded-full bg-primary" /> THE HACKATHON JUDGING WORKSPACE</p>
-          <h1 className="mt-6 text-5xl font-medium leading-none sm:text-7xl">Gavel Mind<span className="text-primary">.</span></h1>
+          <h1 className="mt-6 text-5xl font-medium leading-none sm:text-7xl">GavelMind<span className="text-primary">.</span></h1>
           <h2 className="mt-6 text-3xl font-normal leading-tight sm:text-4xl">AI prepares.<br /><span className="text-muted-foreground">You decide.</span></h2>
           <p className="mt-5 max-w-sm text-sm leading-7 text-muted-foreground sm:text-base">From repository to review. Project material, evidence, and draft scores in one place — with the final call always yours.</p>
           <div className="mt-7 flex flex-wrap items-center gap-3">
