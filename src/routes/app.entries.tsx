@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowRight, FolderGit2, Github, Link2, Trash2, Layers, Globe } from "lucide-react";
-import { addProjects, analyzeProject, judgeStatus, removeProject, scanShowcase, splitUrls, useApi, type AnalysisStatus, type Discovered } from "@/lib/api";
+import { addProjects, analyzeProject, judgeStatus, removeProject, scanShowcase, splitUrls, useApi, type Discovered } from "@/lib/api";
 import { AnalyzeCard } from "@/components/analyze-card";
 import { Badge, Pill } from "@/components/ui-bits";
 import { ShinyButton } from "@/components/ui/shiny-button";
@@ -28,8 +28,6 @@ export const Route = createFileRoute("/app/entries")({
   component: Entries,
 });
 
-const tone: Record<AnalysisStatus, "neutral" | "accent" | "good" | "bad"> = { queued: "neutral", analyzing: "accent", done: "good", failed: "bad" };
-
 function Entries() {
   const state = useApi();
   const [picked, setPicked] = useState<Set<string>>(new Set());
@@ -37,6 +35,12 @@ function Entries() {
   const ready = rows.filter((p) => p.status === "done");
   const nextReview = ready.find((p) => judgeStatus(p.id, state) === "Not reviewed") ?? ready[0];
   const toggle = (id: string) => setPicked((s) => { const n = new Set(s); if (n.has(id)) n.delete(id); else n.add(id); return n; });
+  const selectable = rows.filter((p) => p.status !== "analyzing");
+  const allPicked = selectable.length > 0 && selectable.every((p) => picked.has(p.id));
+  const somePicked = selectable.some((p) => picked.has(p.id));
+  const allRef = useRef<HTMLInputElement>(null);
+  useEffect(() => { if (allRef.current) allRef.current.indeterminate = somePicked && !allPicked; }, [somePicked, allPicked]);
+  const selectAll = () => setPicked(allPicked ? new Set() : new Set(selectable.map((p) => p.id)));
   const analyzeSelected = () => {
     for (const id of picked) void analyzeProject(id, { stageMs: 600 }).catch(() => undefined);
     setPicked(new Set());
@@ -68,7 +72,13 @@ function Entries() {
             <FolderGit2 className="size-5 text-primary" aria-hidden="true" />
             <h2 className="text-base font-medium">Project queue</h2>
           </div>
-          <span className="font-mono text-xs tabular-nums text-muted-foreground">{rows.length} projects</span>
+          <div className="flex items-center gap-4">
+            <label className="flex items-center gap-2 text-xs text-muted-foreground">
+              <input ref={allRef} type="checkbox" checked={allPicked} onChange={selectAll} disabled={selectable.length === 0} aria-label="Select all projects" className="size-4 cursor-pointer accent-(--brand) focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring" />
+              <span>Select all</span>
+            </label>
+            <span className="font-mono text-xs tabular-nums text-muted-foreground">{rows.length} projects</span>
+          </div>
         </header>
         {state.projects.length === 0 ? (
           <div className="p-10 text-center">
@@ -85,14 +95,8 @@ function Entries() {
                   <p className="mt-1.5 flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground"><Github className="size-3 shrink-0" aria-hidden="true" /><span className="truncate">{p.repoUrl}</span></p>
                   {p.demoUrl && <p className="mt-1 flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground"><Link2 className="size-3 shrink-0" aria-hidden="true" /><span className="truncate">{p.demoUrl}</span></p>}
                 </div>
-                <div className="col-start-2 flex flex-wrap items-center gap-2 sm:col-start-auto">
-                  <Badge tone={tone[p.status]}>{p.status === "done" ? "Ready to judge" : p.status === "analyzing" ? "Analyzing…" : p.status === "failed" ? "Analysis failed" : "Queued"}</Badge>
-                  <Badge tone="neutral">{judgeStatus(p.id, state)}</Badge>
-                  {p.status === "done" ? (
-                    <Button asChild variant="ghost" className="h-9 rounded-full text-primary"><Link to="/app/p/$id" params={{ id: p.id }}>Review <ArrowRight className="size-3.5" aria-hidden="true" /></Link></Button>
-                  ) : (
-                    <Pill variant="outline" onClick={() => removeProject(p.id)} className="h-9 w-9 shrink-0 px-0 text-muted-foreground hover:text-destructive" aria-label={`Remove ${p.name}`} title={`Remove ${p.name}`}><Trash2 className="size-3.5" aria-hidden="true" /></Pill>
-                  )}
+                <div className="col-start-2 flex flex-wrap items-center justify-end gap-2 sm:col-start-auto">
+                  {p.status !== "done" && <Pill variant="outline" onClick={() => removeProject(p.id)} className="h-9 w-9 shrink-0 px-0 text-muted-foreground hover:text-destructive" aria-label={`Remove ${p.name}`} title={`Remove ${p.name}`}><Trash2 className="size-3.5" aria-hidden="true" /></Pill>}
                 </div>
               </li>
             ))}
