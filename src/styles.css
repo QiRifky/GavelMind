@@ -156,6 +156,15 @@
 .handoff-beam { position: relative; isolation: isolate; min-width: 0; overflow: hidden; }
 .handoff-beam > [data-beam] { width: 100%; }
 
+.criterion-deck-front:not([hidden]) { animation: criterion-deck-enter 220ms ease-out; }
+@keyframes criterion-deck-enter {
+  from { opacity: 0.65; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .criterion-deck-front:not([hidden]) { animation: none; }
+}
+
 @property --gleam-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
 @property --gleam-offset { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
 @property --gleam-percent { syntax: "<percentage>"; initial-value: 5%; inherits: false; }

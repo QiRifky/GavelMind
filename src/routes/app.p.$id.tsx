@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { getReport, judgeStatus, judgeTotal, finalsOf, summaryText, useApi, reportForEvent, type CheckResult, type Criterion, type Report, type SummaryStyle } from "@/lib/api";
 import { AlertTriangle, ArrowLeft, ArrowRight, ArrowUpRight, Check, ChevronDown, Minus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CriterionEvaluation } from "@/components/criterion-evaluation";
+import { CriterionDeck } from "@/components/criterion-deck";
 import { CardState, CardTitle, GlowCard } from "@/components/glow-card";
 import { AiNotice, Badge } from "@/components/ui-bits";
 import { WorkflowNav } from "@/components/workflow-nav";
@@ -94,7 +94,7 @@ function Bento({ r, criteria }: { r: Report; criteria: Criterion[] }) {
           {criteria.map((c) => <span key={c.id} className={cn("flex-1 rounded-full", finals[c.id] !== undefined ? "bg-primary" : "bg-secondary")} />)}
         </div>
         {criteria.length === 0 && <CardState kind="empty">No criteria in the rubric yet.</CardState>}
-        {criteria.map((c, i) => <CriterionEvaluation key={`${r.projectId}-${c.id}`} report={r} criterion={c} index={i} />)}
+        <CriterionDeck report={r} criteria={criteria} />
       </section>
       <BreakdownCard r={r} criteria={criteria} />
       <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5">

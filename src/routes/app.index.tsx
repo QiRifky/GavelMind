@@ -6,7 +6,7 @@ import { EventDetailsDialog } from "@/components/event-details-dialog";
 import { Badge, PageHead } from "@/components/ui-bits";
 
 export const Route = createFileRoute("/app/")({
-  head: () => ({ meta: [{ title: "Event folders — Gavel Mind" }, { name: "description", content: "Pick an event folder to open its rules, entries, rubric and results." }] }),
+  head: () => ({ meta: [{ title: "Event folders — Gavel Mind" }, { name: "description", content: "Pick an event folder to open its rules, entries, rubric and results." }, { property: "og:title", content: "Event folders — Gavel Mind" }, { property: "og:description", content: "Pick an event folder to open its rules, entries, rubric and results." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
   component: Folders,
 });
 

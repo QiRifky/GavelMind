@@ -1,5 +1,10 @@
 # Landing page
 
+# Stacked criterion cards
+
+- [x] Replace the vertical criterion list with a layered deck and criterion navigation, preserving judging inputs.
+- [x] Verify navigation, score/note retention, evidence, desktop/phone layout, and existing tests.
+
 # Folder event dialog
 
 - [x] Move event details into a create/edit dialog and nest workflow navigation under the active folder.
