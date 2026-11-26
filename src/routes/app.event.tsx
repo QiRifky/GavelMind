@@ -2,14 +2,15 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowRight, Check, Link2, Plus, Sparkles, Trash2 } from "lucide-react";
 import { Badge, PageHead, Pill } from "@/components/ui-bits";
+import { RubricEditor } from "@/components/rubric-editor";
 import { Button } from "@/components/ui/button";
 import { confirmEventRules, eventRubricSuggestions, extractEventRules, newEventRuleId, saveEvent, saveRubric, updateEventRules, useApi } from "@/lib/api";
 
 export const Route = createFileRoute("/app/event")({
   head: () => ({ meta: [
-    { title: "Event & Rules — Gavel Mind" },
+    { title: "Event & Rubric — Gavel Mind" },
     { name: "description", content: "Prepare event requirements and confirm the rules for participant review." },
-    { property: "og:title", content: "Event & Rules — Gavel Mind" },
+    { property: "og:title", content: "Event & Rubric — Gavel Mind" },
     { property: "og:description", content: "Prepare event requirements and confirm the rules for participant review." },
     { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" },
   ] }),
@@ -33,8 +34,8 @@ function EventPage() {
     finally { setBusy(false); }
   };
   return <>
-    <PageHead eyebrow="Event & Rules" title="Set the ground rules." />
-    <div className="mb-6 flex flex-wrap items-center gap-3 text-sm text-muted-foreground"><span className="text-primary">01 Event & Rules</span><ArrowRight className="size-4" /><Link to="/app">02 Entries</Link><ArrowRight className="size-4" /><Link to="/app/rubric">03 Rubric</Link><ArrowRight className="size-4" /><Link to="/app/results">04 Results</Link></div>
+    <PageHead eyebrow="Event & Rubric" title="Set the ground rules.">Eligibility rules and scoring criteria in one place, before judging starts.</PageHead>
+    <div className="mb-6 flex flex-wrap items-center gap-3 text-sm text-muted-foreground"><span className="text-primary">01 Event & Rubric</span><ArrowRight className="size-4" /><Link to="/app">02 Entries</Link><ArrowRight className="size-4" /><Link to="/app/results">03 Results</Link></div>
     <div role="note" className="mb-6 border-l-2 border-primary bg-accent p-4 text-sm text-accent-foreground">Mock mode · The event URL is not read. Rule drafts and rubric suggestions are examples, not extracted event requirements. Changes reset on reload.</div>
     <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
       <div className="min-w-0">
@@ -64,5 +65,6 @@ function EventPage() {
         {event?.confirmed && <Button asChild className="rounded-full"><Link to="/app">Continue to entries <ArrowRight /></Link></Button>}
       </aside>
     </div>
+    <section id="rubric" aria-label="Scoring rubric" className="mt-12 scroll-mt-24 border-t border-border pt-10"><RubricEditor /></section>
   </>;
 }
