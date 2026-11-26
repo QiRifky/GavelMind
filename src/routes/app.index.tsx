@@ -17,7 +17,15 @@ function Folders() {
   return (
     <div>
       <PageHead eyebrow="Event folders" title="Choose an event.">Each folder keeps its own rules, entries, rubric and results.</PageHead>
-      <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-[repeat(auto-fill,15rem)] gap-x-6 gap-y-8">
+        <EventDetailsDialog trigger={
+          <button type="button" className="group flex h-full flex-col items-start rounded-xl text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring">
+            <span className="flex h-40 w-60 flex-col items-center justify-center gap-4 rounded-card border border-dashed border-border text-muted-foreground transition-colors group-hover:border-primary group-hover:text-primary motion-reduce:transition-none">
+              <FolderPlus className="size-16" aria-hidden="true" />
+              <span className="text-sm font-medium text-primary">New event folder</span>
+            </span>
+          </button>
+        } />
         {state.folders.map((f) => {
           const s = folderStats(f.id, state);
           return (
@@ -32,14 +40,6 @@ function Folders() {
             </button>
           );
         })}
-        <EventDetailsDialog trigger={
-          <button type="button" className="group flex h-full flex-col items-start rounded-xl text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring">
-            <span className="flex h-40 w-60 flex-col items-center justify-center gap-4 rounded-card border border-dashed border-border text-muted-foreground transition-colors group-hover:border-primary group-hover:text-primary motion-reduce:transition-none">
-              <FolderPlus className="size-16" aria-hidden="true" />
-              <span className="text-sm font-medium text-primary">New event folder</span>
-            </span>
-          </button>
-        } />
       </div>
     </div>
   );
