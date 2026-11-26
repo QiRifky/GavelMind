@@ -39,4 +39,4 @@ use the editor.
 - App theme is dark (#191919 base); every color is a CSS variable in the :root block of src/styles.css — no hex in components, so palette changes touch one place.
 - Report page uses the glow bento style (GlowCard glows on mouse only; accents from --glow-* vars; pass/warn/fail colors only for status).
 - Report criteria use CriterionEvaluation to colocate model evidence and judge inputs; technical material is collapsible and project navigation targets completed reports to keep judging focused.
-- Event rules and the scoring rubric share one setup page at /app/event (RubricEditor component); /app/rubric redirects there so setup stays in one step.
+- Event rules live at /app/event; the scoring rubric has its own page at /app/rubric (step 3, after Entries) so each setup step stays focused.

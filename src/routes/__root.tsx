@@ -141,8 +141,9 @@ function RootComponent() {
 }
 
 const links = [
-  { to: "/app/event", label: "Event & Rubric" },
+  { to: "/app/event", label: "Event" },
   { to: "/app", label: "Entries" },
+  { to: "/app/rubric", label: "Rubric" },
   { to: "/app/results", label: "Results" },
 ] as const;
 

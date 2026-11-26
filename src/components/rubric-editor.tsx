@@ -46,8 +46,12 @@ export function RubricEditor() {
         </section>
         <section className="glass p-5 sm:p-6" aria-label="Live preview">
           <p className="eyebrow font-mono">Live preview</p>
-          {withFinals.length === 0 ? <p className="mt-3 text-sm text-muted-foreground">Score a project first to see how the rubric changes its total.</p> : (
-            <>
+          <p className="mt-1 text-sm text-muted-foreground">Weight distribution</p>
+          <div className="mt-3 flex h-3 w-full overflow-hidden rounded-full bg-well">{draft.map((c, i) => <div key={c.id} style={{ width: `${Math.min(c.weight, 100)}%`, opacity: 1 - i * 0.15 }} className="h-full bg-primary border-r border-background last:border-r-0" />)}</div>
+          <ul className="mt-4 space-y-2">{draft.map((c) => <li key={c.id} className="grid grid-cols-[minmax(0,1fr)_auto] gap-3 text-sm"><span className="truncate">{c.name}</span><span className="font-mono text-primary">{c.weight}%</span></li>)}</ul>
+          <p className={`mt-3 font-mono text-sm ${total === 100 ? "text-pass" : "text-warn"}`}>{draft.length} criteria · Total {total}%</p>
+          {withFinals.length === 0 ? <p className="mt-4 border-t border-border pt-4 text-xs text-muted-foreground">Once you score projects, compare their totals before and after weight edits here.</p> : (
+            <div className="mt-4 border-t border-border pt-4">
               <select aria-label="Project" value={pid} onChange={(e) => setPid(e.target.value)} className="mt-3 h-10 w-full rounded-full border border-border bg-secondary px-3 text-sm">
                 {withFinals.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
               </select>
@@ -56,7 +60,7 @@ export function RubricEditor() {
                 <div className="rounded-2xl bg-well p-3"><dt className="text-xs text-muted-foreground">With these edits</dt><dd className="mt-1 font-mono text-primary">{fmt(judgeTotal(finals, draft))}</dd></div>
               </dl>
               <p className="mt-3 text-xs text-muted-foreground">Uses only your final scores. New criteria without a score keep the total pending.</p>
-            </>
+            </div>
           )}
         </section>
       </div>
