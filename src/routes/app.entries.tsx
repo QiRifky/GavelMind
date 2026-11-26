@@ -3,7 +3,7 @@ import { useState } from "react";
 import { ArrowRight, FolderGit2, Github, Link2, Trash2, Layers, Globe } from "lucide-react";
 import { addProjects, analyzeProject, judgeStatus, removeProject, scanShowcase, splitUrls, useApi, type AnalysisStatus, type Discovered } from "@/lib/api";
 import { AnalyzeCard } from "@/components/analyze-card";
-import { Badge, PageHead, Pill } from "@/components/ui-bits";
+import { Badge, Pill } from "@/components/ui-bits";
 import { ShinyButton } from "@/components/ui/shiny-button";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -43,9 +43,6 @@ function Entries() {
 
   return (
     <>
-      <PageHead eyebrow="Entries" title={<>Add the projects. <span className="text-primary">You'll judge them.</span></>}>
-        Add submissions and prepare AI draft material for your review.
-      </PageHead>
       <WorkflowNav current="entries" />
       <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-glass" aria-label="Add submissions">
         <header className="flex flex-wrap items-center justify-between gap-3 px-5 pt-5 sm:px-6"><h2 className="text-lg font-medium">Add submissions</h2><Badge tone="neutral">Mock analysis</Badge></header>

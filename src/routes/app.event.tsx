@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowRight, Check, Link2, Plus, Sparkles, Trash2 } from "lucide-react";
-import { Badge, PageHead, Pill } from "@/components/ui-bits";
+import { Badge, Pill } from "@/components/ui-bits";
 import { Button } from "@/components/ui/button";
 import { EventDetailsDialog } from "@/components/event-details-dialog";
 import { WorkflowNav } from "@/components/workflow-nav";
@@ -32,7 +32,6 @@ function EventPage() {
     finally { setBusy(false); }
   };
   return <>
-    <PageHead eyebrow="Event" title="Set the ground rules.">Name the event and confirm the eligibility rules before judging starts.</PageHead>
     <WorkflowNav current="event" />
     <div role="note" className="mb-6 border-l-2 border-primary bg-accent p-4 text-sm text-accent-foreground">Mock mode · The event URL is not read. Rule drafts and rubric suggestions are examples, not extracted event requirements. Changes reset on reload.</div>
     <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">

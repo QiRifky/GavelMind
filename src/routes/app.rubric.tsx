@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
-import { PageHead } from "@/components/ui-bits";
 import { RubricEditor } from "@/components/rubric-editor";
 import { WorkflowNav } from "@/components/workflow-nav";
 import { Button } from "@/components/ui/button";
@@ -22,5 +21,5 @@ export const Route = createFileRoute("/app/rubric")({
 function RubricPage() {
   const state = useApi();
   const ready = state.projects.find((p) => p.status === "done");
-  return <div><PageHead eyebrow="Rubric" title="Decide what counts.">Set the criteria and weights you will score every project on.</PageHead><WorkflowNav current="rubric" /><RubricEditor /><footer className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5"><Button asChild variant="outline" className="rounded-full"><Link to="/app/entries">Back to entries</Link></Button>{ready ? <Button asChild className="rounded-full"><Link to="/app/p/$id" params={{ id: ready.id }}>Start judging <ArrowRight /></Link></Button> : <Button asChild className="rounded-full"><Link to="/app/entries">Add submissions <ArrowRight /></Link></Button>}</footer></div>;
+  return <div><WorkflowNav current="rubric" /><RubricEditor /><footer className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5"><Button asChild variant="outline" className="rounded-full"><Link to="/app/entries">Back to entries</Link></Button>{ready ? <Button asChild className="rounded-full"><Link to="/app/p/$id" params={{ id: ready.id }}>Start judging <ArrowRight /></Link></Button> : <Button asChild className="rounded-full"><Link to="/app/entries">Add submissions <ArrowRight /></Link></Button>}</footer></div>;
 }
