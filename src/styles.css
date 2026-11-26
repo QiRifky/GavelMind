@@ -160,6 +160,7 @@
 @property --gleam-percent { syntax: "<percentage>"; initial-value: 5%; inherits: false; }
 .shiny-button {
   --gleam-percent: var(--gleam-arc);
+  --gleam-animation: gleam-edge;
   isolation: isolate;
   position: relative;
   overflow: hidden;
@@ -172,45 +173,64 @@
       var(--gleam-accent) var(--gleam-percent), var(--gleam-soft) calc(var(--gleam-percent) * 2),
       var(--gleam-accent) calc(var(--gleam-percent) * 3), transparent calc(var(--gleam-percent) * 4)) border-box;
   box-shadow: inset 0 0 0 1px var(--surface-2);
-  animation: gleam-edge var(--gleam-duration) linear infinite;
-  transition: --gleam-offset var(--gleam-ease), --gleam-percent var(--gleam-ease);
+  transition: --gleam-offset var(--gleam-ease) cubic-bezier(0.25, 1, 0.5, 1),
+    --gleam-percent var(--gleam-ease) cubic-bezier(0.25, 1, 0.5, 1);
 }
 .shiny-button::before, .shiny-button::after, .shiny-button-label::before {
   content: "";
   pointer-events: none;
   position: absolute;
-  inset: 2px;
+  inset-inline-start: 50%;
+  inset-block-start: 50%;
+  translate: -50% -50%;
   border-radius: inherit;
   z-index: -1;
 }
 .shiny-button::before {
-  background: radial-gradient(circle, var(--foreground) 0.5px, transparent 0.6px);
+  width: calc(100% - 6px);
+  height: calc(100% - 6px);
+  background: radial-gradient(circle at 2px 2px, var(--foreground) 0.5px, transparent 0);
   background-size: 4px 4px;
-  mask-image: conic-gradient(from var(--gleam-angle), var(--foreground), transparent 10% 90%, var(--foreground));
+  background-repeat: space;
+  mask-image: conic-gradient(from calc(var(--gleam-angle) + 45deg), var(--foreground), transparent 10% 90%, var(--foreground));
   opacity: var(--gleam-speckle);
-  animation: gleam-edge var(--gleam-duration) linear infinite;
 }
 .shiny-button::after {
-  inset: -100%;
-  background: linear-gradient(-50deg, transparent 40%, var(--gleam-accent), transparent 60%);
+  --gleam-animation: gleam-shimmer;
+  width: 100%;
+  aspect-ratio: 1;
+  background: linear-gradient(-50deg, transparent, var(--gleam-accent), transparent);
+  mask-image: radial-gradient(circle at bottom, transparent 40%, var(--foreground));
   opacity: var(--gleam-sheen);
-  animation: gleam-shimmer var(--gleam-duration) linear infinite;
 }
-.shiny-button-label { position: relative; z-index: 1; }
+.shiny-button-label { z-index: 1; }
 .shiny-button-label::before {
-  inset: -1rem;
+  width: calc(100% + 1rem);
+  height: calc(100% + 1rem);
   box-shadow: inset 0 -1ex 2rem 4px var(--gleam-accent);
   opacity: 0;
   transition: opacity var(--gleam-ease);
+  animation: gleam-breathe calc(var(--gleam-duration) * 1.5) linear infinite;
+}
+.shiny-button, .shiny-button::before, .shiny-button::after {
+  animation: var(--gleam-animation) var(--gleam-duration) linear infinite,
+    var(--gleam-animation) calc(var(--gleam-duration) / 0.4) linear infinite reverse paused;
+  animation-composition: add;
 }
 .shiny-button:is(:hover, :focus-visible) { --gleam-percent: 20%; --gleam-offset: 95deg; }
+.shiny-button:is(:hover, :focus-visible),
+.shiny-button:is(:hover, :focus-visible)::before,
+.shiny-button:is(:hover, :focus-visible)::after { animation-play-state: running; }
 .shiny-button:is(:hover, :focus-visible) .shiny-button-label::before { opacity: 1; }
 .shiny-button:active { transform: translateY(1px); }
-.shiny-button:disabled, .shiny-button:disabled::before, .shiny-button:disabled::after { animation-play-state: paused; }
+.shiny-button:disabled, .shiny-button:disabled::before, .shiny-button:disabled::after,
+.shiny-button:disabled .shiny-button-label::before { animation-play-state: paused; }
 @keyframes gleam-edge { to { --gleam-angle: 360deg; } }
-@keyframes gleam-shimmer { to { transform: rotate(360deg); } }
+@keyframes gleam-shimmer { to { rotate: 360deg; } }
+@keyframes gleam-breathe { 0%, 100% { scale: 1; } 50% { scale: 1.2; } }
 @media (prefers-reduced-motion: reduce) {
-  .shiny-button, .shiny-button::before, .shiny-button::after { animation: none; transition: none; }
+  .shiny-button, .shiny-button::before, .shiny-button::after,
+  .shiny-button-label::before { animation: none; transition: none; }
   .shiny-button-label::before { display: none; }
 }
 
