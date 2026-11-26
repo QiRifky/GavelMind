@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { getReport, judgeStatus, judgeTotal, finalsOf, summaryText, useApi, reportForEvent, type CheckResult, type Criterion, type Report, type SummaryStyle } from "@/lib/api";
-import { ArrowLeft, ArrowRight, ChevronDown } from "lucide-react";
+import { AlertTriangle, ArrowLeft, ArrowRight, ArrowUpRight, Check, ChevronDown, Minus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CriterionEvaluation } from "@/components/criterion-evaluation";
 import { CardState, CardTitle, GlowCard } from "@/components/glow-card";
@@ -115,31 +115,57 @@ function SummaryCard({ r }: { r: Report }) {
         <select aria-label="Summary style" value={style} onChange={(e) => setStyle(e.target.value as SummaryStyle)} className="h-8 rounded-full border border-border bg-secondary px-3 text-xs">
           <option value="neutral">Neutral</option><option value="concise">Concise</option><option value="detailed">Detailed</option>
         </select>}>Summary</CardTitle>
-      <div className="space-y-2 text-sm leading-relaxed">{summaryText(r, style).map((t) => <p key={t}>{t}</p>)}</div>
+      <div className="space-y-3 text-sm leading-relaxed">{summaryText(r, style).map((t) => <p key={t}>{t}</p>)}</div>
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
-        <div className="rounded-2xl bg-well p-3 text-sm"><p className="text-xs text-muted-foreground">What it does</p><p className="mt-1">{r.does}</p></div>
-        <div className="rounded-2xl bg-well p-3 text-sm"><p className="text-xs text-muted-foreground">What it does not do</p><p className="mt-1">{r.doesNot}</p></div>
+        <div className="flex h-full flex-col rounded-2xl bg-well p-4">
+          <p className="flex items-center gap-1.5 text-xs text-muted-foreground"><Check className="size-3.5 shrink-0 text-pass" />What it does</p>
+          <p className="mt-2 text-sm leading-relaxed">{r.does}</p>
+        </div>
+        <div className="flex h-full flex-col rounded-2xl bg-well p-4">
+          <p className="flex items-center gap-1.5 text-xs text-muted-foreground"><Minus className="size-3.5 shrink-0" />What it does not do</p>
+          <p className="mt-2 text-sm leading-relaxed">{r.doesNot}</p>
+        </div>
       </div>
-      <div className="mt-4 flex flex-wrap gap-2">{r.stack.map((s) => <span key={s.name} className="rounded-full border border-border px-3 py-1 text-xs">{s.name} <span className="text-muted-foreground">· {s.kind}</span></span>)}</div>
+      <div className="mt-auto pt-4">
+        <p className="font-mono text-[11px] uppercase text-muted-foreground">Stack</p>
+        <div className="mt-2 flex flex-wrap gap-2">{r.stack.map((s) => <span key={s.name} className="rounded-full border border-border px-3 py-1 text-xs">{s.name} <span className="text-muted-foreground">· {s.kind}</span></span>)}</div>
+      </div>
     </GlowCard>
   );
 }
 
-const resultCls: Record<CheckResult, string> = { pass: "bg-pass/15 text-pass", warn: "bg-warn/15 text-warn", fail: "bg-fail/15 text-fail" };
+const resultBg: Record<CheckResult, string> = { pass: "bg-pass/12", warn: "bg-warn/12", fail: "bg-fail/12" };
+const resultText: Record<CheckResult, string> = { pass: "text-pass", warn: "text-warn", fail: "text-fail" };
 const resultLabel: Record<CheckResult, string> = { pass: "Pass", warn: "Warning", fail: "Fail" };
 
 function RulesCard({ r }: { r: Report }) {
+  const passed = r.checks.filter((c) => c.result === "pass").length;
+  const pct = r.checks.length ? Math.round((passed / r.checks.length) * 100) : 0;
   return (
     <GlowCard accent="green" label="Rules check">
-      <CardTitle accent="green" right={<span className="text-xs text-muted-foreground">{r.checks.filter((c) => c.result === "pass").length}/{r.checks.length} pass</span>}>Rules check</CardTitle>
-      <ul className="space-y-3">
+      <CardTitle accent="green" right={
+        <span className="flex items-center gap-2 text-xs text-muted-foreground">
+          <span className="h-1.5 w-14 overflow-hidden rounded-full bg-secondary"><span className="block h-full rounded-full bg-pass" style={{ width: `${pct}%` }} /></span>
+          <span className="font-mono tabular-nums">{passed}/{r.checks.length} pass</span>
+        </span>}>Rules check</CardTitle>
+      <ul className="divide-y divide-border/60">
         {r.checks.map((c) => (
-          <li key={c.id} className="grid grid-cols-[auto_minmax(0,1fr)] gap-3">
-            <span className={cn("mt-0.5 rounded-full px-2 py-0.5 text-xs font-medium", resultCls[c.result])}>{resultLabel[c.result]}</span>
-            <div className="min-w-0 text-sm"><p className="font-medium">{c.label}</p><p className="text-muted-foreground">{c.reason} <a href={c.evidenceUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline">{c.id.startsWith("event-") ? "Event source" : "Evidence"} ↗</a></p></div>
+          <li key={c.id} className="grid grid-cols-[auto_minmax(0,1fr)] gap-3 py-3 first:pt-0 last:pb-0">
+            <span className={cn("mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full", resultBg[c.result])}>
+              {c.result === "pass" ? <Check className="size-4" /> : c.result === "warn" ? <AlertTriangle className="size-4" /> : <X className="size-4" />}
+            </span>
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                <p className="text-sm font-medium">{c.label}</p>
+                <span className={cn("font-mono text-[11px] uppercase", resultText[c.result])}>{resultLabel[c.result]}</span>
+              </div>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{c.reason}</p>
+              <a href={c.evidenceUrl} target="_blank" rel="noreferrer" className="mt-1.5 inline-flex items-center gap-1 text-xs text-primary hover:underline">{c.id.startsWith("event-") ? "Event source" : "Evidence"}<ArrowUpRight className="size-3" /></a>
+            </div>
           </li>
         ))}
       </ul>
+      <p className="mt-auto pt-4 text-xs text-muted-foreground">Checks read the collected material only. The judge makes the final decision.</p>
     </GlowCard>
   );
 }
