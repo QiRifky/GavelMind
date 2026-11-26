@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ArrowRight, FolderPlus } from "lucide-react";
+import { FolderPlus } from "lucide-react";
 import { Folder3D } from "@/components/ui/folder";
 import { folderName, folderStats, switchFolder, useApi } from "@/lib/api";
 import { EventDetailsDialog } from "@/components/event-details-dialog";
@@ -39,7 +39,7 @@ function Folders() {
                 <FolderPlus className="size-7" aria-hidden="true" />
               </span>
             </span>
-            <span className="mt-4 inline-flex w-60 items-center justify-center gap-1 text-sm text-primary">New event folder <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" /></span>
+            <span className="mt-4 inline-flex w-60 items-center justify-center gap-1 text-sm text-primary">New event folder</span>
           </button>
         } />
       </div>
