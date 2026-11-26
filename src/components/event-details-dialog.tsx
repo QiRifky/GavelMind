@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { FolderPlus, Pencil, Sparkles } from "lucide-react";
 import { createFolder, extractEventRules, saveEvent, useApi } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
-export function EventDetailsDialog({ edit = false }: { edit?: boolean }) {
+export function EventDetailsDialog({ edit = false, trigger }: { edit?: boolean; trigger?: ReactNode }) {
   const { event } = useApi();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -38,9 +38,9 @@ export function EventDetailsDialog({ edit = false }: { edit?: boolean }) {
     setOpen(next);
     if (next) { setName(edit ? event?.name ?? "" : ""); setUrl(edit ? event?.url ?? "" : ""); setPrepare(true); setError(""); }
   }}>
-    <DialogTrigger asChild><Button variant="ghost" size="sm" className="shrink-0 rounded-full text-muted-foreground">
+    <DialogTrigger asChild>{trigger ?? <Button variant="ghost" size="sm" className="shrink-0 rounded-full text-muted-foreground">
       {edit ? <Pencil className="size-4" /> : <FolderPlus className="size-4" />}{edit ? "Edit event details" : "New event folder"}
-    </Button></DialogTrigger>
+    </Button>}</DialogTrigger>
     <DialogContent className="max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] overflow-y-auto rounded-lg border-border bg-card shadow-glass">
       <DialogHeader><div className="mb-3 flex size-10 items-center justify-center rounded-lg bg-accent text-primary"><FolderPlus className="size-5" /></div><DialogTitle>{edit ? "Edit event details" : "New event folder"}</DialogTitle><DialogDescription>{edit ? "Event details" : "Event details · New workspace"}</DialogDescription></DialogHeader>
       <form onSubmit={(e) => void submit(e)} className="space-y-5">
