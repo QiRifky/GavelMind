@@ -29,7 +29,6 @@ function Folders() {
               <span className="mt-5"><Badge tone={s.finalized ? "good" : "neutral"}>{s.finalized ? "Results final" : "Draft, not final"}</Badge></span>
               <span className="mt-3 block max-w-full truncate text-lg font-medium">{folderName(f, state)}</span>
               <span className="mt-1 block text-sm text-muted-foreground">{s.projects} projects · {s.ready} ready · {s.confirmed ? "Rules confirmed" : "Rules not confirmed"}</span>
-              <span className="mt-3 inline-flex items-center gap-1 text-sm text-primary">Open folder <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" /></span>
             </button>
           );
         })}
