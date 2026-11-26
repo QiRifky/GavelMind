@@ -6,6 +6,7 @@ import { Pill } from "@/components/ui-bits";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { DonutBreakdown } from "@/components/ui/donut-breakdown";
+import { ShinyButton } from "@/components/ui/shiny-button";
 import { ArrowRight, RotateCcw, CheckCheck } from "lucide-react";
 
 type Phase = { k: "idle" } | { k: "running"; stage: AnalyzeStage } | { k: "done"; report: Report; name: string } | { k: "error"; message: string };
@@ -43,7 +44,7 @@ export function AnalyzeCard({ initialUrl = "", className }: { initialUrl?: strin
           <div className="mt-3 flex flex-col gap-3 sm:flex-row">
             <input id="analyze-url" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://github.com/team/project"
               className="h-11 min-w-0 sm:flex-1 rounded-2xl border border-border bg-well px-4 font-mono text-sm outline-hidden transition placeholder:text-muted-foreground/60 focus:border-primary" />
-            <Pill size="lg" type="submit" disabled={!url.trim()}>Analyze →</Pill>
+            <ShinyButton label="Analyze →" type="submit" disabled={!url.trim()} />
           </div>
         </form>
       )}

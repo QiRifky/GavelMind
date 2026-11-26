@@ -1,5 +1,10 @@
 # Landing page
 
+# Shiny Analyze button
+
+- [x] Adapt the supplied shiny button to the shared controls and dark palette.
+- [x] Verify submission, disabled behavior, reduced motion, and phone layout.
+
 # AI activity beam
 
 - [x] Integrate the orange beam in analysis and report AI drafts without changing judging logic.

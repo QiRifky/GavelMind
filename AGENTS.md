@@ -42,3 +42,4 @@ use the editor.
 - Event rules live at /app/event; the scoring rubric has its own page at /app/rubric (step 3, after Entries) so each setup step stays focused.
 - Analysis-ready summaries use the reusable DonutBreakdown presentation component; ring areas show weighted AI contributions while labels retain absolute /10 scores to avoid confusing scores with percentages.
 - AI analysis and criterion drafts use HandoffBeam as a shared adapter for border-beam line animation; override decorative colors with CSS tokens and keep idle, offscreen, hidden-tab, and reduced-motion states static to avoid judging distractions.
+- ShinyButton wraps the shared Button with token-based gleam styling and native button props so animated CTAs preserve form submission and disabled behavior.

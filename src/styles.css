@@ -155,6 +155,65 @@
 .handoff-beam { position: relative; isolation: isolate; min-width: 0; overflow: hidden; }
 .handoff-beam > [data-beam] { width: 100%; }
 
+@property --gleam-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+@property --gleam-offset { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+@property --gleam-percent { syntax: "<percentage>"; initial-value: 5%; inherits: false; }
+.shiny-button {
+  --gleam-percent: var(--gleam-arc);
+  isolation: isolate;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid transparent;
+  border-radius: var(--gleam-radius);
+  color: var(--gleam-label);
+  background: linear-gradient(var(--gleam-base), var(--gleam-base)) padding-box,
+    conic-gradient(from calc(var(--gleam-angle) - var(--gleam-offset)), transparent,
+      var(--gleam-accent) var(--gleam-percent), var(--gleam-soft) calc(var(--gleam-percent) * 2),
+      var(--gleam-accent) calc(var(--gleam-percent) * 3), transparent calc(var(--gleam-percent) * 4)) border-box;
+  box-shadow: inset 0 0 0 1px var(--surface-2);
+  animation: gleam-edge var(--gleam-duration) linear infinite;
+  transition: --gleam-offset var(--gleam-ease), --gleam-percent var(--gleam-ease);
+}
+.shiny-button::before, .shiny-button::after, .shiny-button-label::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 2px;
+  border-radius: inherit;
+  z-index: -1;
+}
+.shiny-button::before {
+  background: radial-gradient(circle, var(--foreground) 0.5px, transparent 0.6px);
+  background-size: 4px 4px;
+  mask-image: conic-gradient(from var(--gleam-angle), var(--foreground), transparent 10% 90%, var(--foreground));
+  opacity: var(--gleam-speckle);
+  animation: gleam-edge var(--gleam-duration) linear infinite;
+}
+.shiny-button::after {
+  inset: -100%;
+  background: linear-gradient(-50deg, transparent 40%, var(--gleam-accent), transparent 60%);
+  opacity: var(--gleam-sheen);
+  animation: gleam-shimmer var(--gleam-duration) linear infinite;
+}
+.shiny-button-label { position: relative; z-index: 1; }
+.shiny-button-label::before {
+  inset: -1rem;
+  box-shadow: inset 0 -1ex 2rem 4px var(--gleam-accent);
+  opacity: 0;
+  transition: opacity var(--gleam-ease);
+}
+.shiny-button:is(:hover, :focus-visible) { --gleam-percent: 20%; --gleam-offset: 95deg; }
+.shiny-button:is(:hover, :focus-visible) .shiny-button-label::before { opacity: 1; }
+.shiny-button:active { transform: translateY(1px); }
+.shiny-button:disabled, .shiny-button:disabled::before, .shiny-button:disabled::after { animation-play-state: paused; }
+@keyframes gleam-edge { to { --gleam-angle: 360deg; } }
+@keyframes gleam-shimmer { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .shiny-button, .shiny-button::before, .shiny-button::after { animation: none; transition: none; }
+  .shiny-button-label::before { display: none; }
+}
+
 .dark {
   color-scheme: dark;
   --background: oklch(0.129 0.042 264.695);
