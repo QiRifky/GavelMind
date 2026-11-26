@@ -127,6 +127,7 @@
   --accent-foreground: #ffb27f;
   --accent-brand: var(--brand);
   --glass: rgb(34 34 34 / 0.85);
+  --bento-stripe: rgb(25 25 25 / 0.35);
   --shadow-soft: inset 0 1px 0 rgb(255 255 255 / 0.05), 0 14px 34px -18px rgb(0 0 0 / 0.6);
   --shadow-tile: var(--shadow-soft);
   --destructive: var(--fail);
@@ -329,4 +330,14 @@ body {
   .landing-hero { min-height: 510px; }
   .landing-hero-inner { padding-top: 44px; padding-bottom: 38px; }
   .landing-hero-image { opacity: 0.2; object-position: 68% center; }
+}
+@utility bento {
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-soft);
+  border-radius: 1.5rem;
+}
+@utility bento-stripes {
+  background-image: repeating-linear-gradient(45deg, var(--bento-stripe) 0 1px, transparent 1px 10px);
+  mask-image: radial-gradient(ellipse 80% 70% at 100% 0%, #000 60%, transparent 110%);
 }

@@ -49,3 +49,4 @@ use the editor.
 - /app is the event-folder gallery (open a folder → /app/event); Entries lives at /app/entries so the folder level stays separate from the workflow steps.
 - The top bar (Gavel Mind brand + active-folder pill) is hidden only on the four workflow-step paths (/app/event, /app/entries, /app/rubric, /app/results) via WORKSPACE_STEP_PATHS in src/routes/__root.tsx, because WorkflowNav already shows the location; every other page keeps the top bar.
 - Workflow-step pages (Event/Entries/Rubric/Results) fit one laptop screen: main is h-dvh flex on lg, content goes in StepBody (workflow-nav.tsx) with internal scroll regions; phones keep normal page scroll.
+- Workflow-step pages open with the shared StatsBento strip (src/components/ui/stats-bento.tsx) and use the `bento` utility for cards, so all four steps share one card language.

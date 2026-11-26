@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { canSaveRubric, finalsOf, judgeTotal, newCriterionId, saveRubric, useApi, weightTotal, type Criterion } from "@/lib/api";
+import { StatsBento } from "@/components/ui/stats-bento";
 import { Pill } from "@/components/ui-bits";
 
 export function RubricEditor() {
@@ -18,13 +19,14 @@ export function RubricEditor() {
 
   return (
     <>
+      <StatsBento hero={{ badge: total === 100 ? "Rubric ready" : "Needs 100%", value: `${total}%`, caption: "Total weight across criteria" }} trend={{ label: "Weight distribution", value: `${draft.length} criteria`, bars: draft.map((c) => c.weight) }} tiles={[{ label: "Top weight", value: `${Math.max(0, ...draft.map((c) => c.weight))}%` }, { label: "Scored", value: withFinals.length }]} />
       <div className="mb-4 flex items-end justify-between gap-3"><div><p className="eyebrow font-mono">Scoring rubric</p><h2 className="mt-2 text-lg">What you judge on</h2><p className="mt-1 text-sm text-muted-foreground">Weights must add up to 100%. Changes apply after you save.</p></div></div>
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-        <section className="glass p-5 sm:p-6" aria-label="Criteria">
+        <section className="bento p-5 sm:p-6" aria-label="Criteria">
           {draft.length === 0 && <p className="mb-4 text-sm text-muted-foreground">No criteria. Add one to start.</p>}
           <ul className="space-y-4">
             {draft.map((c) => (
-              <li key={c.id} className="rounded-2xl bg-well p-4">
+              <li key={c.id} className="rounded-3xl bg-well p-4">
                 <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
                   <input aria-label="Criterion name" value={c.name} onChange={(e) => edit(c.id, { name: e.target.value })} className="h-10 min-w-0 rounded-xl border border-border bg-transparent px-3 outline-hidden focus:border-primary" />
                   <button aria-label={`Remove ${c.name}`} onClick={() => { setSaved(false); setDraft((d) => d.filter((x) => x.id !== c.id)); }} className="rounded-full px-3 py-1 text-sm text-muted-foreground hover:text-destructive">Remove</button>
@@ -44,7 +46,7 @@ export function RubricEditor() {
           </div>
           {total !== 100 && <p role="alert" className="mt-3 text-sm text-warn">Weights add up to {total}%. Adjust them to exactly 100% to save.</p>}
         </section>
-        <section className="glass p-5 sm:p-6" aria-label="Live preview">
+        <section className="bento p-5 sm:p-6" aria-label="Live preview">
           <p className="eyebrow font-mono">Live preview</p>
           <p className="mt-1 text-sm text-muted-foreground">Weight distribution</p>
           <div className="mt-3 flex h-3 w-full overflow-hidden rounded-full bg-well">{draft.map((c, i) => <div key={c.id} style={{ width: `${Math.min(c.weight, 100)}%`, opacity: 1 - i * 0.15 }} className="h-full bg-primary border-r border-background last:border-r-0" />)}</div>

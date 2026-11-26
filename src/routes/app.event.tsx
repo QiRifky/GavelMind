@@ -4,6 +4,7 @@ import { ArrowRight, Check, Link2, Plus, Sparkles, Trash2 } from "lucide-react";
 import { Badge, Pill } from "@/components/ui-bits";
 import { Button } from "@/components/ui/button";
 import { EventDetailsDialog } from "@/components/event-details-dialog";
+import { StatsBento } from "@/components/ui/stats-bento";
 import { StepBody, WorkflowNav } from "@/components/workflow-nav";
 import { confirmEventRules, eventRubricSuggestions, extractEventRules, newEventRuleId, saveRubric, updateEventRules, useApi } from "@/lib/api";
 
@@ -19,7 +20,8 @@ export const Route = createFileRoute("/app/event")({
 });
 
 function EventPage() {
-  const { event } = useApi();
+  const { event, projects } = useApi();
+  const active = event?.rules.filter((r) => r.enabled).length ?? 0;
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [applied, setApplied] = useState(false);
@@ -35,8 +37,9 @@ function EventPage() {
     <WorkflowNav current="event" />
     <StepBody className="lg:flex lg:flex-col lg:overflow-hidden">
     <div role="note" className="mb-4 shrink-0 border-l-2 border-primary bg-accent px-4 py-2 text-xs text-accent-foreground">Mock mode · The event URL is not read. Rule drafts and rubric suggestions are examples, not extracted event requirements. Changes reset on reload.</div>
+    <StatsBento hero={{ badge: "Active rules", value: active, caption: event?.name ?? "No event yet" }} trend={{ label: "Suggested rubric", value: `${suggestions.length} criteria`, bars: suggestions.map((c) => c.weight) }} tiles={[{ label: event?.confirmed ? "Confirmed" : "Draft", value: event?.confirmed ? "✓" : "—" }, { label: "Projects", value: projects.length }]} />
     <div className="grid gap-4 lg:min-h-0 lg:flex-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
-      <section aria-label="Event details" className="flex min-w-0 flex-col rounded-2xl border border-border bg-card shadow-glass lg:min-h-0 lg:overflow-y-auto">
+      <section aria-label="Event details" className="flex min-w-0 flex-col bento  lg:min-h-0 lg:overflow-y-auto">
         <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4"><p className="eyebrow font-mono">Event details</p><EventDetailsDialog key={event?.name ?? "empty"} edit /></header>
         <div className="space-y-4 px-5 py-5">
           {event ? <div><h2 className="break-words text-xl">{event.name}</h2><a href={event.url} target="_blank" rel="noreferrer" className="mt-2 flex items-start gap-2 break-all text-sm text-primary hover:underline"><Link2 className="mt-0.5 size-4 shrink-0" />{event.url}</a></div> : <p className="text-sm text-muted-foreground">No event details yet. Add a name and event link first.</p>}
@@ -46,7 +49,7 @@ function EventPage() {
         {event?.rules.length ? <div className="border-t border-border px-5 py-5"><p className="eyebrow font-mono">Suggested rubric · sample</p><dl className="mt-4 space-y-3">{suggestions.map((c) => <div key={c.id} className="flex justify-between gap-3 text-sm"><dt>{c.name}</dt><dd className="font-mono text-primary">{c.weight}%</dd></div>)}</dl><Pill variant="outline" className="mt-5" onClick={() => { if (window.confirm("Replace the current rubric with these sample criteria and weights?")) setApplied(saveRubric(suggestions)); }}>Apply sample rubric</Pill>{applied && <p role="status" className="mt-3 text-sm text-pass">Rubric updated.</p>}</div> : null}
         <p className="mt-auto border-t border-border px-5 py-4 text-xs leading-relaxed text-muted-foreground">Rules and eligibility findings are drafts for judge review. Only the judge makes the final decision.</p>
       </section>
-      <section aria-label="Eligibility rules" className="flex min-w-0 flex-col rounded-2xl border border-border bg-card shadow-glass lg:min-h-0">
+      <section aria-label="Eligibility rules" className="flex min-w-0 flex-col bento  lg:min-h-0">
         <header className="flex items-center justify-between gap-3 border-b border-border px-5 py-4"><h2 className="text-lg">Eligibility rules</h2><span className="font-mono text-xs text-muted-foreground">{event?.rules.filter((r) => r.enabled).length ?? 0} active</span></header>
         <div className="flex-1 px-5 py-4 lg:min-h-0 lg:overflow-y-auto">
           {!event?.rules.length && <div className="flex h-full min-h-40 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border text-center"><Sparkles className="size-6 text-primary" /><p className="text-sm">No rules prepared yet.</p><p className="max-w-xs text-xs text-muted-foreground">Prepare a sample rule draft or add rules yourself, then confirm them.</p></div>}
