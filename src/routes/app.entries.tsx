@@ -7,7 +7,7 @@ import { Badge, Pill } from "@/components/ui-bits";
 import { ShinyButton } from "@/components/ui/shiny-button";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { WorkflowNav } from "@/components/workflow-nav";
+import { StepBody, WorkflowNav } from "@/components/workflow-nav";
 
 export const Route = createFileRoute("/app/entries")({
   validateSearch: (s: Record<string, unknown>): { q?: string; status?: string } => ({
@@ -44,7 +44,8 @@ function Entries() {
   return (
     <>
       <WorkflowNav current="entries" />
-      <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-glass" aria-label="Add submissions">
+      <StepBody className="grid items-start gap-4 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:grid-rows-[minmax(0,1fr)_auto] lg:items-stretch lg:overflow-hidden">
+      <section className="overflow-hidden rounded-2xl lg:overflow-y-auto border border-border bg-card shadow-glass" aria-label="Add submissions">
         <header className="flex flex-wrap items-center justify-between gap-3 px-5 pt-5 sm:px-6"><h2 className="text-lg font-medium">Add submissions</h2><Badge tone="neutral">Mock analysis</Badge></header>
         <Tabs defaultValue="single" className="p-5 sm:p-6">
           <TabsList aria-label="Submission input method" className="grid h-auto w-full grid-cols-3 gap-1 rounded-xl bg-well p-1.5">
@@ -59,7 +60,7 @@ function Entries() {
         <p className="border-t border-border px-5 py-3 text-xs leading-relaxed text-muted-foreground sm:px-6">Demo mode · Repository and showcase content are not fetched. AI drafts use sample material; changes reset on reload.</p>
       </section>
 
-      <section className="mt-6 overflow-hidden rounded-3xl border border-border bg-card shadow-glass" aria-label="Projects">
+      <section className="flex flex-col overflow-hidden rounded-3xl lg:min-h-0 border border-border bg-card shadow-glass" aria-label="Projects">
         <header className="flex items-center justify-between gap-4 border-b border-border px-5 py-5 sm:px-6">
           <div className="flex items-center gap-3">
             <FolderGit2 className="size-5 text-primary" aria-hidden="true" />
@@ -73,7 +74,7 @@ function Entries() {
             <p className="mt-1 text-sm text-muted-foreground">Paste repo URLs above or scan a showcase page to start.</p>
           </div>
         ) : (
-          <ul className="divide-y divide-border">
+          <ul className="divide-y divide-border lg:min-h-0 lg:flex-1 lg:overflow-y-auto">
             {rows.map((p) => (
               <li key={p.id} className={`grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-4 gap-y-3 px-5 py-5 transition-colors sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:px-6 ${picked.has(p.id) ? "bg-accent" : "hover:bg-secondary/40"}`}>
                 <input type="checkbox" checked={picked.has(p.id)} onChange={() => toggle(p.id)} disabled={p.status === "analyzing"} aria-label={`Select ${p.name}`} className="size-4 cursor-pointer accent-(--brand) focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring" />
@@ -95,15 +96,16 @@ function Entries() {
             ))}
           </ul>
         )}
-        <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-border bg-well/50 px-5 py-4 sm:px-6">
+        <footer className="mt-auto flex shrink-0 flex-wrap items-center justify-between gap-4 border-t border-border bg-well/50 px-5 py-4 sm:px-6">
           <span className="text-sm tabular-nums text-muted-foreground"><span className="font-medium text-foreground">{picked.size}</span> selected</span>
           <Pill size="lg" disabled={picked.size === 0} onClick={analyzeSelected}>Analyze selected <ArrowRight className="size-4" aria-hidden="true" /></Pill>
         </footer>
       </section>
-      <footer className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5">
+      <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-4 lg:col-span-2">
         <Button asChild variant="outline" className="rounded-full"><Link to="/app/rubric">Continue to rubric <ArrowRight /></Link></Button>
         {nextReview && <Button asChild className="rounded-full"><Link to="/app/p/$id" params={{ id: nextReview.id }}>Start judging · {ready.length} ready <ArrowRight /></Link></Button>}
       </footer>
+      </StepBody>
     </>
   );
 }

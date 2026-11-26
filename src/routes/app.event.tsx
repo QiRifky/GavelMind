@@ -4,7 +4,7 @@ import { ArrowRight, Check, Link2, Plus, Sparkles, Trash2 } from "lucide-react";
 import { Badge, Pill } from "@/components/ui-bits";
 import { Button } from "@/components/ui/button";
 import { EventDetailsDialog } from "@/components/event-details-dialog";
-import { WorkflowNav } from "@/components/workflow-nav";
+import { StepBody, WorkflowNav } from "@/components/workflow-nav";
 import { confirmEventRules, eventRubricSuggestions, extractEventRules, newEventRuleId, saveRubric, updateEventRules, useApi } from "@/lib/api";
 
 export const Route = createFileRoute("/app/event")({
@@ -33,7 +33,8 @@ function EventPage() {
   };
   return <>
     <WorkflowNav current="event" />
-    <div role="note" className="mb-6 border-l-2 border-primary bg-accent p-4 text-sm text-accent-foreground">Mock mode · The event URL is not read. Rule drafts and rubric suggestions are examples, not extracted event requirements. Changes reset on reload.</div>
+    <StepBody>
+    <div role="note" className="mb-4 border-l-2 border-primary bg-accent px-4 py-2 text-xs text-accent-foreground">Mock mode · The event URL is not read. Rule drafts and rubric suggestions are examples, not extracted event requirements. Changes reset on reload.</div>
     <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
       <div className="min-w-0">
         <section className="space-y-4 border-b border-border pb-6">
@@ -59,6 +60,7 @@ function EventPage() {
         <p className="border-t border-border pt-5 text-sm text-muted-foreground">Rules and eligibility findings are drafts for judge review. Only the judge makes the final decision.</p>
       </aside>
     </div>
-    <footer className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5"><Badge tone={event?.confirmed ? "good" : "neutral"}>{event?.confirmed ? "Rules confirmed by judge" : "Rules awaiting confirmation"}</Badge>{event?.confirmed && <Button asChild className="rounded-full"><Link to="/app/entries">Continue to entries <ArrowRight /></Link></Button>}</footer>
+    <footer className="mt-4 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-4"><Badge tone={event?.confirmed ? "good" : "neutral"}>{event?.confirmed ? "Rules confirmed by judge" : "Rules awaiting confirmation"}</Badge>{event?.confirmed && <Button asChild className="rounded-full"><Link to="/app/entries">Continue to entries <ArrowRight /></Link></Button>}</footer>
+    </StepBody>
   </>;
 }
