@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { canSaveRubric, finalsOf, judgeTotal, newCriterionId, saveRubric, useApi, weightTotal, type Criterion } from "@/lib/api";
 import { Pill } from "@/components/ui-bits";
-import { Trash2 } from "lucide-react";
 
 export function RubricEditor() {
   const state = useApi();
@@ -19,17 +18,16 @@ export function RubricEditor() {
 
   return (
     <>
-      <div className="mb-4 flex items-start gap-3"><span className="grid size-8 shrink-0 place-items-center rounded-full border border-border font-mono text-sm text-muted-foreground">3</span><div><h2 className="text-lg">Set what you judge on</h2><p className="mt-0.5 text-sm text-muted-foreground">Name each criterion and drag its weight. Weights must add up to 100%, then save.</p></div></div>
+      <div className="mb-4 flex items-end justify-between gap-3"><div><p className="eyebrow font-mono">Scoring rubric</p><h2 className="mt-2 text-lg">What you judge on</h2><p className="mt-1 text-sm text-muted-foreground">Weights must add up to 100%. Changes apply after you save.</p></div></div>
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         <section className="glass p-5 sm:p-6" aria-label="Criteria">
           {draft.length === 0 && <p className="mb-4 text-sm text-muted-foreground">No criteria. Add one to start.</p>}
-          <div className="mb-5" aria-hidden><div className="flex h-2 gap-0.5 overflow-hidden rounded-full bg-well">{draft.map((c, i) => <div key={c.id} style={{ width: `${Math.min(c.weight, 100)}%`, opacity: Math.max(0.35, 1 - i * 0.18) }} className="h-full bg-primary" />)}</div><div className="mt-2 flex justify-between font-mono text-xs"><span className="text-muted-foreground">Weight split</span><span className={total === 100 ? "text-pass" : "text-warn"}>{total}% / 100%</span></div></div>
-          <ul className="space-y-3">
+          <ul className="space-y-4">
             {draft.map((c) => (
               <li key={c.id} className="rounded-2xl bg-well p-4">
                 <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
                   <input aria-label="Criterion name" value={c.name} onChange={(e) => edit(c.id, { name: e.target.value })} className="h-10 min-w-0 rounded-xl border border-border bg-transparent px-3 outline-hidden focus:border-primary" />
-                  <button aria-label={`Remove ${c.name}`} onClick={() => { setSaved(false); setDraft((d) => d.filter((x) => x.id !== c.id)); }} title="Remove criterion" className="rounded-full p-2 text-muted-foreground hover:text-destructive focus-visible:outline-2 focus-visible:outline-ring"><Trash2 className="size-4" /></button>
+                  <button aria-label={`Remove ${c.name}`} onClick={() => { setSaved(false); setDraft((d) => d.filter((x) => x.id !== c.id)); }} className="rounded-full px-3 py-1 text-sm text-muted-foreground hover:text-destructive">Remove</button>
                 </div>
                 <div className="mt-3 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
                   <input type="range" min={0} max={100} step={5} value={c.weight} aria-label={`${c.name} weight`} onChange={(e) => edit(c.id, { weight: Number(e.target.value) })} className="w-full accent-(--brand)" />
