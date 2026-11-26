@@ -39,7 +39,7 @@ function Folders() {
                 <FolderPlus className="size-7" aria-hidden="true" />
               </span>
             </span>
-            <span className="mt-auto inline-flex items-center gap-1 pt-5 text-sm text-primary">New event folder <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" /></span>
+            <span className="mt-4 inline-flex items-center gap-1 text-sm text-primary">New event folder <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" /></span>
           </button>
         } />
       </div>
