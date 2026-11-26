@@ -112,7 +112,7 @@
   --chart-grid: rgb(255 255 255 / 0.06);
 
   --radius: 1.25rem;
-  --card-radius: 35px;
+  --card-radius: 8px;
   --background: var(--page);
   --foreground: var(--ink);
   --card: var(--surface);
@@ -128,9 +128,9 @@
   --accent: rgb(255 122 47 / 0.12);
   --accent-foreground: #ffb27f;
   --accent-brand: var(--brand);
-  --glass: rgb(34 34 34 / 0.85);
+  --glass: var(--card);
   --bento-stripe: rgb(25 25 25 / 0.35);
-  --shadow-soft: inset 0 1px 0 rgb(255 255 255 / 0.05), 0 14px 34px -18px rgb(0 0 0 / 0.6);
+  --shadow-soft: 0 1px 3px 0 rgb(0 0 0 / 0.18), 0 1px 2px -1px rgb(0 0 0 / 0.18);
   --shadow-tile: var(--shadow-soft);
   --destructive: var(--fail);
   --destructive-foreground: #191919;

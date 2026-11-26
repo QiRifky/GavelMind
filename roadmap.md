@@ -1,5 +1,10 @@
 # Landing page
 
+# Reference card presentation
+
+- [x] Adapt shared card corners, solid surfaces, and subtle shadows to the uploaded reference while preserving orange fills.
+- [x] Verify workflow pages and reports on laptop and phone, and run existing tests.
+
 # Card corners
 
 - [x] Apply the shared card radius across card surfaces, deck layers, dialogs, and the folder creation tile.

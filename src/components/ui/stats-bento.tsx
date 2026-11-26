@@ -20,7 +20,7 @@ export function StatsBento({ hero, trend, tiles }: Props) {
         </div>
         <p className="relative shrink-0 text-4xl tracking-tighter tabular-nums">{hero.value}</p>
       </div>
-      <div className="col-span-2 flex items-center justify-between gap-4 rounded-card border border-border bg-muted px-6 py-4">
+      <div className="col-span-2 flex items-center justify-between gap-4 rounded-card border border-border bg-card px-6 py-4">
         <div className="min-w-0">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">{trend.label}</p>
           <p className="mt-1 text-2xl tabular-nums text-foreground">{trend.value}</p>

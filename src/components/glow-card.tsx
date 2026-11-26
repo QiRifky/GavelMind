@@ -9,12 +9,12 @@ export const ACCENTS: Record<Accent, string> = {
   amber: "var(--glow-amber)",
 };
 
-/** Card surface: border ring, soft shadow, and a blurred panel. No mouse-following glow. */
+/** Card surface: border ring, subtle shadow, and a solid panel. No mouse-following glow. */
 export function GlowCard({ className, children, label }: { accent: Accent; className?: string; children: ReactNode; label: string }) {
   return (
     <section aria-label={label} className={cn("relative rounded-card", className)}>
       <div aria-hidden className="absolute inset-0 rounded-card bg-border shadow-[var(--shadow-tile)]" />
-      <div aria-hidden className="absolute inset-px overflow-hidden rounded-[calc(var(--card-radius)-1px)] bg-card/85 backdrop-blur-sm" />
+      <div aria-hidden className="absolute inset-px overflow-hidden rounded-[calc(var(--card-radius)-1px)] bg-card" />
       <div className="relative z-10 flex h-full flex-col p-5 sm:p-6">{children}</div>
     </section>
   );
