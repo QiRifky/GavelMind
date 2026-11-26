@@ -3,6 +3,9 @@ import { useState } from "react";
 import { exportResults, finalize, finalsOf, judgeTotal, reopen, useApi, type ExportFormat } from "@/lib/api";
 import { AiNotice, Badge, PageHead, Pill } from "@/components/ui-bits";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { WorkflowNav } from "@/components/workflow-nav";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/app/results")({
   head: () => ({ meta: [{ title: "Results — GavelMind" }, { name: "description", content: "Leaderboard ranked only by the judge's final scores, export and change log." }, { property: "og:title", content: "Results — GavelMind" }, { property: "og:description", content: "Leaderboard ranked only by the judge's final scores, export and change log." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
@@ -24,12 +27,15 @@ function Results() {
   const rows = state.projects.map((p) => ({ p, total: judgeTotal(finalsOf(p.id, state), state.criteria) }));
   const ranked = rows.filter((r) => r.total !== null).sort((a, b) => (b.total ?? 0) - (a.total ?? 0));
   const waiting = rows.filter((r) => r.total === null);
+  const nextReview = waiting.find((r) => r.p.status === "done");
   const [open, setOpen] = useState(false);
   const [winners, setWinners] = useState<Set<string>>(new Set());
 
   return (
     <>
       <PageHead eyebrow="Results" title="Ranked by your decisions only.">AI drafts never count here. A project is ranked once you've set a final score for every criterion.</PageHead>
+      <WorkflowNav current="results" />
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4"><span className="text-sm text-muted-foreground">{ranked.length}/{rows.length} projects scored · {waiting.length} awaiting review</span>{nextReview && <Button asChild variant="outline" className="rounded-full"><Link to="/app/p/$id" params={{ id: nextReview.p.id }}>Continue judging <ArrowRight /></Link></Button>}</div>
       <div className="mb-5 flex flex-wrap items-center gap-3">
         <Badge tone={state.finalized ? "good" : "accent"}>{state.finalized ? "Final" : "Draft, not final"}</Badge>
         {state.finalized ? <Pill variant="outline" onClick={reopen}>Reopen</Pill> : <Pill disabled={ranked.length === 0} onClick={() => { setWinners(new Set()); setOpen(true); }}>Finalize…</Pill>}
@@ -53,8 +59,8 @@ function Results() {
           {waiting.map((r) => (
             <li key={r.p.id} className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-2 py-3">
               <span className="w-8 font-mono text-muted-foreground">—</span>
-              <Link to="/app/p/$id" params={{ id: r.p.id }} className="min-w-0 truncate hover:text-primary">{r.p.name}</Link>
-              <span className="text-sm text-muted-foreground">Awaiting judge review</span>
+              {r.p.status === "done" ? <Link to="/app/p/$id" params={{ id: r.p.id }} className="min-w-0 truncate hover:text-primary">{r.p.name}</Link> : <Link to="/app" className="min-w-0 truncate hover:text-primary">{r.p.name}</Link>}
+              <span className="max-w-32 text-right text-xs text-muted-foreground sm:max-w-none sm:text-sm">Awaiting judge review</span>
             </li>
           ))}
         </ol>

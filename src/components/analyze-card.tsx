@@ -12,7 +12,7 @@ import { ArrowRight, RotateCcw, CheckCheck } from "lucide-react";
 type Phase = { k: "idle" } | { k: "running"; stage: AnalyzeStage } | { k: "done"; report: Report; name: string } | { k: "error"; message: string };
 
 /** Input card → activity beam while analyzing → result summary. */
-export function AnalyzeCard({ initialUrl = "", className }: { initialUrl?: string; className?: string }) {
+export function AnalyzeCard({ initialUrl = "", className, embedded = false }: { initialUrl?: string; className?: string; embedded?: boolean }) {
   const [url, setUrl] = useState(initialUrl);
   const [phase, setPhase] = useState<Phase>({ k: "idle" });
   const ctrl = useRef<AbortController | null>(null);
@@ -36,8 +36,8 @@ export function AnalyzeCard({ initialUrl = "", className }: { initialUrl?: strin
   }
 
   return (
-    <HandoffBeam phase={phase.k === "running" ? "thinking" : "idle"} className={cn("glass", className)}>
-    <section aria-label="Analyze a project" aria-live="polite" className="p-5 pb-8 sm:p-6 sm:pb-9">
+    <HandoffBeam phase={phase.k === "running" ? "thinking" : "idle"} className={cn(!embedded && "glass", className)}>
+    <section aria-label="Analyze a project" aria-live="polite" className={embedded ? "px-1 py-4" : "p-5 pb-8 sm:p-6 sm:pb-9"}>
       {phase.k === "idle" && (
         <form className="animate-in fade-in duration-300" onSubmit={(e) => { e.preventDefault(); void run(); }}>
           <label htmlFor="analyze-url" className="eyebrow font-mono">Project URL</label>

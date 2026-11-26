@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ArrowRight, Check, Link2, Plus, Sparkles, Trash2 } from "lucide-react";
 import { Badge, PageHead, Pill } from "@/components/ui-bits";
 import { Button } from "@/components/ui/button";
+import { WorkflowNav } from "@/components/workflow-nav";
 import { confirmEventRules, eventRubricSuggestions, extractEventRules, newEventRuleId, saveEvent, saveRubric, updateEventRules, useApi } from "@/lib/api";
 
 export const Route = createFileRoute("/app/event")({
@@ -34,7 +35,7 @@ function EventPage() {
   };
   return <>
     <PageHead eyebrow="Event" title="Set the ground rules.">Name the event and confirm the eligibility rules before judging starts.</PageHead>
-    <div className="mb-6 flex flex-wrap items-center gap-3 text-sm text-muted-foreground"><span className="text-primary">01 Event</span><ArrowRight className="size-4" /><Link to="/app">02 Entries</Link><ArrowRight className="size-4" /><Link to="/app/rubric">03 Rubric</Link><ArrowRight className="size-4" /><Link to="/app/results">04 Results</Link></div>
+    <WorkflowNav current="event" />
     <div role="note" className="mb-6 border-l-2 border-primary bg-accent p-4 text-sm text-accent-foreground">Mock mode · The event URL is not read. Rule drafts and rubric suggestions are examples, not extracted event requirements. Changes reset on reload.</div>
     <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
       <div className="min-w-0">
@@ -61,9 +62,8 @@ function EventPage() {
         <section><p className="eyebrow font-mono">Event source</p>{event ? <><h2 className="mt-3 break-words text-xl">{event.name}</h2><a href={event.url} target="_blank" rel="noreferrer" className="mt-3 flex items-start gap-2 break-all text-sm text-primary"><Link2 className="mt-0.5 size-4 shrink-0" />{event.url}</a></> : <p className="mt-3 text-sm text-muted-foreground">No event selected.</p>}</section>
         {event?.rules.length ? <section className="border-t border-border pt-6"><p className="eyebrow font-mono">Suggested rubric · sample</p><dl className="mt-4 space-y-3">{suggestions.map((c) => <div key={c.id} className="flex justify-between gap-3 text-sm"><dt>{c.name}</dt><dd className="font-mono text-primary">{c.weight}%</dd></div>)}</dl><Pill variant="outline" className="mt-5" onClick={() => { if (window.confirm("Replace the current rubric with these sample criteria and weights?")) setApplied(saveRubric(suggestions)); }}>Apply sample rubric</Pill>{applied && <p role="status" className="mt-3 text-sm text-pass">Rubric updated.</p>}</section> : null}
         <p className="border-t border-border pt-5 text-sm text-muted-foreground">Rules and eligibility findings are drafts for judge review. Only the judge makes the final decision.</p>
-        {event?.confirmed && <Button asChild className="rounded-full"><Link to="/app">Continue to entries <ArrowRight /></Link></Button>}
       </aside>
     </div>
-
+    <footer className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5"><Badge tone={event?.confirmed ? "good" : "neutral"}>{event?.confirmed ? "Rules confirmed by judge" : "Rules awaiting confirmation"}</Badge>{event?.confirmed && <Button asChild className="rounded-full"><Link to="/app">Continue to entries <ArrowRight /></Link></Button>}</footer>
   </>;
 }

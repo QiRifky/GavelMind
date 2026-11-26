@@ -3,6 +3,9 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { PageHead } from "@/components/ui-bits";
 import { RubricEditor } from "@/components/rubric-editor";
+import { WorkflowNav } from "@/components/workflow-nav";
+import { Button } from "@/components/ui/button";
+import { useApi } from "@/lib/api";
 
 export const Route = createFileRoute("/app/rubric")({
   head: () => ({ meta: [
@@ -13,5 +16,11 @@ export const Route = createFileRoute("/app/rubric")({
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
   ] }),
-  component: () => <div><PageHead eyebrow="Rubric" title="Decide what counts.">Set the criteria and weights you will score every project on.</PageHead><div className="mb-6 flex flex-wrap items-center gap-3 text-sm text-muted-foreground"><Link to="/app/event">01 Event</Link><ArrowRight className="size-4" /><Link to="/app">02 Entries</Link><ArrowRight className="size-4" /><span className="text-primary">03 Rubric</span><ArrowRight className="size-4" /><Link to="/app/results">04 Results</Link></div><RubricEditor /></div>,
+  component: RubricPage,
 });
+
+function RubricPage() {
+  const state = useApi();
+  const ready = state.projects.find((p) => p.status === "done");
+  return <div><PageHead eyebrow="Rubric" title="Decide what counts.">Set the criteria and weights you will score every project on.</PageHead><WorkflowNav current="rubric" /><RubricEditor /><footer className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5"><Button asChild variant="outline" className="rounded-full"><Link to="/app">Back to entries</Link></Button>{ready ? <Button asChild className="rounded-full"><Link to="/app/p/$id" params={{ id: ready.id }}>Start judging <ArrowRight /></Link></Button> : <Button asChild className="rounded-full"><Link to="/app">Add submissions <ArrowRight /></Link></Button>}</footer></div>;
+}

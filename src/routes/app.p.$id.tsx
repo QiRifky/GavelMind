@@ -68,8 +68,10 @@ function Bento({ r, criteria }: { r: Report; criteria: Criterion[] }) {
   const current = projects.findIndex((p) => p.id === r.projectId);
   const previous = projects[current - 1];
   const next = projects[current + 1];
+  const reviewed = state.projects.filter((p) => judgeTotal(finalsOf(p.id, state), criteria) !== null).length;
   return (
     <div className="mt-6 space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-y border-border py-3 text-sm"><span className="font-mono">Project {current + 1} of {projects.length}</span><span className="text-muted-foreground">{reviewed}/{state.projects.length} scored · Saved for this session{state.finalized ? " · Final" : " · Not final"}</span></div>
       <div className="grid items-stretch gap-5 lg:grid-cols-2">
         <SummaryCard r={r} />
         <RulesCard r={r} />
@@ -98,7 +100,7 @@ function Bento({ r, criteria }: { r: Report; criteria: Criterion[] }) {
         <nav aria-label="Project navigation" className="flex flex-wrap gap-2">
           {previous ? <Button asChild variant="outline" className="rounded-full"><Link to="/app/p/$id" params={{ id: previous.id }}><ArrowLeft />Previous project</Link></Button> : <Button variant="outline" className="rounded-full" disabled><ArrowLeft />Previous project</Button>}
           {next ? <Button asChild className="rounded-full"><Link to="/app/p/$id" params={{ id: next.id }}>Next project<ArrowRight /></Link></Button> : <Button variant="outline" className="rounded-full" disabled>Next project<ArrowRight /></Button>}
-          <Button asChild variant="ghost" className="rounded-full"><Link to="/app/results">Results<ArrowRight /></Link></Button>
+          <Button asChild variant="ghost" className="rounded-full"><Link to="/app/results">{reviewed === state.projects.length ? "All scored · View results" : "View draft results"}<ArrowRight /></Link></Button>
         </nav>
       </footer>
     </div>

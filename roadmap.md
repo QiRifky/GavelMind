@@ -1,5 +1,11 @@
 # Landing page
 
+# Entries and guided workflow
+
+- [x] Combine single analysis, bulk URLs, and showcase import into one persistent tabbed input.
+- [x] Add consistent step navigation and clearer judging/next-step actions without reordering pages.
+- [x] Verify all input modes, report navigation, existing tests, and phone layout.
+
 # Shiny Analyze button
 
 - [x] Adapt the supplied shiny button to the shared controls and dark palette.

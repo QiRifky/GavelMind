@@ -1,10 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowRight, FolderGit2, Github, Link2, Trash2 } from "lucide-react";
+import { ArrowRight, FolderGit2, Github, Link2, Trash2, Layers, Globe } from "lucide-react";
 import { addProjects, analyzeProject, judgeStatus, removeProject, scanShowcase, splitUrls, useApi, type AnalysisStatus, type Discovered } from "@/lib/api";
 import { AnalyzeCard } from "@/components/analyze-card";
 import { Badge, PageHead, Pill } from "@/components/ui-bits";
 import { ShinyButton } from "@/components/ui/shiny-button";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { WorkflowNav } from "@/components/workflow-nav";
 
 export const Route = createFileRoute("/app/")({
   validateSearch: (s: Record<string, unknown>): { q?: string; status?: string } => ({
@@ -30,6 +33,8 @@ function Entries() {
   const state = useApi();
   const [picked, setPicked] = useState<Set<string>>(new Set());
   const rows = state.projects;
+  const ready = rows.filter((p) => p.status === "done");
+  const nextReview = ready.find((p) => judgeStatus(p.id, state) === "Not reviewed") ?? ready[0];
   const toggle = (id: string) => setPicked((s) => { const n = new Set(s); if (n.has(id)) n.delete(id); else n.add(id); return n; });
   const analyzeSelected = () => {
     for (const id of picked) void analyzeProject(id, { stageMs: 600 }).catch(() => undefined);
@@ -39,13 +44,23 @@ function Entries() {
   return (
     <>
       <PageHead eyebrow="Entries" title={<>Add the projects. <span className="text-primary">You'll judge them.</span></>}>
-        GavelMind runs and reads each project, then prepares material and draft scores for your review.
+        Add submissions and prepare AI draft material for your review.
       </PageHead>
-      <AnalyzeCard className="mb-6" />
-      <div className="grid gap-6 lg:grid-cols-2">
-        <PasteCard />
-        <ShowcaseCard />
-      </div>
+      <WorkflowNav current="entries" />
+      <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-glass" aria-label="Add submissions">
+        <header className="flex flex-wrap items-center justify-between gap-3 px-5 pt-5 sm:px-6"><h2 className="text-lg font-medium">Add submissions</h2><Badge tone="neutral">Mock analysis</Badge></header>
+        <Tabs defaultValue="single" className="p-5 sm:p-6">
+          <TabsList aria-label="Submission input method" className="grid h-auto w-full grid-cols-3 gap-1 rounded-xl bg-well p-1.5">
+            <TabsTrigger value="single" className="min-w-0 flex-col gap-1 whitespace-normal px-1 py-3 text-xs data-[state=active]:bg-accent data-[state=active]:text-accent-foreground sm:flex-row sm:gap-2 sm:text-sm"><Github className="size-4 shrink-0" />Single Analyze</TabsTrigger>
+            <TabsTrigger value="bulk" className="min-w-0 flex-col gap-1 whitespace-normal px-1 py-3 text-xs data-[state=active]:bg-accent data-[state=active]:text-accent-foreground sm:flex-row sm:gap-2 sm:text-sm"><Layers className="size-4 shrink-0" />Bulk Repos</TabsTrigger>
+            <TabsTrigger value="showcase" className="min-w-0 flex-col gap-1 whitespace-normal px-1 py-3 text-xs data-[state=active]:bg-accent data-[state=active]:text-accent-foreground sm:flex-row sm:gap-2 sm:text-sm"><Globe className="size-4 shrink-0" />Import Showcase</TabsTrigger>
+          </TabsList>
+          <TabsContent value="single" forceMount className="mt-4 data-[state=inactive]:hidden"><AnalyzeCard embedded /></TabsContent>
+          <TabsContent value="bulk" forceMount className="mt-4 data-[state=inactive]:hidden"><PasteCard /></TabsContent>
+          <TabsContent value="showcase" forceMount className="mt-4 data-[state=inactive]:hidden"><ShowcaseCard /></TabsContent>
+        </Tabs>
+        <p className="border-t border-border px-5 py-3 text-xs leading-relaxed text-muted-foreground sm:px-6">Demo mode · Repository and showcase content are not fetched. AI drafts use sample material; changes reset on reload.</p>
+      </section>
 
       <section className="mt-6 overflow-hidden rounded-3xl border border-border bg-card shadow-glass" aria-label="Projects">
         <header className="flex items-center justify-between gap-4 border-b border-border px-5 py-5 sm:px-6">
@@ -71,10 +86,10 @@ function Entries() {
                   {p.demoUrl && <p className="mt-1 flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground"><Link2 className="size-3 shrink-0" aria-hidden="true" /><span className="truncate">{p.demoUrl}</span></p>}
                 </div>
                 <div className="col-start-2 flex flex-wrap items-center gap-2 sm:col-start-auto">
-                  <Badge tone={tone[p.status]}>{p.status === "analyzing" ? "analyzing…" : p.status}</Badge>
+                  <Badge tone={tone[p.status]}>{p.status === "done" ? "Ready to judge" : p.status === "analyzing" ? "Analyzing…" : p.status === "failed" ? "Analysis failed" : "Queued"}</Badge>
                   <Badge tone="neutral">{judgeStatus(p.id, state)}</Badge>
                   {p.status === "done" ? (
-                    <Link to="/app/p/$id" params={{ id: p.id }} className="inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-sm text-primary hover:bg-accent focus-visible:outline-2 focus-visible:outline-ring">Report <ArrowRight className="size-3.5" aria-hidden="true" /></Link>
+                    <Button asChild variant="ghost" className="h-9 rounded-full text-primary"><Link to="/app/p/$id" params={{ id: p.id }}>Review <ArrowRight className="size-3.5" aria-hidden="true" /></Link></Button>
                   ) : (
                     <Pill variant="outline" onClick={() => removeProject(p.id)} className="h-9 w-9 shrink-0 px-0 text-muted-foreground hover:text-destructive" aria-label={`Remove ${p.name}`} title={`Remove ${p.name}`}><Trash2 className="size-3.5" aria-hidden="true" /></Pill>
                   )}
@@ -88,6 +103,10 @@ function Entries() {
           <Pill size="lg" disabled={picked.size === 0} onClick={analyzeSelected}>Analyze selected <ArrowRight className="size-4" aria-hidden="true" /></Pill>
         </footer>
       </section>
+      <footer className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5">
+        <Button asChild variant="outline" className="rounded-full"><Link to="/app/rubric">Continue to rubric <ArrowRight /></Link></Button>
+        {nextReview && <Button asChild className="rounded-full"><Link to="/app/p/$id" params={{ id: nextReview.id }}>Start judging · {ready.length} ready <ArrowRight /></Link></Button>}
+      </footer>
     </>
   );
 }
@@ -96,7 +115,7 @@ function PasteCard() {
   const [text, setText] = useState("");
   const [added, setAdded] = useState<number | null>(null);
   return (
-    <section className="glass flex flex-col p-5 sm:p-6" aria-label="Paste URLs">
+    <section className="flex flex-col py-4" aria-label="Paste URLs">
       <label htmlFor="urls" className="eyebrow font-mono">Repo or project URLs</label>
       <textarea id="urls" value={text} onChange={(e) => setText(e.target.value)} rows={5}
         placeholder={"https://github.com/team/project-one\nhttps://github.com/team/project-two"}
@@ -124,14 +143,14 @@ function ShowcaseCard() {
     }
   };
   return (
-    <section className="glass p-5 sm:p-6" aria-label="Scan showcase page">
-      <label htmlFor="showcase" className="eyebrow font-mono">Scan showcase page</label>
+    <section className="py-4" aria-label="Import showcase">
+      <label htmlFor="showcase" className="eyebrow font-mono">Showcase URL</label>
       <div className="mt-3 flex flex-col gap-3 sm:flex-row">
         <input id="showcase" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://event.dev/showcase"
           className="h-10 min-w-0 sm:flex-1 rounded-full border border-border bg-well px-4 font-mono text-sm outline-hidden focus:border-primary" />
         <ShinyButton className="h-10" label={st.k === "loading" ? "Scanning…" : "Scan"} disabled={!url.trim() || st.k === "loading"} onClick={() => void scan()} />
       </div>
-      {st.k === "error" && <p className="mt-3 text-sm text-fail">{st.m} <button className="underline" onClick={() => void scan()}>Retry</button></p>}
+      {st.k === "error" && <p className="mt-3 text-sm text-fail">{st.m} <Button variant="link" className="px-2" onClick={() => void scan()}>Retry</Button></p>}
       {st.k === "loading" && <div className="mt-4 space-y-2"><div className="h-3 w-2/3 animate-pulse rounded bg-foreground/10" /><div className="h-3 w-1/2 animate-pulse rounded bg-foreground/10" /></div>}
       {st.k === "list" && (st.items.length === 0 ? <p className="mt-3 text-sm text-muted-foreground">No projects found on that page.</p> : (
         <div className="mt-4">
