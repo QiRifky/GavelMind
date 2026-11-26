@@ -46,3 +46,9 @@
 
 - [x] Replace the AI ribbon with the uploaded border-beam line animation in the existing AI blocks.
 - [x] Verify analysis, report, phone layout, and reduced motion.
+
+# Remove step bar inside folders
+
+- [x] Remove the four-step navigation from Event, Entries, Rubric, Results and the report page.
+- [x] Keep folder switching and folder deletion reachable from the folder gallery.
+- [x] Verify pages, folder create/delete, and phone layout.

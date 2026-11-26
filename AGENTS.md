@@ -44,6 +44,6 @@ use the editor.
 - AI analysis and criterion drafts use HandoffBeam as a shared adapter for border-beam line animation; override decorative colors with CSS tokens and keep idle, offscreen, hidden-tab, and reduced-motion states static to avoid judging distractions.
 - ShinyButton wraps the shared Button with token-based gleam styling and native button props so animated CTAs preserve form submission and disabled behavior.
 - Entries uses persistent Radix tabs for single analysis, bulk URLs, and showcase import; hidden panels retain state so switching modes never cancels work or loses input.
-- WorkflowNav shares the existing Event → Entries → Rubric → Results order and reads session status from the mock store; page footers link to existing next-step and completed-report views without changing scoring rules.
-- Event folders swap the whole mock workspace (event, projects, rubric, scores, results) in api.ts so events never mix; EventFolders owns create/edit event dialogs and contains WorkflowNav on every workspace step and report; global navigation shows only the active folder to keep steps scoped to that event.
+- Workspace pages carry no persistent step bar; each page's own footer links to the next step or a completed report, so the judging order Event → Entries → Rubric → Results is followed without a stepper.
+- Event folders swap the whole mock workspace (event, projects, rubric, scores, results) in api.ts so events never mix; EventDetailsDialog owns create/edit, the header shows only the active folder name and links back to the gallery, and folder deletion lives on the gallery cards.
 - /app is the event-folder gallery (open a folder → /app/event); Entries lives at /app/entries so the folder level stays separate from the workflow steps.

@@ -1,9 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { FolderPlus } from "lucide-react";
+import { FolderPlus, Trash2 } from "lucide-react";
 import { Folder3D } from "@/components/ui/folder";
-import { folderName, folderStats, switchFolder, useApi } from "@/lib/api";
+import { deleteFolder, folderName, folderStats, switchFolder, useApi } from "@/lib/api";
 import { EventDetailsDialog } from "@/components/event-details-dialog";
 import { Badge, PageHead } from "@/components/ui-bits";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/app/")({
   head: () => ({ meta: [{ title: "Event folders — Gavel Mind" }, { name: "description", content: "Pick an event folder to open its rules, entries, rubric and results." }] }),
@@ -20,16 +21,24 @@ function Folders() {
       <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
         {state.folders.map((f) => {
           const s = folderStats(f.id, state);
+          const name = folderName(f, state);
           return (
-            <button key={f.id} type="button" onClick={() => open(f.id)}
-              className="group flex flex-col items-start rounded-xl text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring">
-              <span className="transition-transform duration-300 ease-out group-hover:-translate-y-1 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0">
-                <Folder3D><span className="text-xs font-medium">{s.projects} projects</span></Folder3D>
-              </span>
-              <span className="mt-5"><Badge tone={s.finalized ? "good" : "neutral"}>{s.finalized ? "Results final" : "Draft, not final"}</Badge></span>
-              <span className="mt-3 block max-w-full truncate text-lg font-medium">{folderName(f, state)}</span>
-              <span className="mt-1 block text-sm text-muted-foreground">{s.projects} projects · {s.ready} ready · {s.confirmed ? "Rules confirmed" : "Rules not confirmed"}</span>
-            </button>
+            <div key={f.id} className="group relative flex flex-col items-start rounded-xl focus-within:outline-2 focus-within:outline-offset-4 focus-within:outline-ring">
+              <button type="button" onClick={() => open(f.id)} className="flex flex-col items-start rounded-xl text-left">
+                <span className="transition-transform duration-300 ease-out group-hover:-translate-y-1 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0">
+                  <Folder3D><span className="text-xs font-medium">{s.projects} projects</span></Folder3D>
+                </span>
+                <span className="mt-5"><Badge tone={s.finalized ? "good" : "neutral"}>{s.finalized ? "Results final" : "Draft, not final"}</Badge></span>
+                <span className="mt-3 block max-w-full truncate text-lg font-medium">{name}</span>
+                <span className="mt-1 block text-sm text-muted-foreground">{s.projects} projects · {s.ready} ready · {s.confirmed ? "Rules confirmed" : "Rules not confirmed"}</span>
+              </button>
+              {state.folders.length > 1 && (
+                <Button variant="ghost" size="icon" className="absolute -right-1 -top-1 rounded-full text-muted-foreground hover:text-destructive" aria-label={`Delete folder ${name}`} title="Delete this folder"
+                  onClick={() => { if (window.confirm(`Delete "${name}" and all its projects and scores?`)) deleteFolder(f.id); }}>
+                  <Trash2 className="size-4" aria-hidden="true" />
+                </Button>
+              )}
+            </div>
           );
         })}
         <EventDetailsDialog trigger={

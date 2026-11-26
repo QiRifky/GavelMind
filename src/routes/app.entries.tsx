@@ -7,7 +7,6 @@ import { Badge, Pill } from "@/components/ui-bits";
 import { ShinyButton } from "@/components/ui/shiny-button";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { WorkflowNav } from "@/components/workflow-nav";
 
 export const Route = createFileRoute("/app/entries")({
   validateSearch: (s: Record<string, unknown>): { q?: string; status?: string } => ({
@@ -43,7 +42,6 @@ function Entries() {
 
   return (
     <>
-      <WorkflowNav current="entries" />
       <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-glass" aria-label="Add submissions">
         <header className="flex flex-wrap items-center justify-between gap-3 px-5 pt-5 sm:px-6"><h2 className="text-lg font-medium">Add submissions</h2><Badge tone="neutral">Mock analysis</Badge></header>
         <Tabs defaultValue="single" className="p-5 sm:p-6">

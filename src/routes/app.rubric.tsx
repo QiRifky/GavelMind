@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { RubricEditor } from "@/components/rubric-editor";
-import { WorkflowNav } from "@/components/workflow-nav";
 import { Button } from "@/components/ui/button";
 import { useApi } from "@/lib/api";
 
@@ -21,5 +20,6 @@ export const Route = createFileRoute("/app/rubric")({
 function RubricPage() {
   const state = useApi();
   const ready = state.projects.find((p) => p.status === "done");
-  return <div><WorkflowNav current="rubric" /><RubricEditor /><footer className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5"><Button asChild variant="outline" className="rounded-full"><Link to="/app/entries">Back to entries</Link></Button>{ready ? <Button asChild className="rounded-full"><Link to="/app/p/$id" params={{ id: ready.id }}>Start judging <ArrowRight /></Link></Button> : <Button asChild className="rounded-full"><Link to="/app/entries">Add submissions <ArrowRight /></Link></Button>}</footer></div>;
+  return <div><RubricEditor />
+<footer className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5"><Button asChild variant="outline" className="rounded-full"><Link to="/app/entries">Back to entries</Link></Button>{ready ? <Button asChild className="rounded-full"><Link to="/app/p/$id" params={{ id: ready.id }}>Start judging <ArrowRight /></Link></Button> : <Button asChild className="rounded-full"><Link to="/app/entries">Add submissions <ArrowRight /></Link></Button>}</footer></div>;
 }
