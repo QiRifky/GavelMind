@@ -32,11 +32,12 @@ function Folders() {
             <button key={f.id} type="button" onClick={() => open(f.id)}
               className="group flex flex-col items-start rounded-xl text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring">
               <span className="transition-transform duration-300 ease-out group-hover:-translate-y-1 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0">
-                <Folder3D><span className="text-xs font-medium">{s.projects} projects</span></Folder3D>
+                <Folder3D>
+                  <Badge tone={s.finalized ? "good" : "neutral"}>{s.finalized ? "Results final" : "Draft, not final"}</Badge>
+                  <span className="block max-w-full truncate text-base font-semibold">{folderName(f, state)}</span>
+                  <span className="block max-w-full text-[11px] leading-snug text-primary-foreground/80">{s.projects} projects · {s.ready} ready · {s.confirmed ? "Rules confirmed" : "Rules not confirmed"}</span>
+                </Folder3D>
               </span>
-              <span className="mt-5"><Badge tone={s.finalized ? "good" : "neutral"}>{s.finalized ? "Results final" : "Draft, not final"}</Badge></span>
-              <span className="mt-3 block max-w-full truncate text-lg font-medium">{folderName(f, state)}</span>
-              <span className="mt-1 block text-sm text-muted-foreground">{s.projects} projects · {s.ready} ready · {s.confirmed ? "Rules confirmed" : "Rules not confirmed"}</span>
             </button>
           );
         })}

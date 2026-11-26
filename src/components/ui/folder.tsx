@@ -9,7 +9,7 @@ export function Folder3D({ children }: { children?: ReactNode }) {
       <div className={`${sheet} bg-muted-foreground/60 group-hover:[transform:rotateX(-20deg)] group-focus-visible:[transform:rotateX(-20deg)]`} />
       <div className={`${sheet} bg-muted-foreground/80 group-hover:[transform:rotateX(-30deg)] group-focus-visible:[transform:rotateX(-30deg)]`} />
       <div className={`${sheet} bg-foreground/90 group-hover:[transform:rotateX(-38deg)] group-focus-visible:[transform:rotateX(-38deg)]`} />
-      <div className="absolute bottom-0 flex h-[156px] w-full origin-bottom items-end rounded-2xl rounded-tr-none bg-linear-to-t from-primary to-primary/85 p-4 text-primary-foreground transition-transform duration-300 ease-out motion-reduce:transition-none after:absolute after:bottom-[99%] after:right-0 after:h-4 after:w-[146px] after:rounded-t-2xl after:bg-primary/85 after:content-[''] group-hover:[transform:rotateX(-46deg)_translateY(1px)] group-focus-visible:[transform:rotateX(-46deg)_translateY(1px)]">
+      <div className="absolute bottom-0 flex h-[156px] w-full origin-bottom flex-col items-start justify-end gap-1.5 rounded-2xl rounded-tr-none bg-linear-to-t from-primary to-primary/85 p-4 text-primary-foreground transition-transform duration-300 ease-out motion-reduce:transition-none after:absolute after:bottom-[99%] after:right-0 after:h-4 after:w-[146px] after:rounded-t-2xl after:bg-primary/85 after:content-[''] group-hover:[transform:rotateX(-46deg)_translateY(1px)] group-focus-visible:[transform:rotateX(-46deg)_translateY(1px)]">
         {children}
       </div>
     </div>
