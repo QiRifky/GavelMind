@@ -40,3 +40,4 @@ use the editor.
 - Report page uses the glow bento style (GlowCard glows on mouse only; accents from --glow-* vars; pass/warn/fail colors only for status).
 - Report criteria use CriterionEvaluation to colocate model evidence and judge inputs; technical material is collapsible and project navigation targets completed reports to keep judging focused.
 - Event rules live at /app/event; the scoring rubric has its own page at /app/rubric (step 3, after Entries) so each setup step stays focused.
+- Analysis-ready summaries use the reusable DonutBreakdown presentation component; ring areas show weighted AI contributions while labels retain absolute /10 scores to avoid confusing scores with percentages.

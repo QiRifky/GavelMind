@@ -1,5 +1,10 @@
 # Landing page
 
+# Analysis-ready design
+
+- [x] Replace the analysis summary with a dark interactive donut and criterion legend.
+- [x] Verify analysis completion, chart interactions, report navigation, and phone layout.
+
 - [x] Create the dark Gavel Mind landing page and original hero image.
 - [x] Connect landing buttons to existing workspace and sample report.
 - [x] Verify navigation, mobile layout, and existing tests.

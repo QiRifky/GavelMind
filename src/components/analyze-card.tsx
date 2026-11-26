@@ -4,6 +4,9 @@ import { addProjects, analyzeProject, average, draftsFor, snapshot, STAGES, type
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { Pill } from "@/components/ui-bits";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { DonutBreakdown } from "@/components/ui/donut-breakdown";
+import { ArrowRight, RotateCcw, CheckCheck } from "lucide-react";
 
 type Phase = { k: "idle" } | { k: "running"; stage: AnalyzeStage } | { k: "done"; report: Report; name: string } | { k: "error"; message: string };
 
@@ -101,18 +104,25 @@ function Result({ report, name, onAgain }: { report: Report; name: string; onAga
   const passed = report.checks.filter((c) => c.result === "pass").length;
   const w = criteria.reduce((a, c) => a + c.weight, 0) || 1;
   const draft = criteria.reduce((a, c) => a + average(draftsFor(report, c).map((d) => d.score)) * c.weight, 0) / w;
+  const segments = criteria.map((criterion) => {
+    const drafts = draftsFor(report, criterion);
+    return { id: criterion.id, label: criterion.name, score: average(drafts.map((d) => d.score)), weight: criterion.weight, reason: drafts[0]?.reason ?? "No model evidence available." };
+  });
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-      <p className="eyebrow font-mono">Analysis ready</p>
-      <h3 className="mt-2 truncate text-xl font-medium">{name}</h3>
-      <dl className="mt-4 grid grid-cols-2 gap-3">
-        <div className="rounded-2xl bg-well p-3"><dt className="text-xs text-muted-foreground">Checks passed</dt><dd className="mt-1 font-mono text-lg">{passed}/{report.checks.length}</dd></div>
-        <div className="rounded-2xl bg-well p-3"><dt className="text-xs text-muted-foreground">AI draft total (suggestion)</dt><dd className="mt-1 font-mono text-lg">{draft.toFixed(1)}<span className="text-xs text-muted-foreground"> /10</span></dd></div>
-      </dl>
-      <div className="mt-4 flex flex-wrap gap-3">
-        <Link to="/app/p/$id" params={{ id: report.projectId }} className="inline-flex h-10 items-center rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground">Open full report →</Link>
-        <Pill variant="outline" onClick={onAgain}>Analyze another</Pill>
-      </div>
+    <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 motion-reduce:animate-none">
+      <header className="mb-5 flex flex-col items-start justify-between gap-4 sm:flex-row sm:flex-wrap">
+        <div className="min-w-0 flex-1"><p className="eyebrow font-mono">Analysis ready</p><h3 className="mt-2 break-words text-xl font-medium">{name}</h3><p className="mt-2 text-sm text-muted-foreground">AI draft score breakdown</p></div>
+        <span className="inline-flex items-center gap-2 rounded-full border border-border px-3 py-2 text-xs text-muted-foreground"><CheckCheck className="size-4" /><span><span className="font-mono text-foreground">{passed}/{report.checks.length}</span> checks passed · mock</span></span>
+      </header>
+      <DonutBreakdown data={segments} total={draft} />
+      <p className="mt-4 text-xs text-muted-foreground">Chart segments show weighted contributions to the AI draft total.</p>
+      <footer className="mt-5 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5">
+        <p className="max-w-md text-xs leading-relaxed text-muted-foreground">AI scores are suggestions to help you decide. The final decision is yours.</p>
+        <div className="flex flex-wrap gap-3">
+          <Button asChild className="h-10 rounded-full px-5"><Link to="/app/p/$id" params={{ id: report.projectId }}>Open full report <ArrowRight /></Link></Button>
+          <Button variant="outline" className="h-10 rounded-full px-5" onClick={onAgain}><RotateCcw />Analyze another</Button>
+        </div>
+      </footer>
     </div>
   );
 }
