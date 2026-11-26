@@ -36,18 +36,6 @@ function ReportPage() {
   return (
     <>
       <WorkflowNav current="judging" />
-      <header className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-3 sm:flex sm:items-end sm:justify-between">
-        <div className="min-w-0">
-          <h1 className="break-words text-2xl sm:text-3xl">{project.name}</h1>
-          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
-            <a href={project.repoUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline">Repository ↗</a>
-            {project.demoUrl && <a href={project.demoUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline">Demo ↗</a>}
-          </div>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Badge tone="neutral">{judgeStatus(id, state)}</Badge>
-        </div>
-      </header>
       {load.k === "loading" && <div className="glass mt-6 p-6"><CardState kind="loading" /></div>}
       {load.k === "error" && <div className="glass mt-6 p-6"><CardState kind="error">{load.m}</CardState><Button variant="outline" className="mt-3 rounded-full" onClick={() => setTick((t) => t + 1)}>Retry</Button></div>}
       {report && <Bento key={project.id} r={report} criteria={state.criteria} />}
@@ -57,6 +45,7 @@ function ReportPage() {
 
 function Bento({ r, criteria }: { r: Report; criteria: Criterion[] }) {
   const state = useApi();
+  const project = state.projects.find((p) => p.id === r.projectId);
   const finals = finalsOf(r.projectId, state);
   const decided = criteria.filter((c) => finals[c.id] !== undefined).length;
   const total = judgeTotal(finals, criteria);
@@ -75,6 +64,20 @@ function Bento({ r, criteria }: { r: Report; criteria: Criterion[] }) {
         <div role="progressbar" aria-label="Review progress" aria-valuemin={0} aria-valuemax={criteria.length || 1} aria-valuenow={decided} className="flex h-1.5 gap-1.5">
           {criteria.map((c) => <span key={c.id} className={cn("flex-1 rounded-full", finals[c.id] !== undefined ? "bg-primary" : "bg-secondary")} />)}
         </div>
+        {project && (
+          <div className="flex flex-wrap items-end justify-between gap-3 pt-1">
+            <div className="min-w-0">
+              <h1 className="break-words text-2xl sm:text-3xl">{project.name}</h1>
+              <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
+                <a href={project.repoUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline">Repository ↗</a>
+                {project.demoUrl && <a href={project.demoUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline">Demo ↗</a>}
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Badge tone="neutral">{judgeStatus(r.projectId, state)}</Badge>
+            </div>
+          </div>
+        )}
       </div>
       <div className="grid gap-5 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
       <ContextDeck r={r} />
