@@ -37,7 +37,7 @@ use the editor.
 - The root shell uses pathname-based styling for the full-bleed landing page while always rendering Outlet, so workspace layouts stay unchanged.
 - AI model names come from Report.models in api.ts, never hard-coded in components.
 - App theme is dark (#191919 base); every color is a CSS variable in the :root block of src/styles.css — no hex in components, so palette changes touch one place.
-- Report page uses the glow bento style (GlowCard glows on mouse only; accents from --glow-* vars; pass/warn/fail colors only for status).
+- Report page uses the glow bento style (GlowCard has no mouse-following glow; accents from --glow-* vars; pass/warn/fail colors only for status).
 - Report criteria use CriterionEvaluation to colocate model evidence and judge inputs; technical material is collapsible and project navigation targets completed reports to keep judging focused.
 - Event rules live at /app/event; the scoring rubric has its own page at /app/rubric (step 3, after Entries) so each setup step stays focused.
 - Analysis-ready summaries use the reusable DonutBreakdown presentation component; ring areas show weighted AI contributions while labels retain absolute /10 scores to avoid confusing scores with percentages.
