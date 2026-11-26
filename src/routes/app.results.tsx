@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { exportResults, finalize, finalsOf, judgeTotal, reopen, useApi, type ExportFormat } from "@/lib/api";
-import { AiNotice, Badge, Pill } from "@/components/ui-bits";
+import { Badge, Pill } from "@/components/ui-bits";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { StatsBento } from "@/components/ui/stats-bento";
 import { StepBody, WorkflowNav } from "@/components/workflow-nav";
@@ -45,7 +45,6 @@ function Results() {
           {(["csv", "json", "md"] as const).map((f) => <Pill key={f} variant="outline" onClick={() => download(f)}>{f === "md" ? "Markdown" : f.toUpperCase()}</Pill>)}
         </div>
       </div>
-      <AiNotice />
       <div className="mt-4"><StatsBento hero={{ badge: "Reviewed", value: `${ranked.length}/${rows.length}`, caption: "Ranked by judge final scores only" }} trend={{ label: "Judge totals", value: ranked[0]?.total?.toFixed(2) ?? "—", bars: ranked.map((r) => r.total ?? 0) }} tiles={[{ label: "Awaiting", value: waiting.length }, { label: "Edits logged", value: state.log.length }]} /></div>
 
       <div className="mt-4 grid gap-4 lg:min-h-0 lg:flex-1 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
