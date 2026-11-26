@@ -1,7 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, FolderGit2, Github, Link2, Trash2, Layers, Globe } from "lucide-react";
-import { addProjects, analyzeProject, judgeStatus, removeProject, scanShowcase, splitUrls, useApi, type Discovered } from "@/lib/api";
+import { addProjects, analyzeProject, removeProject, scanShowcase, splitUrls, useApi, type Discovered } from "@/lib/api";
 import { AnalyzeCard } from "@/components/analyze-card";
 import { Badge, Pill } from "@/components/ui-bits";
 import { ShinyButton } from "@/components/ui/shiny-button";
@@ -33,7 +33,6 @@ function Entries() {
   const [picked, setPicked] = useState<Set<string>>(new Set());
   const rows = state.projects;
   const ready = rows.filter((p) => p.status === "done");
-  const nextReview = ready.find((p) => judgeStatus(p.id, state) === "Not reviewed") ?? ready[0];
   const toggle = (id: string) => setPicked((s) => { const n = new Set(s); if (n.has(id)) n.delete(id); else n.add(id); return n; });
   const selectable = rows.filter((p) => p.status !== "analyzing");
   const allPicked = selectable.length > 0 && selectable.every((p) => picked.has(p.id));
@@ -107,10 +106,6 @@ function Entries() {
           <Pill size="lg" disabled={picked.size === 0} onClick={analyzeSelected}>Analyze selected <ArrowRight className="size-4" aria-hidden="true" /></Pill>
         </footer>
       </section>
-      <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-4 lg:col-span-2">
-        <Button asChild variant="outline" className="rounded-full"><Link to="/app/rubric">Back to rubric</Link></Button>
-        {nextReview && <Button asChild className="rounded-full"><Link to="/app/p/$id" params={{ id: nextReview.id }}>Start judging · {ready.length} ready <ArrowRight /></Link></Button>}
-      </footer>
       </StepBody>
     </>
   );
