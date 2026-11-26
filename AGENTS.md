@@ -39,12 +39,12 @@ use the editor.
 - App theme is dark (#191919 base); every color is a CSS variable in the :root block of src/styles.css — no hex in components, so palette changes touch one place.
 - Report page uses the glow bento style (GlowCard has no mouse-following glow; accents from --glow-* vars; pass/warn/fail colors only for status).
 - Report criteria use CriterionDeck to show one CriterionEvaluation over layered back cards; inactive forms stay mounted but hidden to preserve notes and evidence state, while criterion navigation remains separate from project navigation.
-- Event rules live at /app/event; the scoring rubric has its own page at /app/rubric (step 3, after Entries) so each setup step stays focused.
+- Event rules live at /app/event; the scoring rubric has its own page at /app/rubric (step 2, before Entries) so each setup step stays focused.
 - Analysis-ready summaries use the reusable DonutBreakdown presentation component; ring areas show weighted AI contributions while labels retain absolute /10 scores to avoid confusing scores with percentages.
 - AI analysis and criterion drafts use HandoffBeam as a shared adapter for border-beam line animation; override decorative colors with CSS tokens and keep idle, offscreen, hidden-tab, and reduced-motion states static to avoid judging distractions.
 - ShinyButton wraps the shared Button with token-based gleam styling and native button props so animated CTAs preserve form submission and disabled behavior.
 - Entries uses persistent Radix tabs for single analysis, bulk URLs, and showcase import; hidden panels retain state so switching modes never cancels work or loses input.
-- WorkflowNav shares the existing Event → Entries → Rubric → Results order and reads session status from the mock store; page footers link to existing next-step and completed-report views without changing scoring rules.
+- WorkflowNav shares the existing Event → Rubric → Entries → Results order and reads session status from the mock store; page footers link to existing next-step and completed-report views without changing scoring rules.
 - Event folders swap the whole mock workspace (event, projects, rubric, scores, results) in api.ts so events never mix; EventFolders owns create/edit event dialogs and contains WorkflowNav on every workspace step and report; global navigation shows only the active folder to keep steps scoped to that event.
 - /app is the event-folder gallery (open a folder → /app/event); Entries lives at /app/entries so the folder level stays separate from the workflow steps.
 - The top bar (Gavel Mind brand + active-folder pill) is hidden only on the four workflow-step paths (/app/event, /app/entries, /app/rubric, /app/results) via WORKSPACE_STEP_PATHS in src/routes/__root.tsx, because WorkflowNav already shows the location; every other page keeps the top bar.

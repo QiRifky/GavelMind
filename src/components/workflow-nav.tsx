@@ -13,8 +13,8 @@ export function WorkflowNav({ current }: { current: Step }) {
   const ready = state.projects.filter((p) => p.status === "done").length;
   const steps = [
     { id: "event", to: "/app/event", label: "Event", status: state.event?.confirmed ? "Rules confirmed" : "Rules pending", done: Boolean(state.event?.confirmed) },
-    { id: "entries", to: "/app/entries", label: "Entries", status: `${ready}/${state.projects.length} ready`, done: state.projects.length > 0 && ready === state.projects.length },
     { id: "rubric", to: "/app/rubric", label: "Rubric", status: `${weightTotal(state.criteria)}% saved weight`, done: false },
+    { id: "entries", to: "/app/entries", label: "Entries", status: `${ready}/${state.projects.length} ready`, done: state.projects.length > 0 && ready === state.projects.length },
     { id: "results", to: "/app/results", label: "Results", status: state.finalized ? "Final" : "Draft, not final", done: state.finalized },
   ] as const;
   return (

@@ -104,7 +104,7 @@ function Entries() {
         </footer>
       </section>
       <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-4 lg:col-span-2">
-        <Button asChild variant="outline" className="rounded-full"><Link to="/app/rubric">Continue to rubric <ArrowRight /></Link></Button>
+        <Button asChild variant="outline" className="rounded-full"><Link to="/app/rubric">Back to rubric</Link></Button>
         {nextReview && <Button asChild className="rounded-full"><Link to="/app/p/$id" params={{ id: nextReview.id }}>Start judging · {ready.length} ready <ArrowRight /></Link></Button>}
       </footer>
       </StepBody>
