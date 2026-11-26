@@ -82,10 +82,7 @@ function Bento({ r, criteria }: { r: Report; criteria: Criterion[] }) {
         {materialOpen && <div id="technical-material" className="mt-3"><MaterialCard r={r} /></div>}
       </section>
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
-      <div className="grid gap-5">
-        <SummaryCard r={r} />
-        <RulesCard r={r} />
-      </div>
+      <ContextDeck r={r} />
       <section aria-label="Criterion evaluations" className="min-w-0 space-y-5">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div><p className="font-mono text-xs uppercase text-primary">Judging workspace</p><h2 className="mt-2 text-2xl font-medium">Your evaluation</h2></div>
@@ -108,6 +105,25 @@ function Bento({ r, criteria }: { r: Report; criteria: Criterion[] }) {
         </nav>
       </footer>
     </div>
+  );
+}
+
+function ContextDeck({ r }: { r: Report }) {
+  const [tab, setTab] = useState<"summary" | "rules">("summary");
+  const tabs = [{ id: "summary", label: "Summary" }, { id: "rules", label: "Rules check" }] as const;
+  return (
+    <section aria-label="Project context" className="min-w-0 space-y-4">
+      <div role="tablist" aria-label="Context cards" className="flex flex-wrap gap-2">
+        {tabs.map((t) => (
+          <Button key={t.id} type="button" role="tab" aria-selected={tab === t.id} variant={tab === t.id ? "default" : "outline"} className="rounded-full" onClick={() => setTab(t.id)}>{t.label}</Button>
+        ))}
+      </div>
+      <div className="relative isolate pb-4" aria-roledescription="card deck">
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-2.5 top-0 bottom-0 rounded-card border border-border bg-secondary shadow-glass sm:inset-x-5" />
+        <div role="tabpanel" hidden={tab !== "summary"} className="criterion-deck-front relative z-10 rounded-card bg-card"><SummaryCard r={r} /></div>
+        <div role="tabpanel" hidden={tab !== "rules"} className="criterion-deck-front relative z-10 rounded-card bg-card"><RulesCard r={r} /></div>
+      </div>
+    </section>
   );
 }
 
