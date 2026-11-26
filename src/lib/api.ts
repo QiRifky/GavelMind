@@ -156,6 +156,16 @@ const seed: Project[] = [
   { id: "p3", name: "ada-team/receipt-ninja", repoUrl: "https://github.com/ada-team/receipt-ninja", demoUrl: "https://youtu.be/receipt-ninja", status: "done" },
   { id: "p4", name: "nightowls/standup-bot", repoUrl: "https://github.com/nightowls/standup-bot", status: "queued" },
 ];
+/** Criteria the judge can pick from in the rubric editor; "Custom name…" opens a text field. */
+export const CRITERION_PRESETS: { name: string; hint: string }[] = [
+  { name: "Creativity", hint: "Originality of the idea" },
+  { name: "Usefulness", hint: "Practical impact for real users" },
+  { name: "Technical quality", hint: "Architecture, code and reliability" },
+  { name: "Demo clarity", hint: "How well the demo communicates the product" },
+  { name: "UI/UX design", hint: "Interface quality and ease of use" },
+  { name: "Innovation", hint: "Novelty of the approach" },
+  { name: "Business viability", hint: "Market potential and sustainability" },
+];
 const DEFAULT_CRITERIA: Criterion[] = [
   { id: "c1", name: "Creativity", weight: 25 },
   { id: "c2", name: "Usefulness", weight: 25 },

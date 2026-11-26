@@ -1,17 +1,23 @@
 import { useEffect, useState } from "react";
-import { canSaveRubric, finalsOf, judgeTotal, newCriterionId, saveRubric, useApi, weightTotal, type Criterion } from "@/lib/api";
+import { CRITERION_PRESETS, canSaveRubric, finalsOf, judgeTotal, newCriterionId, saveRubric, useApi, weightTotal, type Criterion } from "@/lib/api";
 import { StatsBento } from "@/components/ui/stats-bento";
 import { Pill } from "@/components/ui-bits";
+import { Select, SelectContent, SelectItem, SelectSeparator, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const CUSTOM = "__custom__";
+const PRESET_NAMES = CRITERION_PRESETS.map((p) => p.name);
 
 export function RubricEditor() {
   const state = useApi();
   const [draft, setDraft] = useState<Criterion[]>(state.criteria);
+  const [customIds, setCustomIds] = useState<Record<string, boolean>>({});
   const [saved, setSaved] = useState(false);
   useEffect(() => { setDraft(state.criteria); }, [state.criteria]);
   const total = weightTotal(draft);
   const ok = canSaveRubric(draft);
   const dirty = JSON.stringify(draft) !== JSON.stringify(state.criteria);
   const edit = (id: string, patch: Partial<Criterion>) => { setSaved(false); setDraft((d) => d.map((c) => (c.id === id ? { ...c, ...patch } : c))); };
+  const isCustom = (c: Criterion) => customIds[c.id] === true || (c.name.trim() !== "" && !PRESET_NAMES.includes(c.name));
   const withFinals = state.projects.filter((p) => Object.keys(finalsOf(p.id, state)).length > 0);
   const [pid, setPid] = useState(withFinals[0]?.id ?? "");
   const finals = finalsOf(pid, state);
@@ -25,21 +31,44 @@ export function RubricEditor() {
         <section className="bento p-5 sm:p-6" aria-label="Criteria">
           {draft.length === 0 && <p className="mb-4 text-sm text-muted-foreground">No criteria. Add one to start.</p>}
           <ul className="space-y-4">
-            {draft.map((c) => (
-              <li key={c.id} className="rounded-card bg-well p-4">
-                <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
-                  <input aria-label="Criterion name" value={c.name} onChange={(e) => edit(c.id, { name: e.target.value })} className="h-10 min-w-0 rounded-xl border border-border bg-transparent px-3 outline-hidden focus:border-primary" />
-                  <button aria-label={`Remove ${c.name}`} onClick={() => { setSaved(false); setDraft((d) => d.filter((x) => x.id !== c.id)); }} className="rounded-full px-3 py-1 text-sm text-muted-foreground hover:text-destructive">Remove</button>
-                </div>
-                <div className="mt-3 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
-                  <input type="range" min={0} max={100} step={5} value={c.weight} aria-label={`${c.name} weight`} onChange={(e) => edit(c.id, { weight: Number(e.target.value) })} className="w-full accent-(--brand)" />
-                  <span className="w-12 text-right font-mono text-sm">{c.weight}%</span>
-                </div>
-              </li>
-            ))}
+            {draft.map((c) => {
+              const custom = isCustom(c);
+              return (
+                <li key={c.id} className="rounded-card bg-well p-4">
+                  <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+                    {custom ? (
+                      <div className="flex min-w-0 items-center gap-2">
+                        <input autoFocus aria-label="Criterion name" placeholder="Type a criterion name" value={c.name} onChange={(e) => edit(c.id, { name: e.target.value })} className="h-10 min-w-0 flex-1 rounded-xl border border-border bg-transparent px-3 outline-hidden focus:border-primary" />
+                        <button type="button" onClick={() => { setCustomIds((m) => ({ ...m, [c.id]: false })); edit(c.id, { name: "" }); }} className="shrink-0 rounded-full px-3 py-1 text-sm text-muted-foreground hover:text-foreground">Choose from list</button>
+                      </div>
+                    ) : (
+                      <Select value={c.name} onValueChange={(v) => { if (v === CUSTOM) { setCustomIds((m) => ({ ...m, [c.id]: true })); edit(c.id, { name: "" }); } else { edit(c.id, { name: v }); } }}>
+                        <SelectTrigger aria-label="Criterion" className="h-10 w-full rounded-xl border-border bg-transparent px-3 text-sm data-[placeholder]:text-muted-foreground focus-visible:border-primary">
+                          <SelectValue placeholder="Choose a criterion…" />
+                        </SelectTrigger>
+                        <SelectContent className="border-border">
+                          {CRITERION_PRESETS.map((p) => (
+                            <SelectItem key={p.name} value={p.name} title={p.hint} disabled={draft.some((o) => o.id !== c.id && o.name === p.name)}>
+                              {p.name}
+                            </SelectItem>
+                          ))}
+                          <SelectSeparator />
+                          <SelectItem value={CUSTOM}>Custom name…</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                    <button aria-label={`Remove ${c.name || "criterion"}`} onClick={() => { setSaved(false); setDraft((d) => d.filter((x) => x.id !== c.id)); }} className="rounded-full px-3 py-1 text-sm text-muted-foreground hover:text-destructive">Remove</button>
+                  </div>
+                  <div className="mt-3 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+                    <input type="range" min={0} max={100} step={5} value={c.weight} aria-label={`${c.name || "Unnamed criterion"} weight`} onChange={(e) => edit(c.id, { weight: Number(e.target.value) })} className="w-full accent-(--brand)" />
+                    <span className="w-12 text-right font-mono text-sm">{c.weight}%</span>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
           <div className="mt-5 flex flex-wrap items-center gap-3">
-            <Pill variant="outline" onClick={() => { setSaved(false); setDraft((d) => [...d, { id: newCriterionId(), name: "New criterion", weight: 0 }]); }}>Add criterion</Pill>
+            <Pill variant="outline" onClick={() => { setSaved(false); setDraft((d) => [...d, { id: newCriterionId(), name: "", weight: 0 }]); }}>Add criterion</Pill>
             <Pill disabled={!ok || !dirty} onClick={() => { if (saveRubric(draft)) setSaved(true); }}>Save rubric</Pill>
             <span className={`font-mono text-sm ${total === 100 ? "text-pass" : "text-warn"}`}>Total {total}%</span>
             {saved && !dirty && <span className="text-sm text-muted-foreground">Saved.</span>}
@@ -50,7 +79,7 @@ export function RubricEditor() {
           <p className="eyebrow font-mono">Live preview</p>
           <p className="mt-1 text-sm text-muted-foreground">Weight distribution</p>
           <div className="mt-3 flex h-3 w-full overflow-hidden rounded-full bg-well">{draft.map((c, i) => <div key={c.id} style={{ width: `${Math.min(c.weight, 100)}%`, opacity: 1 - i * 0.15 }} className="h-full bg-primary border-r border-background last:border-r-0" />)}</div>
-          <ul className="mt-4 space-y-2">{draft.map((c) => <li key={c.id} className="grid grid-cols-[minmax(0,1fr)_auto] gap-3 text-sm"><span className="truncate">{c.name}</span><span className="font-mono text-primary">{c.weight}%</span></li>)}</ul>
+          <ul className="mt-4 space-y-2">{draft.map((c) => <li key={c.id} className="grid grid-cols-[minmax(0,1fr)_auto] gap-3 text-sm"><span className="truncate">{c.name || "Untitled criterion"}</span><span className="font-mono text-primary">{c.weight}%</span></li>)}</ul>
           <p className={`mt-3 font-mono text-sm ${total === 100 ? "text-pass" : "text-warn"}`}>{draft.length} criteria · Total {total}%</p>
           {withFinals.length === 0 ? <p className="mt-4 border-t border-border pt-4 text-xs text-muted-foreground">Once you score projects, compare their totals before and after weight edits here.</p> : (
             <div className="mt-4 border-t border-border pt-4">
