@@ -17,6 +17,9 @@ import { Button } from "@/components/ui/button";
 import { folderName, useApi } from "@/lib/api";
 import { FolderOpen, ArrowUpRight } from "lucide-react";
 
+/** Workflow steps inside an event folder: the top bar is hidden there, the step nav already shows the location. */
+const WORKSPACE_STEP_PATHS = ["/app/event", "/app/entries", "/app/rubric", "/app/results"];
+
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -128,12 +131,14 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const isLanding = useRouterState({ select: (s) => s.location.pathname === "/" });
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isLanding = pathname === "/";
+  const hideNav = WORKSPACE_STEP_PATHS.includes(pathname);
 
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Nav />
+      {!hideNav && <Nav />}
       <main className={isLanding ? "" : "mx-auto max-w-6xl px-4 pb-20 pt-8 sm:px-6 sm:pt-12"}>
         <Outlet />
       </main>
