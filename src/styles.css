@@ -94,8 +94,20 @@
   --cosmic-stars: #ffffff, #e0f2fe, #fdf4ff, #fbcfe8, #bae6fd;
   --cosmic-trail: 255 255 255;
   /* Horizon glow: kept dim so the lower part of the screen stays calm. */
-  --cosmic-glow: radial-gradient(ellipse at 50% 100%, rgba(224, 102, 70, 0.45) 0%, rgba(199, 81, 58, 0.34) 20%, rgba(67, 142, 145, 0.22) 42%, rgba(20, 48, 70, 0.12) 60%, transparent 80%);
-  --cosmic-glow-soft: radial-gradient(ellipse at 50% 100%, rgba(255, 170, 110, 0.26) 0%, rgba(94, 219, 210, 0.17) 30%, transparent 65%);
+  --cosmic-glow: radial-gradient(
+    ellipse at 50% 100%,
+    rgba(224, 102, 70, 0.45) 0%,
+    rgba(199, 81, 58, 0.34) 20%,
+    rgba(67, 142, 145, 0.22) 42%,
+    rgba(20, 48, 70, 0.12) 60%,
+    transparent 80%
+  );
+  --cosmic-glow-soft: radial-gradient(
+    ellipse at 50% 100%,
+    rgba(255, 170, 110, 0.26) 0%,
+    rgba(94, 219, 210, 0.17) 30%,
+    transparent 65%
+  );
   color-scheme: dark;
   /* Palette: the single source of truth. Change colors here only. */
   --page: #191919;
@@ -104,7 +116,7 @@
   --well: rgb(8 8 8 / 0.08);
   --ink: #f5f3ee;
   --grey: #a39f98;
-  --line: rgb(255 255 255 / 0.10);
+  --line: rgb(255 255 255 / 0.1);
   --brand: #ff7a2f;
   --pass: #34d399;
   --warn: #fbbf24;
@@ -122,9 +134,9 @@
   --grid-line: rgb(255 255 255 / 0.08);
   --chart-grid: rgb(255 255 255 / 0.06);
   /* Glass dashboard treatment: dark translucent layers with warm rim lighting. */
-  --glass-rim: rgb(255 240 224 / 0.20);
+  --glass-rim: rgb(255 240 224 / 0.2);
   --glass-edge-light: rgb(255 248 238 / 0.13);
-  --glass-edge-shade: rgb(0 0 0 / 0.20);
+  --glass-edge-shade: rgb(0 0 0 / 0.2);
   --glass-gloss: rgb(255 244 231 / 0.05);
   --glass-frame: rgb(36 36 36 / 0.13);
   --glass-rail: rgb(30 30 30 / 0.22);
@@ -155,7 +167,9 @@
   --accent-brand: var(--brand);
   --glass: var(--glass-card);
   --bento-stripe: rgb(25 25 25 / 0.35);
-  --shadow-soft: inset 1px 1px 1px var(--glass-edge-light), inset -1px -1px 1px var(--glass-edge-shade), 0 7px 22px rgb(0 0 0 / 0.16);
+  --shadow-soft:
+    inset 1px 1px 1px var(--glass-edge-light), inset -1px -1px 1px var(--glass-edge-shade),
+    0 7px 22px rgb(0 0 0 / 0.16);
   --shadow-tile: var(--shadow-soft);
   --destructive: var(--fail);
   --destructive-foreground: #191919;
@@ -180,21 +194,50 @@
   --sidebar-ring: var(--brand);
 }
 
-.handoff-beam { position: relative; isolation: isolate; min-width: 0; overflow: hidden; }
-.handoff-beam > [data-beam] { width: 100%; }
+.handoff-beam {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  overflow: hidden;
+}
+.handoff-beam > [data-beam] {
+  width: 100%;
+}
 
-.criterion-deck-front:not([hidden]) { animation: criterion-deck-enter 220ms ease-out; }
+.criterion-deck-front:not([hidden]) {
+  animation: criterion-deck-enter 220ms ease-out;
+}
 @keyframes criterion-deck-enter {
-  from { opacity: 0.65; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0.65;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .criterion-deck-front:not([hidden]) { animation: none; }
+  .criterion-deck-front:not([hidden]) {
+    animation: none;
+  }
 }
 
-@property --gleam-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
-@property --gleam-offset { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
-@property --gleam-percent { syntax: "<percentage>"; initial-value: 5%; inherits: false; }
+@property --gleam-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+@property --gleam-offset {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+@property --gleam-percent {
+  syntax: "<percentage>";
+  initial-value: 5%;
+  inherits: false;
+}
 .shiny-button {
   --gleam-percent: var(--gleam-arc);
   --gleam-animation: gleam-edge;
@@ -205,15 +248,25 @@
   border: 1px solid transparent;
   border-radius: var(--gleam-radius);
   color: var(--gleam-label);
-  background: linear-gradient(var(--gleam-base), var(--gleam-base)) padding-box,
-    conic-gradient(from calc(var(--gleam-angle) - var(--gleam-offset)), transparent,
-      var(--gleam-accent) var(--gleam-percent), var(--gleam-soft) calc(var(--gleam-percent) * 2),
-      var(--gleam-accent) calc(var(--gleam-percent) * 3), transparent calc(var(--gleam-percent) * 4)) border-box;
+  background:
+    linear-gradient(var(--gleam-base), var(--gleam-base)) padding-box,
+    conic-gradient(
+        from calc(var(--gleam-angle) - var(--gleam-offset)),
+        transparent,
+        var(--gleam-accent) var(--gleam-percent),
+        var(--gleam-soft) calc(var(--gleam-percent) * 2),
+        var(--gleam-accent) calc(var(--gleam-percent) * 3),
+        transparent calc(var(--gleam-percent) * 4)
+      )
+      border-box;
   box-shadow: inset 0 0 0 1px var(--surface-2);
-  transition: --gleam-offset var(--gleam-ease) cubic-bezier(0.25, 1, 0.5, 1),
+  transition:
+    --gleam-offset var(--gleam-ease) cubic-bezier(0.25, 1, 0.5, 1),
     --gleam-percent var(--gleam-ease) cubic-bezier(0.25, 1, 0.5, 1);
 }
-.shiny-button::before, .shiny-button::after, .shiny-button-label::before {
+.shiny-button::before,
+.shiny-button::after,
+.shiny-button-label::before {
   content: "";
   pointer-events: none;
   position: absolute;
@@ -229,7 +282,12 @@
   background: radial-gradient(circle at 2px 2px, var(--foreground) 0.5px, transparent 0);
   background-size: 4px 4px;
   background-repeat: space;
-  mask-image: conic-gradient(from calc(var(--gleam-angle) + 45deg), var(--foreground), transparent 10% 90%, var(--foreground));
+  mask-image: conic-gradient(
+    from calc(var(--gleam-angle) + 45deg),
+    var(--foreground),
+    transparent 10% 90%,
+    var(--foreground)
+  );
   opacity: var(--gleam-speckle);
 }
 .shiny-button::after {
@@ -240,7 +298,9 @@
   mask-image: radial-gradient(circle at bottom, transparent 40%, var(--foreground));
   opacity: var(--gleam-sheen);
 }
-.shiny-button-label { z-index: 1; }
+.shiny-button-label {
+  z-index: 1;
+}
 .shiny-button-label::before {
   width: calc(100% + 1rem);
   height: calc(100% + 1rem);
@@ -249,26 +309,65 @@
   transition: opacity var(--gleam-ease);
   animation: gleam-breathe calc(var(--gleam-duration) * 1.5) linear infinite;
 }
-.shiny-button, .shiny-button::before, .shiny-button::after {
-  animation: var(--gleam-animation) var(--gleam-duration) linear infinite,
+.shiny-button,
+.shiny-button::before,
+.shiny-button::after {
+  animation:
+    var(--gleam-animation) var(--gleam-duration) linear infinite,
     var(--gleam-animation) calc(var(--gleam-duration) / 0.4) linear infinite reverse paused;
   animation-composition: add;
 }
-.shiny-button:is(:hover, :focus-visible) { --gleam-percent: 20%; --gleam-offset: 95deg; }
+.shiny-button:is(:hover, :focus-visible) {
+  --gleam-percent: 20%;
+  --gleam-offset: 95deg;
+}
 .shiny-button:is(:hover, :focus-visible),
 .shiny-button:is(:hover, :focus-visible)::before,
-.shiny-button:is(:hover, :focus-visible)::after { animation-play-state: running; }
-.shiny-button:is(:hover, :focus-visible) .shiny-button-label::before { opacity: 1; }
-.shiny-button:active { transform: translateY(1px); }
-.shiny-button:disabled, .shiny-button:disabled::before, .shiny-button:disabled::after,
-.shiny-button:disabled .shiny-button-label::before { animation-play-state: paused; }
-@keyframes gleam-edge { to { --gleam-angle: 360deg; } }
-@keyframes gleam-shimmer { to { rotate: 360deg; } }
-@keyframes gleam-breathe { 0%, 100% { scale: 1; } 50% { scale: 1.2; } }
+.shiny-button:is(:hover, :focus-visible)::after {
+  animation-play-state: running;
+}
+.shiny-button:is(:hover, :focus-visible) .shiny-button-label::before {
+  opacity: 1;
+}
+.shiny-button:active {
+  transform: translateY(1px);
+}
+.shiny-button:disabled,
+.shiny-button:disabled::before,
+.shiny-button:disabled::after,
+.shiny-button:disabled .shiny-button-label::before {
+  animation-play-state: paused;
+}
+@keyframes gleam-edge {
+  to {
+    --gleam-angle: 360deg;
+  }
+}
+@keyframes gleam-shimmer {
+  to {
+    rotate: 360deg;
+  }
+}
+@keyframes gleam-breathe {
+  0%,
+  100% {
+    scale: 1;
+  }
+  50% {
+    scale: 1.2;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
-  .shiny-button, .shiny-button::before, .shiny-button::after,
-  .shiny-button-label::before { animation: none; transition: none; }
-  .shiny-button-label::before { display: none; }
+  .shiny-button,
+  .shiny-button::before,
+  .shiny-button::after,
+  .shiny-button-label::before {
+    animation: none;
+    transition: none;
+  }
+  .shiny-button-label::before {
+    display: none;
+  }
 }
 
 .dark {
@@ -340,7 +439,9 @@ body {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
   background-size: 52px 52px;
   mask-image: linear-gradient(to bottom, black, transparent 78%);
   opacity: 0;
@@ -354,15 +455,21 @@ body {
 }
 @utility glass-nav {
   border: 1px solid var(--glass-rim);
-  background: linear-gradient(165deg, var(--glass-gloss), transparent 32% 73%, var(--glass-gloss)), var(--glass-rail);
+  background:
+    linear-gradient(165deg, var(--glass-gloss), transparent 32% 73%, var(--glass-gloss)),
+    var(--glass-rail);
   box-shadow: var(--shadow-soft);
   backdrop-filter: blur(calc(16px * var(--blur-scale, 0))) saturate(1.25);
 }
 @utility workspace-stage {
   border: 1px solid var(--glass-rim);
   border-radius: var(--card-radius);
-  background: linear-gradient(148deg, var(--glass-gloss), transparent 22% 76%, var(--glass-card-light)), var(--glass-frame);
-  box-shadow: var(--shadow-soft), 0 22px 70px rgb(0 0 0 / 0.18);
+  background:
+    linear-gradient(148deg, var(--glass-gloss), transparent 22% 76%, var(--glass-card-light)),
+    var(--glass-frame);
+  box-shadow:
+    var(--shadow-soft),
+    0 22px 70px rgb(0 0 0 / 0.18);
   backdrop-filter: blur(calc(12px * var(--blur-scale, 0))) saturate(1.12);
 }
 @utility glass {
@@ -380,50 +487,128 @@ body {
   color: var(--accent-brand);
 }
 
-@keyframes ring-fill { from { stroke-dashoffset: 88; } to { stroke-dashoffset: 0; } }
-@utility animate-ring { animation: ring-fill 900ms ease-out both; }
+@keyframes ring-fill {
+  from {
+    stroke-dashoffset: 88;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@utility animate-ring {
+  animation: ring-fill 900ms ease-out both;
+}
 
 /* Analyze orb */
-@keyframes orb-breathe { 0%, 100% { transform: scale(0.94); opacity: 0.75; } 50% { transform: scale(1.04); opacity: 1; } }
-@keyframes orb-spin { to { transform: rotate(360deg); } }
-@utility animate-orb-breathe { animation: orb-breathe 3.2s ease-in-out infinite; }
-@utility animate-orb-spin { animation: orb-spin 6s linear infinite; }
+@keyframes orb-breathe {
+  0%,
+  100% {
+    transform: scale(0.94);
+    opacity: 0.75;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 1;
+  }
+}
+@keyframes orb-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@utility animate-orb-breathe {
+  animation: orb-breathe 3.2s ease-in-out infinite;
+}
+@utility animate-orb-spin {
+  animation: orb-spin 6s linear infinite;
+}
 
 /* Landing page stays full bleed; the workspace keeps its existing constrained shell. */
-.landing-page { letter-spacing: 0; }
-.landing-hero { min-height: 590px; }
-.landing-hero-inner { padding-top: 76px; padding-bottom: 66px; }
-.landing-hero-image { object-position: center; mix-blend-mode: screen; mask-image: radial-gradient(ellipse 70% 80% at 70% 50%, black 35%, transparent 80%); }
+.landing-page {
+  letter-spacing: 0;
+}
+.landing-hero {
+  min-height: 590px;
+}
+.landing-hero-inner {
+  padding-top: 76px;
+  padding-bottom: 66px;
+}
+.landing-hero-image {
+  object-position: center;
+  mix-blend-mode: screen;
+  mask-image: radial-gradient(ellipse 70% 80% at 70% 50%, black 35%, transparent 80%);
+}
 @media (min-width: 1600px) {
-  .landing-hero-image { object-fit: contain; object-position: right center; }
+  .landing-hero-image {
+    object-fit: contain;
+    object-position: right center;
+  }
 }
 @media (max-width: 767px) {
-  .landing-hero { min-height: 510px; }
-  .landing-hero-inner { padding-top: 44px; padding-bottom: 38px; }
-  .landing-hero-image { opacity: 0.2; object-position: 68% center; }
+  .landing-hero {
+    min-height: 510px;
+  }
+  .landing-hero-inner {
+    padding-top: 44px;
+    padding-bottom: 38px;
+  }
+  .landing-hero-image {
+    opacity: 0.2;
+    object-position: 68% center;
+  }
 }
 @utility bento {
   border: 1px solid var(--glass-rim);
   border-radius: var(--card-radius);
-  background: linear-gradient(144deg, var(--glass-card-light), transparent 66%), var(--glass-nested);
+  background:
+    linear-gradient(144deg, var(--glass-card-light), transparent 66%), var(--glass-nested);
   box-shadow: var(--shadow-soft);
   backdrop-filter: blur(calc(17px * var(--blur-scale, 0))) saturate(1.25);
 }
 @utility bento-stripes {
-  background-image: repeating-linear-gradient(45deg, var(--bento-stripe) 0 1px, transparent 1px 10px);
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--bento-stripe) 0 1px,
+    transparent 1px 10px
+  );
   mask-image: radial-gradient(ellipse 80% 70% at 100% 0%, #000 60%, transparent 110%);
 }
+/* Floating workspace capsule: same darkness and blur as the scrolled landing pill, always on. */
+.nav-float {
+  backdrop-filter: blur(calc(7px * var(--blur-scale, 0))) saturate(1.2);
+  background:
+    linear-gradient(165deg, var(--glass-gloss), transparent 32% 73%, var(--glass-gloss)),
+    var(--nav-float-bg);
+}
 @media (prefers-reduced-transparency: reduce), (prefers-contrast: more), (forced-colors: active) {
-  .glass, .glass-panel, .glass-nav, .workspace-stage, .bento {
+  .glass,
+  .glass-panel,
+  .glass-nav,
+  .nav-float,
+  .workspace-stage,
+  .bento {
     background: var(--card);
     backdrop-filter: none;
   }
-  .workspace-main::before { display: none; }
+  .workspace-main::before {
+    display: none;
+  }
 }
 
 /* Card blur level chosen in the display control (BlurControl). */
-:root { --blur-scale: 0; }
+:root {
+  --blur-scale: 0;
+  --nav-float-bg: rgb(20 20 20 / 0.68);
+}
 /* Landing navbar: lighter blur than the workspace glass, still scaled by the user's blur setting. */
-.landing-nav { backdrop-filter: blur(calc(7px * var(--blur-scale, 0))) saturate(1.2); transition: background 200ms ease; }
+.landing-nav {
+  backdrop-filter: blur(calc(7px * var(--blur-scale, 0))) saturate(1.2);
+  transition: background 200ms ease;
+}
 /* Scrolled: darken the pill just enough to separate it from page text — never solid. */
-.landing-nav-scrolled { background: linear-gradient(165deg, var(--glass-gloss), transparent 32% 73%, var(--glass-gloss)), rgb(20 20 20 / 0.68); }
+.landing-nav-scrolled {
+  background:
+    linear-gradient(165deg, var(--glass-gloss), transparent 32% 73%, var(--glass-gloss)),
+    var(--nav-float-bg);
+}
