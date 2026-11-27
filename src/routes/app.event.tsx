@@ -4,9 +4,8 @@ import { ArrowRight, Check, Link2, Plus, Sparkles, Trash2 } from "lucide-react";
 import { Badge, Pill } from "@/components/ui-bits";
 import { Button } from "@/components/ui/button";
 import { EventDetailsDialog } from "@/components/event-details-dialog";
-import { StatsBento } from "@/components/ui/stats-bento";
 import { StepBody, WorkflowNav } from "@/components/workflow-nav";
-import { confirmEventRules, eventRubricSuggestions, extractEventRules, newEventRuleId, saveRubric, updateEventRules, useApi } from "@/lib/api";
+import { confirmEventRules, extractEventRules, newEventRuleId, updateEventRules, useApi } from "@/lib/api";
 
 export const Route = createFileRoute("/app/event")({
   head: () => ({ meta: [
@@ -20,12 +19,9 @@ export const Route = createFileRoute("/app/event")({
 });
 
 function EventPage() {
-  const { event, projects } = useApi();
-  const active = event?.rules.filter((r) => r.enabled).length ?? 0;
+  const { event } = useApi();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const [applied, setApplied] = useState(false);
-  const suggestions = eventRubricSuggestions();
   const input = "h-11 w-full min-w-0 rounded-xl border border-border bg-well px-3 text-sm focus-visible:outline-2 focus-visible:outline-ring";
   const extract = async () => {
     setError(""); setBusy(true);
@@ -36,8 +32,6 @@ function EventPage() {
   return <>
     <WorkflowNav current="event" />
     <StepBody className="flex flex-col gap-4">
-    <div role="note" className="mb-4 shrink-0 border-l-2 border-primary bg-accent px-4 py-2 text-xs text-accent-foreground">Mock mode · The event URL is not read. Rule drafts and rubric suggestions are examples, not extracted event requirements. Changes reset on reload.</div>
-    <StatsBento hero={{ badge: "Active rules", value: active, caption: event?.name ?? "No event yet" }} trend={{ label: "Suggested rubric", value: `${suggestions.length} criteria`, bars: suggestions.map((c) => c.weight) }} tiles={[{ label: event?.confirmed ? "Confirmed" : "Draft", value: event?.confirmed ? "✓" : "—" }, { label: "Projects", value: projects.length }]} />
     <div className="grid gap-4 lg:min-h-0 lg:flex-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
       <section aria-label="Event details" className="flex min-w-0 flex-col bento ">
         <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4"><p className="eyebrow font-mono">Event details</p><EventDetailsDialog key={event?.name ?? "empty"} edit /></header>
@@ -46,8 +40,6 @@ function EventPage() {
           <div className="flex flex-wrap items-center gap-3"><Pill disabled={busy || !event} onClick={() => void extract()}><Sparkles className="size-4" />{busy ? "Preparing sample rules…" : "Prepare sample rule draft"}</Pill>{event && <Badge tone={event.confirmed ? "good" : "accent"}>{event.confirmed ? "Confirmed by judge" : "Draft, not final"}</Badge>}</div>
           {error && <p role="alert" className="text-sm text-fail">{error}</p>}
         </div>
-        {event?.rules.length ? <div className="border-t border-border px-5 py-5"><p className="eyebrow font-mono">Suggested rubric · sample</p><dl className="mt-4 space-y-3">{suggestions.map((c) => <div key={c.id} className="flex justify-between gap-3 text-sm"><dt>{c.name}</dt><dd className="font-mono text-primary">{c.weight}%</dd></div>)}</dl><Pill variant="outline" className="mt-5" onClick={() => { if (window.confirm("Replace the current rubric with these sample criteria and weights?")) setApplied(saveRubric(suggestions)); }}>Apply sample rubric</Pill>{applied && <p role="status" className="mt-3 text-sm text-pass">Rubric updated.</p>}</div> : null}
-        <p className="mt-auto border-t border-border px-5 py-4 text-xs leading-relaxed text-muted-foreground">Rules and eligibility findings are drafts for judge review. Only the judge makes the final decision.</p>
       </section>
       <section aria-label="Eligibility rules" className="flex min-w-0 flex-col bento  lg:min-h-0">
         <header className="flex items-center justify-between gap-3 border-b border-border px-5 py-4"><h2 className="text-lg">Eligibility rules</h2><span className="font-mono text-xs text-muted-foreground">{event?.rules.filter((r) => r.enabled).length ?? 0} active</span></header>
