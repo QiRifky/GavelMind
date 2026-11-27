@@ -100,7 +100,7 @@
   --page: #191919;
   --surface: #222222;
   --surface-2: #2a2a2a;
-  --well: rgb(8 8 8 / 0.12);
+  --well: rgb(8 8 8 / 0.08);
   --ink: #f5f3ee;
   --grey: #a39f98;
   --line: rgb(255 255 255 / 0.10);
@@ -125,13 +125,13 @@
   --glass-edge-light: rgb(255 248 238 / 0.13);
   --glass-edge-shade: rgb(0 0 0 / 0.20);
   --glass-gloss: rgb(255 244 231 / 0.05);
-  --glass-frame: rgb(36 36 36 / 0.22);
-  --glass-rail: rgb(30 30 30 / 0.38);
-  --glass-card: rgb(38 38 38 / 0.30);
-  --glass-card-light: rgb(255 244 232 / 0.05);
-  --glass-nested: rgb(38 38 38 / 0.16);
-  --glass-raised: rgb(64 61 58 / 0.26);
-  --glass-inner: rgb(255 255 255 / 0.03);
+  --glass-frame: rgb(36 36 36 / 0.13);
+  --glass-rail: rgb(30 30 30 / 0.22);
+  --glass-card: rgb(38 38 38 / 0.18);
+  --glass-card-light: rgb(255 244 232 / 0.035);
+  --glass-nested: rgb(38 38 38 / 0.09);
+  --glass-raised: rgb(64 61 58 / 0.16);
+  --glass-inner: rgb(255 255 255 / 0.02);
 
   --radius: 1.25rem;
   --card-radius: 8px;
