@@ -76,7 +76,7 @@ function LandingPage() {
         <div><div className="mb-3 flex items-center gap-2 text-xs text-primary"><SlidersHorizontal className="size-4" /> YOUR RUBRIC. YOUR CALL.</div><h2 className="text-3xl">The next great project is waiting.</h2></div>
         <Button asChild size="lg" className="h-12 w-fit rounded-full"><Link to="/app">Start reviewing <ArrowRight /></Link></Button>
       </section>
-      <footer className="border-t border-border"><div className="flex flex-wrap items-center justify-between gap-4 px-5 py-6 text-xs text-muted-foreground sm:px-6"><Link to="/" className="text-sm text-foreground">Gavel Mind<span className="text-primary">.</span></Link><span>AI assists. Humans decide.</span><Link to="/app" className="hover:text-foreground">Enter workspace ↗</Link></div></footer>
+      <footer className="border-t border-border"><div className="flex flex-wrap items-center justify-between gap-4 px-5 py-6 text-xs text-muted-foreground sm:px-6"><Link to="/" className="text-sm text-foreground">GavelMind<span className="text-primary">.</span></Link><span>AI assists. Humans decide.</span><Link to="/app" className="hover:text-foreground">Enter workspace ↗</Link></div></footer>
     </div>
   );
 }
