@@ -84,7 +84,7 @@ export function CosmicBackground() {
       <canvas ref={canvasRef} className="absolute inset-0" />
       <div className="absolute -bottom-48 left-1/2 h-[480px] w-[160vw] max-w-[1900px] -translate-x-1/2 sm:-bottom-56 sm:h-[550px] md:-bottom-64 md:h-[620px]">
         <div className="size-full rounded-[100%] blur-[32px]" style={{ background: "var(--cosmic-glow)" }} />
-        <div className="absolute inset-0 rounded-[100%] opacity-40 mix-blend-screen blur-[48px]" style={{ background: "var(--cosmic-glow-soft)" }} />
+        <div className="absolute inset-0 rounded-[100%] opacity-25 mix-blend-screen blur-[48px]" style={{ background: "var(--cosmic-glow-soft)" }} />
       </div>
     </div>
   );
