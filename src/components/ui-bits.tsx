@@ -20,10 +20,10 @@ export function Pill({ variant = "primary", size = "md", className, ...p }: Reac
 
 export function PageHead({ eyebrow, title, children }: { eyebrow: string; title: ReactNode; children?: ReactNode }) {
   return (
-    <header className="mb-8">
+    <header className="mb-5">
       <p className="eyebrow flex items-center gap-2"><span className="size-1.5 rounded-full bg-primary" />{eyebrow}</p>
-      <h1 className="mt-3 text-[clamp(2rem,1rem+2.6vw,3.2rem)] font-normal leading-[1.05] tracking-[-0.035em]">{title}</h1>
-      {children && <div className="mt-3 max-w-2xl text-muted-foreground">{children}</div>}
+      <h1 className="mt-2 text-[clamp(2rem,1rem+2.6vw,3.2rem)] font-normal leading-[1.05] tracking-[-0.035em]">{title}</h1>
+      {children && <div className="mt-2 max-w-2xl text-muted-foreground">{children}</div>}
     </header>
   );
 }

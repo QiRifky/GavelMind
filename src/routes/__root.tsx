@@ -144,7 +144,7 @@ function RootComponent() {
       {!isLanding && <CosmicBackground />}
       <div className={isLanding ? "" : "flex min-h-dvh flex-col"}>
         {!hideNav && <Nav />}
-        <main className={isLanding ? "" : `flex flex-1 flex-col ${hideNav ? "px-4 pb-4 pt-4 sm:px-6" : "px-4 pb-4 pt-8 sm:px-6 sm:pt-12"} ${isWorkspace ? "workspace-main" : ""}`}>
+        <main className={isLanding ? "" : `flex flex-1 flex-col ${hideNav ? "px-4 pb-4 pt-2 sm:px-6 sm:pt-3" : "px-4 pb-4 pt-2 sm:px-6 sm:pt-4"} ${isWorkspace ? "workspace-main" : ""}`}>
           <Outlet />
         </main>
       </div>
