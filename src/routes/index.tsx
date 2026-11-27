@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, ArrowUpRight, FileSearch, GitBranch, Gavel, SlidersHorizontal, Sparkles, Check, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { average, draftsFor, useApi } from "@/lib/api";
-import hero from "@/assets/judging-hero.png.asset.json";
+const heroUrl = "/images/judging-hero.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -24,7 +24,7 @@ function LandingPage() {
   return (
     <div className="landing-page">
       <section className="landing-hero relative isolate overflow-hidden">
-        <img src={hero.url} alt="A titanium and amber glass judge's gavel on a charcoal sound block" className="landing-hero-image pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover" fetchPriority="high" />
+        <img src={heroUrl} alt="A titanium and amber glass judge's gavel on a charcoal sound block" className="landing-hero-image pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover" fetchPriority="high" />
         <div className="landing-hero-inner px-5 sm:px-6">
           <p className="flex items-center gap-2 text-xs font-medium text-accent-foreground"><span className="size-1.5 rounded-full bg-primary" /> THE HACKATHON JUDGING WORKSPACE</p>
           <h1 className="mt-6 text-5xl font-medium leading-none sm:text-7xl">GavelMind<span className="text-primary">.</span></h1>
