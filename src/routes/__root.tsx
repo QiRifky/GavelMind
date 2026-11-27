@@ -122,7 +122,7 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         {/* Apply the saved card-blur level before first paint so cards never flash back to the default. */}
-        <script dangerouslySetInnerHTML={{ __html: `try{var r=localStorage.getItem("gavelmind-card-blur-pct");if(r!==null){var v=Number(r);if(Number.isFinite(v)){var s=String(Math.min(100,Math.max(0,v))/50);document.documentElement.style.setProperty("--blur-scale",s);document.documentElement.style.setProperty("--landing-blur-scale",s);}}}catch(e){}` }} />
+        <script dangerouslySetInnerHTML={{ __html: `try{var r=localStorage.getItem("gavelmind-card-blur-pct");if(r!==null){var v=Number(r);if(Number.isFinite(v)){document.documentElement.style.setProperty("--blur-scale",String(Math.min(100,Math.max(0,v))/50));}}}catch(e){}` }} />
         <HeadContent />
       </head>
       <body>

@@ -22,7 +22,6 @@ export function writeBlurPct(pct: number) {
 /** Paint the chosen level onto the glass utilities. */
 export function applyBlur(pct: number) {
   document.documentElement.style.setProperty("--blur-scale", String(blurScale(pct)));
-  document.documentElement.style.setProperty("--landing-blur-scale", String(blurScale(pct)));
 }
 
 /** Display control: a volume-style slider for how strongly glass cards blur the background. */
