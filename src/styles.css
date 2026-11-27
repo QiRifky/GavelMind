@@ -143,6 +143,8 @@
   --popover: var(--surface-2);
   --popover-foreground: var(--ink);
   --primary: var(--brand);
+  --podium-silver: #c9ced6;
+  --podium-bronze: #c98a5a;
   --primary-foreground: #191919;
   --secondary: var(--surface-2);
   --secondary-foreground: var(--ink);
