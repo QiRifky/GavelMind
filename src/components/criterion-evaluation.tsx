@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, ChevronDown, Eraser, Scale } from "lucide-react";
+import { Check, ChevronDown, Eraser, Scale, Star, StarHalf } from "lucide-react";
 import { agreement, average, draftsFor, saveJudgeScore, useApi, type Criterion, type Report } from "@/lib/api";
 import { GlowCard } from "@/components/glow-card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ export function CriterionEvaluation({ report, criterion, index }: { report: Repo
   const value = state.judge[report.projectId]?.[criterion.id];
   const [note, setNote] = useState(value?.note ?? "");
   const [expanded, setExpanded] = useState(false);
+  const [hoverScore, setHoverScore] = useState<number | null>(null);
   const drafts = draftsFor(report, criterion);
   const draft = average(drafts.map((d) => d.score));
   const agreed = agreement(drafts.map((d) => d.score));
@@ -48,6 +49,23 @@ export function CriterionEvaluation({ report, criterion, index }: { report: Repo
         </HandoffBeam>
         <div className="min-w-0 border-t border-border pt-5">
           <label htmlFor={`s-${criterion.id}`} className="flex items-center gap-2 text-sm font-medium"><Scale className="size-4 text-primary" />Judge's decision</label>
+          <div className="mt-3 grid grid-cols-10 gap-0.5" role="group" aria-label={`${criterion.name} star rating`} onMouseLeave={() => setHoverScore(null)}>
+            {Array.from({ length: 10 }, (_, i) => {
+              const score = i + 1;
+              const displayedScore = hoverScore ?? value?.score ?? 0;
+              const filled = displayedScore >= score;
+              const half = !filled && displayedScore >= score - 0.5;
+              const Icon = half ? StarHalf : Star;
+              return <Button key={score} type="button" variant="ghost" size="icon"
+                className={`h-10 w-full rounded-full p-0 [&_svg]:size-5 ${filled || half ? "text-primary hover:text-primary" : "text-muted-foreground hover:text-primary"}`}
+                aria-label={`${criterion.name}: ${score} out of 10`} aria-pressed={value?.score === score}
+                title={`${score}/10`} disabled={state.finalized}
+                onMouseEnter={() => setHoverScore(score)}
+                onClick={() => saveJudgeScore(report.projectId, criterion.id, { score })}>
+                <Icon className={filled || half ? "fill-current" : "fill-none"} aria-hidden="true" />
+              </Button>;
+            })}
+          </div>
           <div className="relative mt-3">
             <input id={`s-${criterion.id}`} aria-label={`${criterion.name} final score`} type="number" min={0} max={10} step={0.5} disabled={state.finalized} value={value?.score ?? ""} placeholder="—"
               onChange={(e) => saveJudgeScore(report.projectId, criterion.id, { score: e.target.value === "" ? null : Number(e.target.value) })}
