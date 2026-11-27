@@ -553,9 +553,10 @@ body {
     padding-top: 44px;
     padding-bottom: 38px;
   }
-  /* Phones: the gavel picture is dropped entirely. */
+  /* Phones: the gavel picture stays visible, just softer so the text above it stays readable. */
   .landing-hero-image {
-    display: none;
+    opacity: 0.55;
+    object-position: 62% 42%;
   }
 }
 @utility bento {
