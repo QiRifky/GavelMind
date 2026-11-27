@@ -5,7 +5,6 @@ import { AnimatePresence, MotionConfig, motion } from "motion/react";
 import { Check, ChevronDown, ExternalLink, FolderOpen, Menu, Trash2, X } from "lucide-react";
 import { deleteFolder, folderName, folderStats, judgeStatus, switchFolder, useApi, weightTotal } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import logo from "@/assets/gavel-logo.png.asset.json";
 
 type Step = "event" | "entries" | "rubric" | "judging" | "results";
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -46,8 +45,7 @@ export function WorkflowNav({ current }: { current: Step }) {
     <MotionConfig reducedMotion="user">
       <motion.div ref={ref} layout transition={{ duration: 0.35, ease: EASE }} className="glass-nav relative z-20 mb-4 overflow-hidden rounded-3xl">
         <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-6">
-          <Link to="/" className="flex shrink-0 items-center gap-2 text-lg font-medium">
-            <img src={logo.url} alt="" aria-hidden className="size-6 object-contain" />
+          <Link to="/" aria-label="GavelMind home" className="flex shrink-0 items-center gap-2 text-lg font-medium">
             <span className="hidden sm:inline">GavelMind<span className="-ml-0.5 text-primary">.</span></span>
           </Link>
 
