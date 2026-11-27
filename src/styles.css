@@ -424,4 +424,4 @@ body {
 /* Card blur level chosen in the display control (BlurControl). */
 :root { --blur-scale: 0; }
 /* Landing navbar: lighter blur than the workspace glass, still scaled by the user's blur setting. */
-.landing-nav { backdrop-filter: blur(calc(3px * var(--blur-scale, 0))) saturate(1.15); }
+.landing-nav { backdrop-filter: blur(calc(6px * var(--blur-scale, 0))) saturate(1.2); }
