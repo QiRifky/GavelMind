@@ -17,12 +17,12 @@ function Folders() {
   return (
     <div className="workspace-stage flex-1 p-5 sm:p-7">
       <PageHead eyebrow="Event folders" title="Choose an event.">Each folder keeps its own rules, entries, rubric and results.</PageHead>
-      <div className="grid grid-cols-[repeat(auto-fill,15rem)] gap-x-6 gap-y-8">
+      <div className="grid grid-cols-[repeat(auto-fill,11rem)] gap-x-4 gap-y-6">
         <EventDetailsDialog trigger={
           <button type="button" className="group flex h-full flex-col items-start rounded-xl text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring">
-            <span className="glass-panel flex h-40 w-60 flex-col items-center justify-center gap-4 border-dashed text-muted-foreground transition-colors group-hover:border-primary group-hover:text-primary motion-reduce:transition-none">
-              <FolderPlus className="size-16" aria-hidden="true" />
-              <span className="text-sm font-medium text-primary">New event folder</span>
+            <span className="glass-panel flex h-28 w-44 flex-col items-center justify-center gap-2 border-dashed text-muted-foreground transition-colors group-hover:border-primary group-hover:text-primary motion-reduce:transition-none">
+              <FolderPlus className="size-9" aria-hidden="true" />
+              <span className="text-xs font-medium text-primary">New event folder</span>
             </span>
           </button>
         } />
@@ -34,8 +34,8 @@ function Folders() {
               <span className="transition-transform duration-300 ease-out group-hover:-translate-y-1 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0">
                 <Folder3D>
                   <Badge tone={s.finalized ? "good" : "neutral"}>{s.finalized ? "Results final" : "Draft, not final"}</Badge>
-                  <span className="block max-w-full truncate text-base font-semibold">{folderName(f, state)}</span>
-                  <span className="block max-w-full text-[11px] leading-snug text-primary-foreground/80">{s.projects} projects · {s.ready} ready · {s.confirmed ? "Rules confirmed" : "Rules not confirmed"}</span>
+                  <span className="block max-w-full truncate text-sm font-semibold">{folderName(f, state)}</span>
+                  <span className="block max-w-full text-[10px] leading-snug text-primary-foreground/80">{s.projects} projects · {s.ready} ready · {s.confirmed ? "Rules confirmed" : "Rules not confirmed"}</span>
                 </Folder3D>
               </span>
             </button>
