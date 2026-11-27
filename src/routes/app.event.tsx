@@ -18,7 +18,7 @@ export const Route = createFileRoute("/app/event")({
   component: EventPage,
 });
 
-function EventPage() {
+export function EventPage() {
   const { event } = useApi();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -54,7 +54,7 @@ function EventPage() {
         {event && <div className="flex flex-wrap gap-3 border-t border-border px-5 py-4"><Pill variant="outline" disabled={busy} onClick={() => updateEventRules([...event.rules, { id: newEventRuleId(), label: "", enabled: true }])}><Plus className="size-4" />Add rule</Pill><Pill disabled={busy || event.confirmed || !event.rules.some((r) => r.enabled) || event.rules.some((r) => r.enabled && !r.label.trim())} onClick={() => confirmEventRules()}><Check className="size-4" />Confirm rules</Pill></div>}
       </section>
     </div>
-    <footer className="mt-4 flex shrink-0 flex-wrap items-center justify-between gap-4 border-t border-border pt-4"><Badge tone={event?.confirmed ? "good" : "neutral"}>{event?.confirmed ? "Rules confirmed by judge" : "Rules awaiting confirmation"}</Badge>{event?.confirmed && <Button asChild className="rounded-full"><Link to="/app/rubric">Continue to rubric <ArrowRight /></Link></Button>}</footer>
+    <footer className="mt-4 flex shrink-0 flex-wrap items-center justify-between gap-4 border-t border-border pt-4"><Badge tone={event?.confirmed ? "good" : "neutral"}>{event?.confirmed ? "Rules confirmed by judge" : "Rules awaiting confirmation"}</Badge><Button asChild variant={event?.confirmed ? "default" : "outline"} className="rounded-full"><Link to="/app/rubric">{event?.confirmed ? "Continue to rubric" : "Go to rubric"} <ArrowRight /></Link></Button></footer>
     </StepBody>
   </>;
 }
