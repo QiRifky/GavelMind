@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ChevronRight, Search, ArrowRight, ArrowUpRight, FileSearch, GitBranch, Gavel, SlidersHorizontal, Sparkles, Check, ShieldCheck } from "lucide-react";
+import { ArrowRight, ArrowUpRight, FileSearch, GitBranch, Gavel, SlidersHorizontal, Sparkles, Check, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { average, draftsFor, useApi } from "@/lib/api";
+import hero from "@/assets/judging-hero.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -22,37 +23,19 @@ function LandingPage() {
 
   return (
     <div className="landing-page">
-      <section className="relative flex w-full flex-col items-center border-b border-border">
-        <main className="z-10 flex w-full max-w-[1000px] flex-col items-center px-6 pt-24 text-center md:pt-32">
-          <Link to="/app" className="group mb-8 flex items-center gap-2 rounded-full border border-glass-rim bg-glass-inner py-1.5 pl-1.5 pr-3 text-xs font-medium text-muted-foreground backdrop-blur-md transition-colors hover:bg-glass-raised">
-            <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-primary-foreground">Demo</span>
-            <span>The hackathon judging workspace</span>
-            <ChevronRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
-          </Link>
-          <h1 className="mb-6 max-w-4xl text-balance text-5xl font-medium tracking-tighter sm:text-7xl lg:text-8xl">
-            AI prepares. <br className="hidden sm:block" />
-            <span className="text-muted-foreground">You decide<span className="text-primary">.</span></span>
-          </h1>
-          <p className="mx-auto mb-10 max-w-[600px] text-balance text-base leading-relaxed text-muted-foreground sm:text-lg">From repository to review. Project material, evidence, and draft scores in one place — with the final call always yours.</p>
-          <div className="flex w-full flex-col items-center justify-center gap-4 sm:flex-row">
-            <Button asChild size="lg" className="h-11 w-full rounded-full px-6 sm:w-auto"><Link to="/app">Open workspace <ArrowRight /></Link></Button>
-            {project && <Button asChild variant="outline" size="lg" className="h-11 w-full rounded-full px-6 sm:w-auto"><Link to="/app/p/$id" params={{ id: project.id }}>Explore a sample report <ArrowUpRight /></Link></Button>}
+      <section className="landing-hero relative isolate overflow-hidden">
+        <img src={hero.url} alt="A titanium and amber glass judge's gavel on a charcoal sound block" className="landing-hero-image absolute inset-0 -z-10 h-full w-full object-cover" fetchPriority="high" />
+        <div className="landing-hero-inner px-5 sm:px-6">
+          <p className="flex items-center gap-2 text-xs font-medium text-accent-foreground"><span className="size-1.5 rounded-full bg-primary" /> THE HACKATHON JUDGING WORKSPACE</p>
+          <h1 className="mt-6 text-5xl font-medium leading-none sm:text-7xl">GavelMind<span className="text-primary">.</span></h1>
+          <h2 className="mt-6 text-3xl font-normal leading-tight sm:text-4xl">AI prepares.<br /><span className="text-muted-foreground">You decide.</span></h2>
+          <p className="mt-5 max-w-sm text-sm leading-7 text-muted-foreground sm:text-base">From repository to review. Project material, evidence, and draft scores in one place — with the final call always yours.</p>
+          <div className="mt-7 flex flex-wrap items-center gap-3">
+            <Button asChild size="lg" className="h-12 rounded-full px-6"><Link to="/app">Open workspace <ArrowRight /></Link></Button>
+            {project && <Button asChild variant="ghost" className="h-12 rounded-full px-4"><Link to="/app/p/$id" params={{ id: project.id }}>Explore a sample report <ArrowUpRight /></Link></Button>}
           </div>
           <p className="mt-4 text-xs text-muted-foreground">Interactive demo · No sign-up · Sample data</p>
-          <div className="glass-panel mt-16 w-full max-w-4xl overflow-hidden rounded-b-none border-b-0">
-            <div className="flex items-center gap-4 border-b border-border bg-glass-inner px-4 py-3">
-              <div className="flex gap-1.5"><span className="size-2.5 rounded-full bg-glass-raised" /><span className="size-2.5 rounded-full bg-glass-raised" /><span className="size-2.5 rounded-full bg-glass-raised" /></div>
-              <div className="mx-auto flex h-7 w-full max-w-md min-w-0 items-center gap-2 rounded-full border border-border bg-well px-2.5 text-xs text-muted-foreground">
-                <Search className="size-3.5 shrink-0" /><span className="truncate">Search projects, criteria, or evidence…</span>
-              </div>
-            </div>
-            <div className="h-56 w-full p-6 text-left font-mono text-sm leading-relaxed text-muted-foreground">
-              <div className="flex items-center gap-2"><span className="text-primary">~</span><span className="truncate">analyze {project?.name ?? "project"}</span></div>
-              <div className="mt-4 opacity-70"><p>✔ Cloning repository…</p><p>✔ Running in sandbox…</p><p>✔ Checking rules…</p><p>✔ Drafting scores…</p></div>
-              <div className="mt-4 flex items-center gap-2"><span className="size-2 animate-pulse rounded-full bg-primary motion-reduce:animate-none" /><span className="text-foreground">Ready for the judge's decision.</span></div>
-            </div>
-          </div>
-        </main>
+        </div>
       </section>
 
       <div className="border-y border-border bg-card/40">
