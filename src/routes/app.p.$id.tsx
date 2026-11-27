@@ -67,7 +67,8 @@ function Bento({ r, criteria }: { r: Report; criteria: Criterion[] }) {
         {project && (
           <div className="flex flex-wrap items-end justify-between gap-3 pt-1">
             <div className="min-w-0">
-              <h1 className="break-words text-lg sm:text-[22px]">{project.name}</h1>
+              <p className="eyebrow flex items-center gap-2"><span className="size-1.5 rounded-full bg-primary" />Project name</p>
+              <h1 className="mt-1.5 break-words text-lg sm:text-[22px]">{project.name}</h1>
               <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
                 <a href={project.repoUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline">Repository ↗</a>
                 {project.demoUrl && <a href={project.demoUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline">Demo ↗</a>}
