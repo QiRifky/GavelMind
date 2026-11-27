@@ -150,12 +150,6 @@ export const average = (xs: number[]) => (xs.length ? Math.round((xs.reduce((a, 
 export const agreement = (xs: number[]) => xs.length > 0 && Math.max(...xs) - Math.min(...xs) <= 1;
 
 // ---------- Store ----------
-const seed: Project[] = [
-  { id: "p1", name: "lumen-labs/plantpal", repoUrl: "https://github.com/lumen-labs/plantpal", demoUrl: "https://youtu.be/plantpal-demo", status: "done" },
-  { id: "p2", name: "quietbyte/transit-whisper", repoUrl: "https://github.com/quietbyte/transit-whisper", status: "done" },
-  { id: "p3", name: "ada-team/receipt-ninja", repoUrl: "https://github.com/ada-team/receipt-ninja", demoUrl: "https://youtu.be/receipt-ninja", status: "done" },
-  { id: "p4", name: "nightowls/standup-bot", repoUrl: "https://github.com/nightowls/standup-bot", status: "queued" },
-];
 /** Criteria the judge can pick from in the rubric editor; "Custom name…" opens a text field. */
 export const CRITERION_PRESETS: { name: string; hint: string }[] = [
   { name: "Creativity", hint: "Originality of the idea" },
@@ -174,15 +168,15 @@ const DEFAULT_CRITERIA: Criterion[] = [
 ];
 let state: State = {
   event: null,
-  projects: seed,
+  projects: [],
   criteria: DEFAULT_CRITERIA,
-  reports: Object.fromEntries(seed.filter((p) => p.status === "done").map((p) => [p.id, makeReport(p)])),
+  reports: {},
   judge: {},
   log: [],
   finalized: false,
   winners: [],
-  folders: [{ id: "f1", name: "Sample hackathon", createdAt: 0 }],
-  activeFolderId: "f1",
+  folders: [],
+  activeFolderId: "",
 };
 const listeners = new Set<() => void>();
 const set = (patch: Partial<State>) => {
@@ -223,7 +217,7 @@ export function folderStats(id: string, s: State = state) {
 }
 export function switchFolder(id: string): void {
   if (id === state.activeFolderId || !state.folders.some((f) => f.id === id)) return;
-  stored.set(state.activeFolderId, workspaceOf(state));
+  if (state.activeFolderId) stored.set(state.activeFolderId, workspaceOf(state));
   const next = stored.get(id);
   if (!next) return;
   stored.delete(id);

@@ -1,8 +1,8 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { CriterionEvaluation } from "@/components/criterion-evaluation";
-import { snapshot } from "@/lib/api";
+import { analyzePreview, createFolder, enqueuePreview, snapshot } from "@/lib/api";
 
 vi.mock("@/components/ui/handoff-beam", () => ({
   HandoffBeam: ({ children }: { children: ReactNode }) => <div>{children}</div>,
@@ -16,10 +16,18 @@ vi.mock("@tanstack/react-router", () => ({
 
 afterEach(cleanup);
 
+let projectId = "";
+beforeAll(async () => {
+  createFolder("Criterion navigation test");
+  const { project } = await analyzePreview("https://github.com/test/criterion-navigation", { stageMs: 0 });
+  enqueuePreview(project.id);
+  projectId = project.id;
+});
+
 function firstCriterion() {
   const state = snapshot();
   const criterion = state.criteria[0];
-  const report = state.reports["p1"];
+  const report = state.reports[projectId];
   if (!criterion || !report) throw new Error("Sample criterion and report are required");
   return { criterion, report };
 }
@@ -47,7 +55,7 @@ describe("Judge criterion navigation buttons", () => {
 
   it("links to the results page on the last criterion", () => {
     const state = snapshot();
-    const report = state.reports["p1"];
+    const report = state.reports[projectId];
     const last = state.criteria[state.criteria.length - 1];
     if (!report || !last) throw new Error("Sample report and criterion are required");
     render(<CriterionEvaluation report={report} criterion={last} index={state.criteria.length - 1} isFirst={false} isLast onBack={noop} onNext={noop} />);

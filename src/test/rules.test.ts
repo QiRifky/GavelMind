@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { agreement, canSaveRubric, EXPORT_LINE, exportResults, snapshot } from "../lib/api";
+import { addProjects, agreement, canSaveRubric, EXPORT_LINE, exportResults, snapshot } from "../lib/api";
 
 describe("rubric save", () => {
   it("allows save only when weights total exactly 100%", () => {
@@ -15,6 +15,7 @@ describe("model agreement", () => {
 });
 describe("export", () => {
   it("every format includes the judge-decision line and unreviewed projects are not scored", () => {
+    addProjects(["https://github.com/test/unreviewed-export"]);
     for (const f of ["csv", "json", "md"] as const) expect(exportResults(f, snapshot()).content).toContain(EXPORT_LINE);
     expect(exportResults("md", snapshot()).content).toContain("Awaiting judge review");
   });

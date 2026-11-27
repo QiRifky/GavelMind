@@ -1,7 +1,8 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { addProjects, createFolder, extractEventRules, saveEvent, snapshot, switchFolder } from "@/lib/api";
 
 describe("event folders", () => {
+  beforeEach(() => { createFolder("First event"); });
   it("keeps each folder's projects separate", () => {
     const first = snapshot().activeFolderId;
     const before = snapshot().projects.length;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { confirmEventRules, extractEventRules, reportForEvent, saveEvent, snapshot, updateEventRules } from "../lib/api";
+import { analyzePreview, confirmEventRules, extractEventRules, reportForEvent, saveEvent, snapshot, updateEventRules } from "../lib/api";
 
 describe("event requirements", () => {
   it("requires a name and web URL", () => {
@@ -9,7 +9,7 @@ describe("event requirements", () => {
   it("applies only confirmed active rules and never treats unknown eligibility as failure", async () => {
     saveEvent("Test event", "https://example.com/rules");
     await extractEventRules();
-    const report = snapshot().reports["p1"];
+    const { report } = await analyzePreview("https://github.com/test/event-rules", { stageMs: 0 });
     const event = snapshot().event;
     if (!report || !event) throw new Error("Missing test data");
     expect(reportForEvent(report, event).checks.map((r) => r.id)).toEqual(["runs"]);
