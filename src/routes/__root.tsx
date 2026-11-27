@@ -143,7 +143,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      {!isLanding && <CosmicBackground />}
+      <CosmicBackground />
       <div className={isLanding ? "" : "flex min-h-dvh flex-col"}>
         {!hideNav && <Nav />}
         <main className={isLanding ? "" : `flex flex-1 flex-col ${hideNav ? "px-4 pb-4 pt-2 sm:px-6 sm:pt-3" : "px-4 pb-4 pt-2 sm:px-6 sm:pt-4"} ${isWorkspace ? "workspace-main" : ""}`}>
@@ -166,8 +166,8 @@ function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   return (
-    <nav className={`sticky top-0 z-30 border-b transition-colors ${scrolled ? "border-border bg-(--nav-scrolled) backdrop-blur-md" : "border-transparent bg-transparent"}`}>
-      <div className="flex items-center gap-4 px-4 py-3 sm:px-6">
+    <nav className={isLanding ? "sticky top-0 z-30 px-4 pt-3 sm:px-6" : `sticky top-0 z-30 border-b transition-colors ${scrolled ? "border-border bg-(--nav-scrolled) backdrop-blur-md" : "border-transparent bg-transparent"}`}>
+      <div className={isLanding ? "glass-nav flex items-center gap-4 rounded-full px-4 py-2 sm:px-5" : "flex items-center gap-4 px-4 py-3 sm:px-6"}>
         <Link to="/" className="flex items-center gap-2 text-lg font-medium">
           <img src={logo.url} alt="" aria-hidden className="size-6 shrink-0 object-contain" />
           GavelMind<span className="-ml-2 text-primary">.</span>
