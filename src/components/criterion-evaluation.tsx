@@ -1,15 +1,15 @@
 import { useState } from "react";
-import { Check, ChevronDown, Eraser, Scale, Star, StarHalf } from "lucide-react";
+import { Check, ChevronDown, Eraser, Scale, Star, StarHalf, ArrowLeft, ArrowRight } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { agreement, average, draftsFor, saveJudgeScore, useApi, type Criterion, type Report } from "@/lib/api";
 import { GlowCard } from "@/components/glow-card";
 import { Button } from "@/components/ui/button";
 import { HandoffBeam } from "@/components/ui/handoff-beam";
 
-/** One criterion keeps the judge's decision beside its supporting AI material. */
-export function CriterionEvaluation({ report, criterion, index }: { report: Report; criterion: Criterion; index: number }) {
+/** One criterion keeps the judge's decision beside its supporting AI material, with buttons to move through the rubric. */
+export function CriterionEvaluation({ report, criterion, index, isFirst, isLast, onBack, onNext }: { report: Report; criterion: Criterion; index: number; isFirst: boolean; isLast: boolean; onBack: () => void; onNext: () => void }) {
   const state = useApi();
   const value = state.judge[report.projectId]?.[criterion.id];
-  const [note, setNote] = useState(value?.note ?? "");
   const [expanded, setExpanded] = useState(false);
   const [hoverScore, setHoverScore] = useState<number | null>(null);
   const drafts = draftsFor(report, criterion);
@@ -76,9 +76,12 @@ export function CriterionEvaluation({ report, criterion, index }: { report: Repo
             <Button variant="outline" size="sm" className="rounded-full" disabled={state.finalized || drafts.length === 0} onClick={() => saveJudgeScore(report.projectId, criterion.id, { score: Math.round(draft * 2) / 2 })}>Use AI draft</Button>
             <Button variant="ghost" size="sm" className="rounded-full text-muted-foreground" disabled={state.finalized || value?.score === undefined} onClick={() => saveJudgeScore(report.projectId, criterion.id, { score: null })}><Eraser />Clear</Button>
           </div>
-          <label htmlFor={`note-${criterion.id}`} className="mt-4 block text-xs text-muted-foreground">Judge's note · optional</label>
-          <textarea id={`note-${criterion.id}`} aria-label={`${criterion.name} note`} disabled={state.finalized} value={note} rows={2} onChange={(e) => setNote(e.target.value)} onBlur={() => saveJudgeScore(report.projectId, criterion.id, { note: note.trim() })}
-            className="mt-2 w-full resize-y rounded-xl border border-border bg-well px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50" />
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+            <Button variant="outline" size="sm" className="rounded-full" disabled={isFirst} onClick={onBack}><ArrowLeft />Back</Button>
+            {isLast
+              ? <Button asChild size="sm" className="rounded-full"><Link to="/app/results">Continue to results<ArrowRight /></Link></Button>
+              : <Button size="sm" className="rounded-full" onClick={onNext}>Continue to next criterion<ArrowRight /></Button>}
+          </div>
           <p className="mt-1 text-xs text-muted-foreground">{state.finalized ? "Finalized · scores locked" : "Saved automatically · not final"}</p>
         </div>
       </div>

@@ -10,13 +10,15 @@ vi.mock("@/components/ui/handoff-beam", () => ({
 
 afterEach(cleanup);
 
+const noop = () => {};
+
 describe("Judge star scoring", () => {
   it.each(Array.from({ length: 10 }, (_, i) => i + 1))("saves %i/10 when the judge chooses that star", (score) => {
     const state = snapshot();
     const criterion = state.criteria[0];
     const report = state.reports["p1"];
     if (!criterion || !report) throw new Error("Sample criterion and report are required");
-    render(<CriterionEvaluation report={report} criterion={criterion} index={0} />);
+    render(<CriterionEvaluation report={report} criterion={criterion} index={0} isFirst isLast={false} onBack={noop} onNext={noop} />);
     fireEvent.click(screen.getByRole("button", { name: `${criterion.name}: ${score} out of 10` }));
     expect(snapshot().judge[report.projectId]?.[criterion.id]?.score).toBe(score);
     expect(screen.getByRole("spinbutton", { name: `${criterion.name} final score` })).toHaveValue(score);
