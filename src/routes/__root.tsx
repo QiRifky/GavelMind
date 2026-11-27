@@ -142,10 +142,12 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       {!isLanding && <CosmicBackground />}
-      {!hideNav && <Nav />}
-      <main className={isLanding ? "" : `${hideNav ? "px-4 pb-10 pt-4 sm:px-6" : "px-4 pb-20 pt-8 sm:px-6 sm:pt-12"} ${isWorkspace ? "workspace-main" : ""}`}>
-        <Outlet />
-      </main>
+      <div className={isLanding ? "" : "flex min-h-dvh flex-col"}>
+        {!hideNav && <Nav />}
+        <main className={isLanding ? "" : `flex flex-1 flex-col ${hideNav ? "px-4 pb-4 pt-4 sm:px-6" : "px-4 pb-4 pt-8 sm:px-6 sm:pt-12"} ${isWorkspace ? "workspace-main" : ""}`}>
+          <Outlet />
+        </main>
+      </div>
     </QueryClientProvider>
   );
 }

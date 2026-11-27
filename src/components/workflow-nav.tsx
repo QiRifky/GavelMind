@@ -142,5 +142,5 @@ function FolderPanel({ name, stats, steps, current, linkProps, close }: { name: 
 
 /** Body under the workflow navbar; pages scroll normally. */
 export function StepBody({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={cn("workspace-stage p-4 sm:p-6", className)}>{children}</div>;
+  return <div className={cn("workspace-stage flex-1 p-4 sm:p-6", className)}>{children}</div>;
 }

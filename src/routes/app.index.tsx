@@ -15,7 +15,7 @@ function Folders() {
   const navigate = useNavigate();
   const open = (id: string) => { switchFolder(id); void navigate({ to: "/app/event" }); };
   return (
-    <div className="workspace-stage p-5 sm:p-7">
+    <div className="workspace-stage flex-1 p-5 sm:p-7">
       <PageHead eyebrow="Event folders" title="Choose an event.">Each folder keeps its own rules, entries, rubric and results.</PageHead>
       <div className="grid grid-cols-[repeat(auto-fill,15rem)] gap-x-6 gap-y-8">
         <EventDetailsDialog trigger={
