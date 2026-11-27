@@ -15,7 +15,6 @@ import { CosmicBackground } from "@/components/cosmic-background";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Button } from "@/components/ui/button";
-import { BlurControlInline } from "@/components/blur-control";
 import { folderName, useApi } from "@/lib/api";
 import logo from "@/assets/gavel-logo.png.asset.json";
 import { FolderOpen, ArrowUpRight } from "lucide-react";
@@ -173,7 +172,7 @@ function Nav() {
           <img src={logo.url} alt="" aria-hidden className="size-6 shrink-0 object-contain" />
           GavelMind<span className="-ml-2 text-primary">.</span>
         </Link>
-        {isLanding ? <div className="ml-auto flex min-w-0 flex-wrap items-center justify-end gap-x-3 gap-y-2 sm:gap-6"><span className="hidden text-xs text-muted-foreground lg:block">Built for the human behind the score.</span><BlurControlInline className="min-w-0" /><Button asChild variant="outline" className="shrink-0 rounded-full"><Link to="/app">Open app <ArrowUpRight /></Link></Button></div> : <Button asChild variant="ghost" className="ml-auto min-w-0 max-w-[55%] rounded-full"><Link to="/app"><FolderOpen className="size-4 shrink-0 text-primary" /><span className="truncate">{active ? folderName(active, state) : "Event folders"}</span></Link></Button>}
+        {isLanding ? <div className="ml-auto flex items-center gap-6"><span className="hidden text-xs text-muted-foreground sm:block">Built for the human behind the score.</span><Button asChild variant="outline" className="rounded-full"><Link to="/app">Open app <ArrowUpRight /></Link></Button></div> : <Button asChild variant="ghost" className="ml-auto min-w-0 max-w-[55%] rounded-full"><Link to="/app"><FolderOpen className="size-4 shrink-0 text-primary" /><span className="truncate">{active ? folderName(active, state) : "Event folders"}</span></Link></Button>}
       </div>
 
     </nav>

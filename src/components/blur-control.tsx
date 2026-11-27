@@ -56,32 +56,3 @@ export function BlurControl({ className }: { className?: string }) {
     </div>
   );
 }
-
-/** One-row variant for the landing navbar pill: label, slider and percent side by side. */
-export function BlurControlInline({ className }: { className?: string }) {
-  const [pct, setPct] = useState(50);
-  // Same saved level as the workspace control; only a drag writes to storage.
-  useEffect(() => {
-    const saved = readBlurPct();
-    if (saved !== null) {
-      setPct(saved);
-      applyBlur(saved);
-    }
-  }, []);
-  const change = (v: number) => {
-    const c = clampPct(v);
-    setPct(c);
-    writeBlurPct(c);
-    applyBlur(c);
-  };
-  return (
-    <div className={cn("flex items-center gap-2", className)}>
-      <label htmlFor="landing-card-blur" className="hidden text-xs font-medium text-muted-foreground sm:block">Card blur</label>
-      <input id="landing-card-blur" type="range" min={0} max={100} step={1} value={pct}
-        onChange={(e) => change(Number(e.target.value))}
-        aria-label="Card blur" aria-valuetext={`${pct}%`}
-        className="w-20 cursor-pointer accent-primary sm:w-28" />
-      <span className="w-9 shrink-0 text-right text-xs tabular-nums text-foreground">{pct}%</span>
-    </div>
-  );
-}
