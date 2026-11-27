@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowRight, Check, ChevronDown, Copy, Download } from "lucide-react";
-import { finalsOf, judgeStatus, judgeTotal, useApi } from "@/lib/api";
+import { Check, ChevronDown, Copy, Download } from "lucide-react";
+import { finalsOf, judgeTotal, useApi } from "@/lib/api";
 import { orderRows, resultsCsv, resultsSummary } from "@/lib/results";
 import { StepBody, WorkflowNav } from "@/components/workflow-nav";
 import { Button } from "@/components/ui/button";
@@ -30,8 +30,6 @@ function Results() {
   const rows = orderRows(state.projects.map((p) => { const finals = finalsOf(p.id, state); return { p, name: p.name, finals, total: judgeTotal(finals, state.criteria) }; }));
   const scoredCount = rows.filter((r) => r.total !== null).length;
   const visible = rows.filter((r) => show === "all" || (show === "scored" ? r.total !== null : r.total === null));
-  const done = state.projects.filter((p) => p.status === "done");
-  const next = done.find((p) => judgeStatus(p.id, state) !== "Finalized" && judgeTotal(finalsOf(p.id, state), state.criteria) === null);
   const eventName = state.event?.name || state.folders.find((f) => f.id === state.activeFolderId)?.name || "Event";
 
   const exportCsv = () => {
@@ -105,13 +103,6 @@ function Results() {
               );
             })}
           </ol>
-          {next && (
-            <div className="mt-3 flex justify-center px-2">
-              <Button asChild className="rounded-full">
-                <Link to="/app/p/$id" params={{ id: next.id }}>{scoredCount === 0 ? "Start judging" : `Continue judging (${scoredCount}/${rows.length} done)`}<ArrowRight /></Link>
-              </Button>
-            </div>
-          )}
         </section>
       </StepBody>
     </>
