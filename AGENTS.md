@@ -53,3 +53,4 @@ use the editor.
 - Workflow-step pages (Event/Entries/Rubric/Results) use normal page scroll on all sizes (no h-dvh lock), so cards never get squeezed; only long lists like the Entries queue cap their height.
 - Workflow-step pages open with the shared StatsBento strip (src/components/ui/stats-bento.tsx) and use the `bento` utility for cards, so all four steps share one card language.
 - Card surfaces and deck layers use shared `rounded-card` / `--card-radius`, translucent semantic glass, rim highlights, and soft shadows through `glass-panel`, `glass-nav`, `workspace-stage`, and `bento`; form controls, pills, and orange fills keep their proportions and colors.
+- Non-landing pages render CosmicBackground (fixed starfield canvas + horizon glow, colors from --cosmic-* vars) from __root.tsx; the landing page keeps its own background.
