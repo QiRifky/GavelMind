@@ -424,4 +424,6 @@ body {
 /* Card blur level chosen in the display control (BlurControl). */
 :root { --blur-scale: 0; }
 /* Landing navbar: lighter blur than the workspace glass, still scaled by the user's blur setting. */
-.landing-nav { backdrop-filter: blur(calc(7px * var(--blur-scale, 0))) saturate(1.2); }
+.landing-nav { backdrop-filter: blur(calc(7px * var(--blur-scale, 0))) saturate(1.2); transition: background 200ms ease; }
+/* Scrolled: darken the pill just enough to separate it from page text — never solid. */
+.landing-nav-scrolled { background: linear-gradient(165deg, var(--glass-gloss), transparent 32% 73%, var(--glass-gloss)), rgb(20 20 20 / 0.55); }
