@@ -420,5 +420,3 @@ body {
 
 /* Card blur level chosen in the display control (BlurControl). */
 :root { --blur-scale: 1; }
-:root[data-blur="soft"] { --blur-scale: 0.5; }
-:root[data-blur="strong"] { --blur-scale: 1.7; }

@@ -54,4 +54,4 @@ use the editor.
 - Workflow-step pages open with the shared StatsBento strip (src/components/ui/stats-bento.tsx) and use the `bento` utility for cards, so all four steps share one card language.
 - Card surfaces use shared `rounded-card` / `--card-radius`, translucent glass, rims and soft shadows via `glass-panel`, `glass-nav`, `workspace-stage`; cards nested inside a card use `bento` / `--glass-nested`; form controls, pills, and orange fills keep their proportions and colors.
 - Non-landing pages render CosmicBackground (fixed starfield canvas + horizon glow, colors from --cosmic-* vars) from __root.tsx; the landing page keeps its own background.
-- Card blur: BlurControl sets html[data-blur] → --blur-scale in every backdrop-filter; per-device (localStorage).
+- Card blur: BlurControl slider sets --blur-scale on html; per-device.

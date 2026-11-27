@@ -1,36 +1,32 @@
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
-const LEVELS = [
-  { id: "soft", label: "Soft" },
-  { id: "medium", label: "Medium" },
-  { id: "strong", label: "Strong" },
-] as const;
-type Level = (typeof LEVELS)[number]["id"];
-const KEY = "gavelmind-card-blur";
+const KEY = "gavelmind-card-blur-pct";
+/** 0% = no blur, 50% = default, 100% = strong (2× default). */
+export const blurScale = (pct: number) => Math.min(100, Math.max(0, pct)) / 50;
 
-/** Display control: sets how strongly glass cards blur the background. */
+/** Display control: a volume-style slider for how strongly glass cards blur the background. */
 export function BlurControl({ className }: { className?: string }) {
-  const [level, setLevel] = useState<Level>("medium");
+  const [pct, setPct] = useState(50);
   useEffect(() => {
-    const saved = window.localStorage.getItem(KEY);
-    if (saved === "soft" || saved === "medium" || saved === "strong") setLevel(saved);
+    const saved = Number(window.localStorage.getItem(KEY));
+    if (window.localStorage.getItem(KEY) !== null && Number.isFinite(saved)) setPct(Math.min(100, Math.max(0, saved)));
   }, []);
   useEffect(() => {
-    document.documentElement.dataset["blur"] = level;
-    window.localStorage.setItem(KEY, level);
-  }, [level]);
+    document.documentElement.style.setProperty("--blur-scale", String(blurScale(pct)));
+    window.localStorage.setItem(KEY, String(pct));
+  }, [pct]);
   return (
     <div className={cn("flex flex-col gap-2", className)}>
-      <span className="text-xs font-medium text-muted-foreground">Card blur</span>
-      <div role="radiogroup" aria-label="Card blur" className="grid w-fit grid-cols-3 gap-1 rounded-full border border-glass-rim bg-glass-inner p-1">
-        {LEVELS.map((l) => (
-          <button key={l.id} type="button" role="radio" aria-checked={level === l.id} onClick={() => setLevel(l.id)}
-            className={cn("rounded-full px-3 py-1.5 text-xs font-medium transition-colors", level === l.id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>
-            {l.label}
-          </button>
-        ))}
+      <div className="flex items-center justify-between gap-3 text-xs font-medium text-muted-foreground">
+        <label htmlFor="card-blur">Card blur</label>
+        <span className="tabular-nums text-foreground">{pct}%</span>
       </div>
+      <input id="card-blur" type="range" min={0} max={100} step={1} value={pct}
+        onChange={(e) => setPct(Number(e.target.value))}
+        aria-valuetext={`${pct}%`}
+        className="w-full max-w-64 cursor-pointer accent-primary" />
+      <div className="flex max-w-64 justify-between text-[11px] text-muted-foreground"><span>Clear</span><span>Strong</span></div>
     </div>
   );
 }
