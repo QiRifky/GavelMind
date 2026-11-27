@@ -37,7 +37,7 @@ use the editor.
 - The root shell uses pathname-based styling for the full-bleed landing page while always rendering Outlet, so workspace layouts stay unchanged.
 - AI model names come from Report.models in api.ts, never hard-coded in components.
 - Rubric criterion names are picked from CRITERION_PRESETS in api.ts via a dropdown; "Custom name…" is the only typed path, so the preset list stays in one place.
-- App theme is dark (#03060f base with the shared CosmicBackground starfield rendered once in __root.tsx); every color is a CSS variable in the :root block of src/styles.css — no hex in components, so palette changes touch one place.
+- App theme is dark (#191919 base); every color is a CSS variable in the :root block of src/styles.css — no hex in components, so palette changes touch one place.
 - Report page uses the glow bento style (GlowCard has no mouse-following glow; accents from --glow-* vars; pass/warn/fail colors only for status).
 - Report criteria use CriterionDeck to show one CriterionEvaluation over layered back cards; inactive forms stay mounted but hidden to preserve score and evidence state, while criterion navigation remains separate from project navigation. Each card ends with Back and Continue buttons that move through the rubric (Continue on the last criterion links to results); no free-text judge note field exists, so the AI's role stays preparation-only and the judge's numbers remain the only saved decision.
 - Event rules live at /app/event; the scoring rubric has its own page at /app/rubric (step 2, before Entries) so each setup step stays focused.
