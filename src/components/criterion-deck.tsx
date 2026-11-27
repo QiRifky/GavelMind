@@ -33,7 +33,7 @@ export function CriterionDeck({ report, criteria }: { report: Report; criteria: 
         ))}
       </nav>
       <div className="relative isolate flex flex-1 flex-col pb-8" aria-roledescription="card deck" aria-label="Criterion cards">
-        {activeIndex + 2 < criteria.length && <div aria-hidden="true" className="pointer-events-none absolute inset-x-5 top-0 bottom-0 rounded-card border border-glass-rim bg-glass-card shadow-glass sm:inset-x-10" />}
+        {activeIndex + 2 < criteria.length && <div aria-hidden="true" className="pointer-events-none absolute inset-x-5 top-0 bottom-0 rounded-card border border-glass-rim bg-glass-nested shadow-glass sm:inset-x-10" />}
         {activeIndex + 1 < criteria.length && <div aria-hidden="true" className="pointer-events-none absolute inset-x-2.5 top-0 bottom-4 rounded-card border border-glass-rim bg-glass-raised shadow-glass sm:inset-x-5" />}
         {criteria.map((criterion, index) => (
           <div key={`${report.projectId}-${criterion.id}`} hidden={index !== activeIndex}

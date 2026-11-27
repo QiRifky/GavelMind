@@ -109,7 +109,7 @@ function ContextDeck({ r }: { r: Report }) {
         ))}
       </div>
       <div className="relative isolate flex flex-1 flex-col pb-8" aria-roledescription="card deck">
-        <div aria-hidden="true" className="pointer-events-none absolute inset-x-5 top-0 bottom-0 rounded-card border border-glass-rim bg-glass-card shadow-glass sm:inset-x-10" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-5 top-0 bottom-0 rounded-card border border-glass-rim bg-glass-nested shadow-glass sm:inset-x-10" />
         <div aria-hidden="true" className="pointer-events-none absolute inset-x-2.5 top-0 bottom-4 rounded-card border border-glass-rim bg-glass-raised shadow-glass sm:inset-x-5" />
         <div role="tabpanel" hidden={tab !== "summary"} className="criterion-deck-front relative z-10 flex-1 rounded-card [&>section]:h-full"><SummaryCard r={r} /></div>
         <div role="tabpanel" hidden={tab !== "rules"} className="criterion-deck-front relative z-10 flex-1 rounded-card [&>section]:h-full"><RulesCard r={r} /></div>

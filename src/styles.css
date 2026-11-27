@@ -37,6 +37,7 @@
   --color-glass: var(--glass);
   --color-glass-rim: var(--glass-rim);
   --color-glass-card: var(--glass-card);
+  --color-glass-nested: var(--glass-nested);
   --color-glass-raised: var(--glass-raised);
   --color-glass-inner: var(--glass-inner);
   --shadow-glass: var(--shadow-soft);
@@ -99,7 +100,7 @@
   --page: #191919;
   --surface: #222222;
   --surface-2: #2a2a2a;
-  --well: rgb(8 8 8 / 0.20);
+  --well: rgb(8 8 8 / 0.12);
   --ink: #f5f3ee;
   --grey: #a39f98;
   --line: rgb(255 255 255 / 0.10);
@@ -128,8 +129,9 @@
   --glass-rail: rgb(30 30 30 / 0.38);
   --glass-card: rgb(38 38 38 / 0.30);
   --glass-card-light: rgb(255 244 232 / 0.05);
-  --glass-raised: rgb(64 61 58 / 0.40);
-  --glass-inner: rgb(255 255 255 / 0.045);
+  --glass-nested: rgb(38 38 38 / 0.16);
+  --glass-raised: rgb(64 61 58 / 0.26);
+  --glass-inner: rgb(255 255 255 / 0.03);
 
   --radius: 1.25rem;
   --card-radius: 8px;
@@ -400,7 +402,7 @@ body {
 @utility bento {
   border: 1px solid var(--glass-rim);
   border-radius: var(--card-radius);
-  background: linear-gradient(144deg, var(--glass-card-light), transparent 66%), var(--glass-card);
+  background: linear-gradient(144deg, var(--glass-card-light), transparent 66%), var(--glass-nested);
   box-shadow: var(--shadow-soft);
   backdrop-filter: blur(26px) saturate(1.3);
 }
