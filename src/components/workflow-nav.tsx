@@ -44,7 +44,7 @@ export function WorkflowNav({ current }: { current: Step }) {
 
   return (
     <MotionConfig reducedMotion="user">
-      <motion.div ref={ref} layout transition={{ duration: 0.35, ease: EASE }} className="relative z-20 mb-4 overflow-hidden rounded-3xl border border-border bg-card shadow-glass">
+      <motion.div ref={ref} layout transition={{ duration: 0.35, ease: EASE }} className="glass-nav relative z-20 mb-4 overflow-hidden rounded-3xl">
         <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <Link to="/" className="flex shrink-0 items-center gap-2 text-lg font-medium">
             <img src={logo.url} alt="" aria-hidden className="size-6 object-contain" />
@@ -54,7 +54,7 @@ export function WorkflowNav({ current }: { current: Step }) {
           <nav aria-label="Event workflow" className="hidden items-center gap-1 lg:flex">
             {steps.map((s, i) => (
               <Link key={s.id} {...linkProps(s)} aria-current={current === s.id ? "step" : undefined} title={s.status} onClick={() => setPanel(null)}
-                className={cn("flex items-center gap-2 rounded-full px-4 py-2 text-[15px] font-medium transition-colors", current === s.id ? "bg-secondary text-foreground" : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground")}>
+                className={cn("flex items-center gap-2 rounded-full px-4 py-2 text-[15px] font-medium transition-colors", current === s.id ? "border border-glass-rim bg-glass-raised text-foreground shadow-glass" : "border border-transparent text-muted-foreground hover:bg-glass-inner hover:text-foreground")}>
                 {mark(s, i)}{s.label}
               </Link>
             ))}
@@ -62,11 +62,11 @@ export function WorkflowNav({ current }: { current: Step }) {
 
           <div className="flex min-w-0 items-center gap-2">
             <button type="button" onClick={() => toggle("folder")} aria-expanded={panel === "folder"}
-              className={cn("hidden min-w-0 max-w-56 items-center gap-1.5 rounded-full border border-border px-4 py-2 text-sm font-medium transition-colors sm:flex", panel === "folder" ? "bg-secondary text-foreground" : "text-muted-foreground hover:bg-secondary hover:text-foreground")}>
+              className={cn("hidden min-w-0 max-w-56 items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors sm:flex", panel === "folder" ? "border-glass-rim bg-glass-raised text-foreground shadow-glass" : "border-glass-rim bg-glass-inner text-muted-foreground hover:bg-glass-raised hover:text-foreground")}>
               <FolderOpen className="size-4 shrink-0 text-primary" /><span className="truncate">{name}</span>
               <ChevronDown className={cn("size-3.5 shrink-0 transition-transform duration-300", panel === "folder" && "rotate-180")} />
             </button>
-            <button type="button" onClick={() => toggle("mobile")} aria-expanded={panel === "mobile"} aria-label={panel === "mobile" ? "Close menu" : "Open menu"} className="flex items-center gap-2 rounded-full px-3 py-2 text-sm lg:hidden">
+            <button type="button" onClick={() => toggle("mobile")} aria-expanded={panel === "mobile"} aria-label={panel === "mobile" ? "Close menu" : "Open menu"} className="flex items-center gap-2 rounded-full border border-glass-rim bg-glass-inner px-3 py-2 text-sm lg:hidden">
               <span className="text-muted-foreground">{steps.find((s) => s.id === current)?.label}</span>
               {panel === "mobile" ? <X className="size-5" /> : <Menu className="size-5" />}
             </button>
@@ -84,7 +84,7 @@ export function WorkflowNav({ current }: { current: Step }) {
               <div className="flex flex-col gap-1 px-4 pb-4">
                 {steps.map((s, i) => (
                   <Link key={s.id} {...linkProps(s)} onClick={() => setPanel(null)} aria-current={current === s.id ? "step" : undefined}
-                    className={cn("grid grid-cols-[2rem_minmax(0,1fr)_auto] items-center rounded-2xl px-3 py-3", current === s.id ? "bg-secondary" : "hover:bg-secondary/60")}>
+                    className={cn("grid grid-cols-[2rem_minmax(0,1fr)_auto] items-center rounded-2xl px-3 py-3", current === s.id ? "border border-glass-rim bg-glass-raised" : "border border-transparent hover:bg-glass-inner")}>
                     {mark(s, i)}<span className="truncate font-medium">{s.label}</span><span className="text-xs text-muted-foreground">{s.status}</span>
                   </Link>
                 ))}
@@ -104,7 +104,7 @@ type Steps = ReadonlyArray<{ id: string; label: string; status: string; done: bo
 function FolderPanel({ name, stats, steps, current, linkProps, close }: { name: string; stats: ReturnType<typeof folderStats>; steps: Steps; current: Step; linkProps: (s: never) => { to: "/app/entries" }; close: () => void }) {
   const state = useApi();
   const others = state.folders.filter((f) => f.id !== state.activeFolderId);
-  const eyebrow = "w-fit rounded-full border border-border px-4 py-1.5 text-xs font-medium text-muted-foreground";
+  const eyebrow = "w-fit rounded-full border border-glass-rim bg-glass-inner px-4 py-1.5 text-xs font-medium text-muted-foreground";
   return (
     <div className="grid gap-8 px-4 pb-6 pt-2 sm:px-6 md:grid-cols-3">
       <div className="flex flex-col gap-4">
@@ -142,5 +142,5 @@ function FolderPanel({ name, stats, steps, current, linkProps, close }: { name: 
 
 /** Body under the workflow navbar; pages scroll normally. */
 export function StepBody({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={cn("", className)}>{children}</div>;
+  return <div className={cn("workspace-stage p-4 sm:p-6", className)}>{children}</div>;
 }

@@ -35,6 +35,10 @@
   --color-accent-brand: var(--accent-brand);
   --color-well: var(--well);
   --color-glass: var(--glass);
+  --color-glass-rim: var(--glass-rim);
+  --color-glass-card: var(--glass-card);
+  --color-glass-raised: var(--glass-raised);
+  --color-glass-inner: var(--glass-inner);
   --shadow-glass: var(--shadow-soft);
   --color-pass: var(--pass);
   --color-warn: var(--warn);
@@ -90,7 +94,7 @@
   --page: #191919;
   --surface: #222222;
   --surface-2: #2a2a2a;
-  --well: #161616;
+  --well: rgb(8 8 8 / 0.34);
   --ink: #f5f3ee;
   --grey: #a39f98;
   --line: rgb(255 255 255 / 0.10);
@@ -110,6 +114,17 @@
   --glow-amber: 251, 191, 36;
   --grid-line: rgb(255 255 255 / 0.08);
   --chart-grid: rgb(255 255 255 / 0.06);
+  /* Glass dashboard treatment: dark translucent layers with warm rim lighting. */
+  --glass-rim: rgb(255 240 224 / 0.16);
+  --glass-edge-light: rgb(255 248 238 / 0.13);
+  --glass-edge-shade: rgb(0 0 0 / 0.24);
+  --glass-gloss: rgb(255 244 231 / 0.055);
+  --glass-frame: rgb(42 42 42 / 0.48);
+  --glass-rail: rgb(34 34 34 / 0.72);
+  --glass-card: rgb(42 42 42 / 0.62);
+  --glass-card-light: rgb(255 244 232 / 0.045);
+  --glass-raised: rgb(64 61 58 / 0.72);
+  --glass-inner: rgb(255 255 255 / 0.035);
 
   --radius: 1.25rem;
   --card-radius: 8px;
@@ -128,9 +143,9 @@
   --accent: rgb(255 122 47 / 0.12);
   --accent-foreground: #ffb27f;
   --accent-brand: var(--brand);
-  --glass: var(--card);
+  --glass: var(--glass-card);
   --bento-stripe: rgb(25 25 25 / 0.35);
-  --shadow-soft: 0 1px 3px 0 rgb(0 0 0 / 0.18), 0 1px 2px -1px rgb(0 0 0 / 0.18);
+  --shadow-soft: inset 1px 1px 1px var(--glass-edge-light), inset -1px -1px 1px var(--glass-edge-shade), 0 7px 22px rgb(0 0 0 / 0.16);
   --shadow-tile: var(--shadow-soft);
   --destructive: var(--fail);
   --destructive-foreground: #191919;
@@ -305,12 +320,47 @@ body {
     var(--background);
   background-attachment: fixed;
 }
-@utility glass {
-  background: var(--glass);
-  backdrop-filter: blur(14px);
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow-soft);
+.workspace-main {
+  position: relative;
+  isolation: isolate;
+}
+.workspace-main::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 52px 52px;
+  mask-image: linear-gradient(to bottom, black, transparent 78%);
+  opacity: 0.16;
+}
+@utility glass-panel {
+  border: 1px solid var(--glass-rim);
   border-radius: var(--card-radius);
+  background: linear-gradient(144deg, var(--glass-card-light), transparent 66%), var(--glass-card);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(18px) saturate(1.24);
+}
+@utility glass-nav {
+  border: 1px solid var(--glass-rim);
+  background: linear-gradient(165deg, var(--glass-gloss), transparent 32% 73%, var(--glass-gloss)), var(--glass-rail);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(18px) saturate(1.35);
+}
+@utility workspace-stage {
+  border: 1px solid var(--glass-rim);
+  border-radius: var(--card-radius);
+  background: linear-gradient(148deg, var(--glass-gloss), transparent 22% 76%, var(--glass-card-light)), var(--glass-frame);
+  box-shadow: var(--shadow-soft), 0 22px 70px rgb(0 0 0 / 0.18);
+  backdrop-filter: blur(12px) saturate(1.18);
+}
+@utility glass {
+  border: 1px solid var(--glass-rim);
+  border-radius: var(--card-radius);
+  background: linear-gradient(144deg, var(--glass-card-light), transparent 66%), var(--glass-card);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(18px) saturate(1.24);
 }
 @utility eyebrow {
   font-size: 0.72rem;
@@ -343,12 +393,20 @@ body {
   .landing-hero-image { opacity: 0.2; object-position: 68% center; }
 }
 @utility bento {
-  background: var(--card);
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--glass-rim);
   border-radius: var(--card-radius);
+  background: linear-gradient(144deg, var(--glass-card-light), transparent 66%), var(--glass-card);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(18px) saturate(1.24);
 }
 @utility bento-stripes {
   background-image: repeating-linear-gradient(45deg, var(--bento-stripe) 0 1px, transparent 1px 10px);
   mask-image: radial-gradient(ellipse 80% 70% at 100% 0%, #000 60%, transparent 110%);
+}
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more), (forced-colors: active) {
+  .glass, .glass-panel, .glass-nav, .workspace-stage, .bento {
+    background: var(--card);
+    backdrop-filter: none;
+  }
+  .workspace-main::before { display: none; }
 }

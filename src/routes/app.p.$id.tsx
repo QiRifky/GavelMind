@@ -55,13 +55,13 @@ function Bento({ r, criteria }: { r: Report; criteria: Criterion[] }) {
   const next = projects[current + 1];
   const reviewed = state.projects.filter((p) => judgeTotal(finalsOf(p.id, state), criteria) !== null).length;
   return (
-    <div className="mt-6 space-y-6">
+    <div className="workspace-stage mt-6 space-y-6 p-4 sm:p-6">
       <div className="space-y-4">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div><p className="font-mono text-xs uppercase text-primary">Judging workspace</p><h2 className="mt-2 text-2xl font-medium">Your evaluation</h2></div>
           <div className="text-right"><p className="font-mono text-lg tabular-nums">{decided}<span className="text-muted-foreground">/{criteria.length}</span></p><p className="text-xs text-muted-foreground">Criteria scored</p></div>
         </div>
-        <div role="progressbar" aria-label="Review progress" aria-valuemin={0} aria-valuemax={criteria.length || 1} aria-valuenow={decided} className="flex h-1.5 gap-1.5">
+        <div role="progressbar" aria-label="Review progress" aria-valuemin={0} aria-valuemax={criteria.length || 1} aria-valuenow={decided} className="flex h-2 gap-1.5 rounded-full bg-glass-inner p-0.5">
           {criteria.map((c) => <span key={c.id} className={cn("flex-1 rounded-full", finals[c.id] !== undefined ? "bg-primary" : "bg-secondary")} />)}
         </div>
         {project && (
@@ -109,11 +109,11 @@ function ContextDeck({ r }: { r: Report }) {
         ))}
       </div>
       <div className="relative isolate flex flex-1 flex-col pb-8" aria-roledescription="card deck">
-        <div aria-hidden="true" className="pointer-events-none absolute inset-x-5 top-0 bottom-0 rounded-card border border-border bg-card shadow-glass sm:inset-x-10" />
-        <div aria-hidden="true" className="pointer-events-none absolute inset-x-2.5 top-0 bottom-4 rounded-card border border-border bg-secondary shadow-glass sm:inset-x-5" />
-        <div role="tabpanel" hidden={tab !== "summary"} className="criterion-deck-front relative z-10 flex-1 rounded-card bg-card [&>section]:h-full"><SummaryCard r={r} /></div>
-        <div role="tabpanel" hidden={tab !== "rules"} className="criterion-deck-front relative z-10 flex-1 rounded-card bg-card [&>section]:h-full"><RulesCard r={r} /></div>
-        <div role="tabpanel" hidden={tab !== "material"} className="criterion-deck-front relative z-10 flex-1 rounded-card bg-card [&>section]:h-full"><MaterialCard r={r} /></div>
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-5 top-0 bottom-0 rounded-card border border-glass-rim bg-glass-card shadow-glass sm:inset-x-10" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-2.5 top-0 bottom-4 rounded-card border border-glass-rim bg-glass-raised shadow-glass sm:inset-x-5" />
+        <div role="tabpanel" hidden={tab !== "summary"} className="criterion-deck-front relative z-10 flex-1 rounded-card [&>section]:h-full"><SummaryCard r={r} /></div>
+        <div role="tabpanel" hidden={tab !== "rules"} className="criterion-deck-front relative z-10 flex-1 rounded-card [&>section]:h-full"><RulesCard r={r} /></div>
+        <div role="tabpanel" hidden={tab !== "material"} className="criterion-deck-front relative z-10 flex-1 rounded-card [&>section]:h-full"><MaterialCard r={r} /></div>
       </div>
     </section>
   );

@@ -9,8 +9,8 @@ export function Pill({ variant = "primary", size = "md", className, ...p }: Reac
         "inline-flex items-center justify-center gap-2 rounded-full text-sm font-medium transition active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
         size === "md" && "h-10 px-5",
         size === "lg" && "h-11 px-6",
-        variant === "primary" && "bg-primary text-primary-foreground hover:brightness-105",
-        variant === "outline" && "border border-border bg-transparent text-foreground hover:bg-secondary hover:border-foreground/25",
+        variant === "primary" && "bg-primary text-primary-foreground shadow-glass hover:brightness-110",
+        variant === "outline" && "border border-glass-rim bg-glass-inner text-foreground shadow-glass hover:bg-glass-raised hover:border-foreground/25",
         variant === "ink" && "bg-foreground text-background hover:opacity-90",
         className,
       )}
@@ -30,7 +30,7 @@ export function PageHead({ eyebrow, title, children }: { eyebrow: string; title:
 
 export function AiNotice() {
   return (
-    <div role="note" className="flex items-start gap-3 rounded-card border border-primary/30 bg-accent px-4 py-3 text-sm text-accent-foreground">
+    <div role="note" className="flex items-start gap-3 rounded-card border border-primary/30 bg-accent px-4 py-3 text-sm text-accent-foreground shadow-glass">
       <span className="mt-1 size-2 shrink-0 rounded-full bg-primary" />
       AI scores are suggestions to help you decide. The final decision is yours.
     </div>
@@ -40,7 +40,7 @@ export function AiNotice() {
 export function Badge({ tone, children }: { tone: "neutral" | "accent" | "good" | "bad"; children: ReactNode }) {
   return (
     <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
-      tone === "neutral" && "bg-muted text-muted-foreground",
+      tone === "neutral" && "border border-glass-rim bg-glass-raised text-foreground",
       tone === "accent" && "bg-accent text-accent-foreground",
       tone === "good" && "bg-success/12 text-success",
       tone === "bad" && "bg-destructive/12 text-destructive")}>{children}</span>

@@ -1,3 +1,8 @@
+# Glass dashboard style
+
+- [x] Apply the uploaded glass dashboard treatment across the workspace while preserving Onest, the dark background, orange accents, and 8 px card corners.
+- [x] Verify workflow pages, the folder gallery, judging interactions, mobile layout, and regression tests.
+
 # Landing page
 
 # Explicit queue and judging actions

@@ -134,13 +134,14 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const isLanding = pathname === "/";
+  const isWorkspace = pathname.startsWith("/app");
   const hideNav = WORKSPACE_STEP_PATHS.includes(pathname) || pathname.startsWith("/app/p/");
 
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       {!hideNav && <Nav />}
-      <main className={isLanding ? "" : hideNav ? "px-4 pb-10 pt-4 sm:px-6" : "px-4 pb-20 pt-8 sm:px-6 sm:pt-12"}>
+      <main className={isLanding ? "" : `${hideNav ? "px-4 pb-10 pt-4 sm:px-6" : "px-4 pb-20 pt-8 sm:px-6 sm:pt-12"} ${isWorkspace ? "workspace-main" : ""}`}>
         <Outlet />
       </main>
     </QueryClientProvider>

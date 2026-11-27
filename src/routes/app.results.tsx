@@ -22,14 +22,14 @@ function Results() {
           {rows.length === 0 && <p className="p-8 text-center text-sm text-muted-foreground">No projects yet. <Link to="/app/entries" className="text-primary">Add some</Link>.</p>}
           <ol className="divide-y divide-border/70">
             {ranked.map((r, i) => (
-              <li key={r.p.id} className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-2 py-3">
+              <li key={r.p.id} className="mx-1 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-card px-3 py-3 transition-colors hover:bg-glass-inner">
                 <span className="w-8 font-mono text-muted-foreground">#{i + 1}</span>
                 <Link to="/app/p/$id" params={{ id: r.p.id }} className="min-w-0 truncate font-medium hover:text-primary">{r.p.name}{state.winners.includes(r.p.id) && <span className="ml-2 text-xs text-primary">Winner (your pick)</span>}</Link>
                 <span className="font-mono">{r.total?.toFixed(2)}</span>
               </li>
             ))}
             {waiting.map((r) => (
-              <li key={r.p.id} className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-2 py-3">
+              <li key={r.p.id} className="mx-1 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-card px-3 py-3 transition-colors hover:bg-glass-inner">
                 <span className="w-8 font-mono text-muted-foreground">—</span>
                 {r.p.status === "done" ? <Link to="/app/p/$id" params={{ id: r.p.id }} className="min-w-0 truncate hover:text-primary">{r.p.name}</Link> : <Link to="/app/entries" className="min-w-0 truncate hover:text-primary">{r.p.name}</Link>}
                 <span className="max-w-32 text-right text-xs text-muted-foreground sm:max-w-none sm:text-sm">Awaiting judge review</span>
