@@ -104,7 +104,7 @@ function Result({ report, name, onAgain }: { report: Report; name: string; onAga
       <footer className="mt-5 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5">
         <p className="max-w-md text-xs leading-relaxed text-muted-foreground">AI scores are suggestions to help you decide. The final decision is yours.</p>
         <div className="flex flex-wrap gap-3">
-          <Button className="h-auto min-h-10 max-w-full rounded-full px-5 py-2 whitespace-normal" disabled={inQueue} onClick={addToQueue}>{inQueue ? <Check /> : <Plus />}{inQueue ? "Ditambahkan ke antrian proyek" : "Tambahkan ke antrian proyek"}</Button>
+          <Button className="h-auto min-h-10 max-w-full rounded-full px-5 py-2 whitespace-normal" disabled={inQueue} onClick={addToQueue}>{inQueue ? <Check /> : <Plus />}{inQueue ? "Added to project queue" : "Add to project queue"}</Button>
           <Button variant="outline" className="h-10 rounded-full px-5" onClick={onAgain}><RotateCcw />Analyze another</Button>
         </div>
         {error && <p role="alert" className="w-full text-sm text-destructive">{error}</p>}
