@@ -16,7 +16,6 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Button } from "@/components/ui/button";
 import { folderName, useApi } from "@/lib/api";
-import logo from "@/assets/gavel-logo.png.asset.json";
 import { FolderOpen, ArrowUpRight } from "lucide-react";
 
 /** Workflow steps inside an event folder: the top bar is hidden there, the step nav already shows the location. */
@@ -169,7 +168,6 @@ function Nav() {
     <nav className={isLanding ? "sticky top-0 z-30 px-4 pt-3 sm:px-6" : `sticky top-0 z-30 border-b transition-colors ${scrolled ? "border-border bg-(--nav-scrolled) backdrop-blur-md" : "border-transparent bg-transparent"}`}>
       <div className={isLanding ? "glass-nav landing-nav flex items-center gap-4 rounded-full px-4 py-2 sm:px-5" : "flex items-center gap-4 px-4 py-3 sm:px-6"}>
         <Link to="/" className="flex items-center gap-2 text-lg font-medium">
-          <img src={logo.url} alt="" aria-hidden className="size-6 shrink-0 object-contain" />
           GavelMind<span className="-ml-2 text-primary">.</span>
         </Link>
         {isLanding ? <div className="ml-auto flex items-center gap-6"><span className="hidden text-xs text-muted-foreground sm:block">Built for the human behind the score.</span><Button asChild variant="outline" className="rounded-full"><Link to="/app">Open app <ArrowUpRight /></Link></Button></div> : <Button asChild variant="ghost" className="ml-auto min-w-0 max-w-[55%] rounded-full"><Link to="/app"><FolderOpen className="size-4 shrink-0 text-primary" /><span className="truncate">{active ? folderName(active, state) : "Event folders"}</span></Link></Button>}
