@@ -1,3 +1,4 @@
+import { CosmicBackground } from "@/components/cosmic-background";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -140,6 +141,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+      <CosmicBackground />
       {!hideNav && <Nav />}
       <main className={isLanding ? "" : `${hideNav ? "px-4 pb-10 pt-4 sm:px-6" : "px-4 pb-20 pt-8 sm:px-6 sm:pt-12"} ${isWorkspace ? "workspace-main" : ""}`}>
         <Outlet />
