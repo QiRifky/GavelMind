@@ -61,3 +61,8 @@
 
 - [x] Replace the AI ribbon with the uploaded border-beam line animation in the existing AI blocks.
 - [x] Verify analysis, report, phone layout, and reduced motion.
+
+# Mulai Penilaian button
+
+- [x] Replace the Single Analyze tab with a working Mulai Penilaian button that opens the Judging page.
+- [x] Verify the button navigates to the next unreviewed entry on laptop and phone, and run existing tests.

@@ -1,8 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, FolderGit2, Github, Link2, Trash2, Layers, Globe } from "lucide-react";
-import { addProjects, analyzeProject, removeProject, scanShowcase, splitUrls, useApi, type Discovered } from "@/lib/api";
-import { AnalyzeCard } from "@/components/analyze-card";
+import { addProjects, analyzeProject, judgeStatus, removeProject, scanShowcase, splitUrls, useApi, type Discovered } from "@/lib/api";
 import { Badge, Pill } from "@/components/ui-bits";
 import { ShinyButton } from "@/components/ui/shiny-button";
 import { Button } from "@/components/ui/button";
@@ -33,6 +32,7 @@ function Entries() {
   const [picked, setPicked] = useState<Set<string>>(new Set());
   const rows = state.projects;
   const ready = rows.filter((p) => p.status === "done");
+  const judgeTarget = ready.find((p) => judgeStatus(p.id, state) === "Not reviewed") ?? ready[0];
   const toggle = (id: string) => setPicked((s) => { const n = new Set(s); if (n.has(id)) n.delete(id); else n.add(id); return n; });
   const selectable = rows.filter((p) => p.status !== "analyzing");
   const allPicked = selectable.length > 0 && selectable.every((p) => picked.has(p.id));
@@ -52,13 +52,18 @@ function Entries() {
       <div className="lg:col-span-2"><StatsBento hero={{ badge: "Projects", value: rows.length, caption: "Submissions in this event" }} trend={{ label: "Analysis ready", value: `${rows.length ? Math.round((ready.length / rows.length) * 100) : 0}%`, bars: (["queued", "analyzing", "done", "failed"] as const).map((k) => rows.filter((p) => p.status === k).length) }} tiles={[{ label: "Ready", value: ready.length }, { label: "Queued", value: rows.filter((p) => p.status === "queued").length }]} /></div>
       <section className="overflow-hidden bento " aria-label="Add submissions">
         <header className="flex flex-wrap items-center justify-between gap-3 px-5 pt-5 sm:px-6"><h2 className="text-lg font-medium">Add submissions</h2><Badge tone="neutral">Mock analysis</Badge></header>
-        <Tabs defaultValue="single" className="p-5 sm:p-6">
-          <TabsList aria-label="Submission input method" className="grid h-auto w-full grid-cols-3 gap-1 rounded-xl bg-well p-1.5">
-            <TabsTrigger value="single" className="min-w-0 flex-col gap-1 whitespace-normal px-1 py-3 text-xs data-[state=active]:bg-accent data-[state=active]:text-accent-foreground sm:flex-row sm:gap-2 sm:text-sm"><Github className="size-4 shrink-0" />Single Analyze</TabsTrigger>
+        <div className="px-5 pt-5 sm:px-6">
+          {judgeTarget ? (
+            <Button asChild className="h-11 w-full rounded-full px-6"><Link to="/app/p/$id" params={{ id: judgeTarget.id }}>Mulai Penilaian <ArrowRight className="size-4" aria-hidden="true" /></Link></Button>
+          ) : (
+            <Button className="h-11 w-full rounded-full px-6" disabled title="No entries ready yet">Mulai Penilaian <ArrowRight className="size-4" aria-hidden="true" /></Button>
+          )}
+        </div>
+        <Tabs defaultValue="bulk" className="p-5 sm:p-6">
+          <TabsList aria-label="Submission input method" className="grid h-auto w-full grid-cols-2 gap-1 rounded-xl bg-well p-1.5">
             <TabsTrigger value="bulk" className="min-w-0 flex-col gap-1 whitespace-normal px-1 py-3 text-xs data-[state=active]:bg-accent data-[state=active]:text-accent-foreground sm:flex-row sm:gap-2 sm:text-sm"><Layers className="size-4 shrink-0" />Bulk Repos</TabsTrigger>
             <TabsTrigger value="showcase" className="min-w-0 flex-col gap-1 whitespace-normal px-1 py-3 text-xs data-[state=active]:bg-accent data-[state=active]:text-accent-foreground sm:flex-row sm:gap-2 sm:text-sm"><Globe className="size-4 shrink-0" />Import Showcase</TabsTrigger>
           </TabsList>
-          <TabsContent value="single" forceMount className="mt-4 data-[state=inactive]:hidden"><AnalyzeCard embedded /></TabsContent>
           <TabsContent value="bulk" forceMount className="mt-4 data-[state=inactive]:hidden"><PasteCard /></TabsContent>
           <TabsContent value="showcase" forceMount className="mt-4 data-[state=inactive]:hidden"><ShowcaseCard /></TabsContent>
         </Tabs>
