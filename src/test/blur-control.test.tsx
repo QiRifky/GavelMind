@@ -3,6 +3,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import {
   BLUR_KEY,
   BlurControl,
+  BlurControlInline,
   applyBlur,
   blurScale,
   clampPct,
@@ -58,5 +59,18 @@ describe("card blur persistence", () => {
     writeBlurPct(62);
     render(<BlurControl />);
     expect(localStorage.getItem(BLUR_KEY)).toBe("62");
+  });
+
+  it("shows the landing navbar control with the saved level", () => {
+    writeBlurPct(41);
+    render(<BlurControlInline />);
+    expect(screen.getByLabelText("Card blur")).toHaveValue("41");
+  });
+
+  it("saves the landing navbar level the moment its slider moves", () => {
+    render(<BlurControlInline />);
+    fireEvent.change(screen.getByLabelText("Card blur"), { target: { value: "9" } });
+    expect(localStorage.getItem(BLUR_KEY)).toBe("9");
+    expect(document.documentElement.style.getPropertyValue("--blur-scale")).toBe(String(9 / 50));
   });
 });
