@@ -4,7 +4,7 @@ import { CriterionEvaluation } from "@/components/criterion-evaluation";
 import { Button } from "@/components/ui/button";
 import { finalsOf, useApi, type Criterion, type Report } from "@/lib/api";
 
-/** Keep every form mounted so changing the front card preserves local notes and evidence. */
+/** Keep every form mounted so changing the front card preserves evidence state. */
 export function CriterionDeck({ report, criteria }: { report: Report; criteria: Criterion[] }) {
   const state = useApi();
   const [selectedId, setSelectedId] = useState(criteria[0]?.id);
@@ -39,7 +39,9 @@ export function CriterionDeck({ report, criteria }: { report: Report; criteria: 
           <div key={`${report.projectId}-${criterion.id}`} hidden={index !== activeIndex}
             className="criterion-deck-front relative z-10 flex-1 rounded-card [&>section]:h-full"
             role="group" aria-label={`Criterion ${index + 1} of ${criteria.length}: ${criterion.name}`}>
-            <CriterionEvaluation report={report} criterion={criterion} index={index} />
+            <CriterionEvaluation report={report} criterion={criterion} index={index}
+              {...(index > 0 ? { onPrevious: () => goTo(index - 1) } : {})}
+              {...(index + 1 < criteria.length ? { onNext: () => goTo(index + 1) } : {})} />
           </div>
         ))}
       </div>
