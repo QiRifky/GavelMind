@@ -4,6 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { AnimatePresence, MotionConfig, motion } from "motion/react";
 import { Check, ChevronDown, ExternalLink, FolderOpen, Menu, Trash2, X } from "lucide-react";
 import { deleteFolder, folderName, folderStats, judgeStatus, switchFolder, useApi, weightTotal } from "@/lib/api";
+import { BlurControl } from "@/components/blur-control";
 import { cn } from "@/lib/utils";
 
 type Step = "event" | "entries" | "rubric" | "judging" | "results";
@@ -89,6 +90,7 @@ export function WorkflowNav({ current }: { current: Step }) {
                 <button type="button" onClick={() => setPanel("folder")} className="mt-2 flex items-center justify-between rounded-2xl border border-border px-3 py-3 text-left text-sm">
                   <span className="flex min-w-0 items-center gap-2"><FolderOpen className="size-4 shrink-0 text-primary" /><span className="truncate">{name}</span></span><ChevronDown className="size-4 -rotate-90" />
                 </button>
+                <BlurControl className="mt-3 px-3" />
               </div>
             </motion.div>
           )}
@@ -114,6 +116,7 @@ function FolderPanel({ name, stats, steps, current, linkProps, close }: { name: 
           <li>{stats.finalized ? "Results final" : "Draft, not final"}</li>
         </ul>
         {state.event?.url ? <a href={state.event.url} target="_blank" rel="noreferrer" className="inline-flex w-fit items-center gap-1 text-sm text-primary hover:underline">Event guide <ExternalLink className="size-3" /></a> : <Link to="/app/event" onClick={close} className="text-sm text-primary hover:underline">Add event details</Link>}
+        <BlurControl />
       </div>
       <div className="flex flex-col gap-4">
         <span className={eyebrow}>Progress</span>
