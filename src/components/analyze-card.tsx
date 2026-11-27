@@ -1,13 +1,12 @@
-import { Link } from "@tanstack/react-router";
 import { useRef, useState } from "react";
-import { addProjects, analyzeProject, average, draftsFor, snapshot, STAGES, type AnalyzeStage, type Report } from "@/lib/api";
+import { analyzePreview, enqueuePreview, average, draftsFor, STAGES, useApi, type AnalyzeStage, type Report } from "@/lib/api";
 import { HandoffBeam } from "@/components/ui/handoff-beam";
 import { Pill } from "@/components/ui-bits";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { DonutBreakdown } from "@/components/ui/donut-breakdown";
 import { ShinyButton } from "@/components/ui/shiny-button";
-import { ArrowRight, RotateCcw, CheckCheck } from "lucide-react";
+import { Plus, RotateCcw, CheckCheck, Check } from "lucide-react";
 
 type Phase = { k: "idle" } | { k: "running"; stage: AnalyzeStage } | { k: "done"; report: Report; name: string } | { k: "error"; message: string };
 
@@ -20,14 +19,11 @@ export function AnalyzeCard({ initialUrl = "", className, embedded = false }: { 
   async function run() {
     const u = url.trim();
     if (!u) return;
-    const existing = snapshot().projects.find((p) => p.repoUrl === u);
-    const project = existing ?? addProjects([u])[0];
-    if (!project) return;
     const c = new AbortController();
     ctrl.current = c;
     setPhase({ k: "running", stage: 0 });
     try {
-      const report = await analyzeProject(project.id, { signal: c.signal, onStage: (stage) => setPhase({ k: "running", stage }) });
+      const { project, report } = await analyzePreview(u, { signal: c.signal, onStage: (stage) => setPhase({ k: "running", stage }) });
       setPhase({ k: "done", report, name: project.name });
     } catch (e) {
       if (e instanceof DOMException && e.name === "AbortError") setPhase({ k: "idle" });
@@ -64,7 +60,7 @@ export function AnalyzeCard({ initialUrl = "", className, embedded = false }: { 
         </div>
       )}
 
-      {phase.k === "done" && <Result report={phase.report} name={phase.name} onAgain={() => setPhase({ k: "idle" })} />}
+      {phase.k === "done" && <Result key={phase.report.projectId} report={phase.report} name={phase.name} onAgain={() => setPhase({ k: "idle" })} />}
 
       {phase.k === "error" && (
         <div className="animate-in fade-in duration-300">
@@ -82,7 +78,14 @@ export function AnalyzeCard({ initialUrl = "", className, embedded = false }: { 
 }
 
 function Result({ report, name, onAgain }: { report: Report; name: string; onAgain: () => void }) {
-  const { criteria } = snapshot();
+  const { criteria, projects } = useApi();
+  const [added, setAdded] = useState(false);
+  const [error, setError] = useState("");
+  const inQueue = added && projects.some((p) => p.id === report.projectId);
+  const addToQueue = () => {
+    try { enqueuePreview(report.projectId); setAdded(true); setError(""); }
+    catch (e) { setError(e instanceof Error ? e.message : "Couldn't add this project."); }
+  };
   const passed = report.checks.filter((c) => c.result === "pass").length;
   const w = criteria.reduce((a, c) => a + c.weight, 0) || 1;
   const draft = criteria.reduce((a, c) => a + average(draftsFor(report, c).map((d) => d.score)) * c.weight, 0) / w;
@@ -101,9 +104,10 @@ function Result({ report, name, onAgain }: { report: Report; name: string; onAga
       <footer className="mt-5 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5">
         <p className="max-w-md text-xs leading-relaxed text-muted-foreground">AI scores are suggestions to help you decide. The final decision is yours.</p>
         <div className="flex flex-wrap gap-3">
-          <Button asChild className="h-10 rounded-full px-5"><Link to="/app/p/$id" params={{ id: report.projectId }}>Start judging <ArrowRight /></Link></Button>
+          <Button className="h-auto min-h-10 max-w-full rounded-full px-5 py-2 whitespace-normal" disabled={inQueue} onClick={addToQueue}>{inQueue ? <Check /> : <Plus />}{inQueue ? "Ditambahkan ke antrian proyek" : "Tambahkan ke antrian proyek"}</Button>
           <Button variant="outline" className="h-10 rounded-full px-5" onClick={onAgain}><RotateCcw />Analyze another</Button>
         </div>
+        {error && <p role="alert" className="w-full text-sm text-destructive">{error}</p>}
       </footer>
     </div>
   );

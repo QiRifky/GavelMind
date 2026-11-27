@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, FolderGit2, Github, Link2, Trash2, Layers, Globe } from "lucide-react";
-import { addProjects, analyzeProject, removeProject, scanShowcase, splitUrls, useApi, type Discovered } from "@/lib/api";
+import { addProjects, prepareJudging, removeProject, scanShowcase, splitUrls, useApi, type Discovered } from "@/lib/api";
 import { AnalyzeCard } from "@/components/analyze-card";
 import { Badge, Pill } from "@/components/ui-bits";
 import { ShinyButton } from "@/components/ui/shiny-button";
@@ -30,6 +30,9 @@ export const Route = createFileRoute("/app/entries")({
 
 function Entries() {
   const state = useApi();
+  const navigate = useNavigate();
+  const [starting, setStarting] = useState(false);
+  const [error, setError] = useState("");
   const [picked, setPicked] = useState<Set<string>>(new Set());
   const rows = state.projects;
   const ready = rows.filter((p) => p.status === "done");
@@ -40,9 +43,15 @@ function Entries() {
   const allRef = useRef<HTMLInputElement>(null);
   useEffect(() => { if (allRef.current) allRef.current.indeterminate = somePicked && !allPicked; }, [somePicked, allPicked]);
   const selectAll = () => setPicked(allPicked ? new Set() : new Set(selectable.map((p) => p.id)));
-  const analyzeSelected = () => {
-    for (const id of picked) void analyzeProject(id, { stageMs: 600 }).catch(() => undefined);
-    setPicked(new Set());
+  const startJudging = async () => {
+    setStarting(true);
+    setError("");
+    try {
+      const id = await prepareJudging([...picked], { stageMs: 600 });
+      await navigate({ to: "/app/p/$id", params: { id } });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Couldn't start judging.");
+    } finally { setStarting(false); }
   };
 
   return (
@@ -103,7 +112,8 @@ function Entries() {
         )}
         <footer className="mt-auto flex shrink-0 flex-wrap items-center justify-between gap-4 border-t border-border bg-well/50 px-5 py-4 sm:px-6">
           <span className="text-sm tabular-nums text-muted-foreground"><span className="font-medium text-foreground">{picked.size}</span> selected</span>
-          <Pill size="lg" disabled={picked.size === 0} onClick={analyzeSelected}>Analyze selected <ArrowRight className="size-4" aria-hidden="true" /></Pill>
+          <Pill size="lg" disabled={picked.size === 0 || starting} onClick={() => void startJudging()}>{starting ? "Preparing…" : "Start judging"} <ArrowRight className="size-4" aria-hidden="true" /></Pill>
+          {error && <p role="alert" className="w-full text-sm text-destructive">{error}</p>}
         </footer>
       </section>
       </StepBody>

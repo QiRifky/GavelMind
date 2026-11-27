@@ -325,25 +325,66 @@ export async function scanShowcase(pageUrl: string): Promise<Discovered[]> {
 function setStatus(id: string, status: AnalysisStatus) {
   set({ projects: state.projects.map((p) => (p.id === id ? { ...p, status } : p)) });
 }
+type AnalysisOptions = { onStage?: (s: AnalyzeStage) => void; signal?: AbortSignal; stageMs?: number };
+const analysisPreviews = new Map<string, { folderId: string; project: Project; report: Report }>();
+async function prepareReport(project: Project, opts: AnalysisOptions): Promise<Report> {
+  for (const stage of [0, 1, 2, 3] as const) {
+    if (opts.signal?.aborted) throw new DOMException("Cancelled", "AbortError");
+    opts.onStage?.(stage);
+    await wait(opts.stageMs ?? 1100, opts.signal);
+    if (stage === 0 && !isRepoUrl(project.repoUrl)) throw new Error("Couldn't clone this address. Use a public GitHub repository URL.");
+  }
+  return makeReport(project);
+}
+/** Single analysis stays outside the queue until explicitly accepted. */
+export async function analyzePreview(repoUrl: string, opts: AnalysisOptions = {}) {
+  const folderId = state.activeFolderId;
+  const url = repoUrl.trim();
+  const existing = state.projects.find((p) => p.repoUrl === url);
+  const project: Project = existing ?? { id: `p${++idSeq}`, name: nameOf(url), repoUrl: url, status: "done" };
+  const report = await prepareReport(project, opts);
+  analysisPreviews.set(project.id, { folderId, project, report });
+  return { project, report };
+}
+export function enqueuePreview(id: string): Project {
+  const preview = analysisPreviews.get(id);
+  if (!preview || preview.folderId !== state.activeFolderId) throw new Error("Analyze this project again in the current event.");
+  const existing = state.projects.find((p) => p.repoUrl === preview.project.repoUrl);
+  const project: Project = { ...(existing ?? preview.project), status: "done" };
+  // Keep an existing ready report intact, including its draft identity.
+  const report = state.reports[project.id] ?? { ...preview.report, projectId: project.id };
+  set({ projects: existing ? state.projects.map((p) => p.id === project.id ? project : p) : [...state.projects, project], reports: { ...state.reports, [project.id]: report } });
+  return project;
+}
+/** Prepare missing material for selected entries, then open the first selected project. */
+export async function prepareJudging(ids: string[], opts: AnalysisOptions = {}): Promise<string> {
+  const folderId = state.activeFolderId;
+  const selected = state.projects.filter((p) => ids.includes(p.id));
+  const first = selected[0];
+  if (!first) throw new Error("Select a project first.");
+  for (const project of selected) {
+    if (project.status !== "done" || !state.reports[project.id]) await analyzeProject(project.id, opts);
+    if (state.activeFolderId !== folderId) throw new Error("The active event changed. Select projects again.");
+  }
+  return first.id;
+}
 /**
  * Runs the four analysis stages. onStage reports progress; abort the signal to cancel
  * (the project goes back to queued). Rejects for URLs that are not a GitHub repo.
  */
-export async function analyzeProject(id: string, opts: { onStage?: (s: AnalyzeStage) => void; signal?: AbortSignal; stageMs?: number } = {}): Promise<Report> {
+export async function analyzeProject(id: string, opts: AnalysisOptions = {}): Promise<Report> {
   const p = state.projects.find((x) => x.id === id);
   if (!p) throw new Error("Project not found");
+  const folderId = state.activeFolderId;
   setStatus(id, "analyzing");
+  let report: Report;
   try {
-    for (const s of [0, 1, 2, 3] as const) {
-      opts.onStage?.(s);
-      await wait(opts.stageMs ?? 1100, opts.signal);
-      if (s === 0 && !isRepoUrl(p.repoUrl)) throw new Error("Couldn't clone this address. Use a public GitHub repository URL.");
-    }
+    report = await prepareReport(p, opts);
   } catch (e) {
-    setStatus(id, e instanceof DOMException && e.name === "AbortError" ? "queued" : "failed");
+    if (state.activeFolderId === folderId) setStatus(id, e instanceof DOMException && e.name === "AbortError" ? "queued" : "failed");
     throw e;
   }
-  const report = makeReport(p);
+  if (state.activeFolderId !== folderId) throw new Error("The active event changed. Analyze this project again.");
   set({ reports: { ...state.reports, [id]: report } });
   setStatus(id, "done");
   return report;

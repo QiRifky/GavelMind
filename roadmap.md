@@ -1,5 +1,11 @@
 # Landing page
 
+# Explicit queue and judging actions
+
+- [x] Add analyzed previews to Project queue only through the queue button, without duplicates.
+- [x] Replace Analyze selected with Start judging and open a selected project's judging page.
+- [x] Verify the full flow, mobile layout, and regression tests.
+
 # Reference card presentation
 
 - [x] Adapt shared card corners, solid surfaces, and subtle shadows to the uploaded reference while preserving orange fills.
