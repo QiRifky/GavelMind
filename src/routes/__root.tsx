@@ -16,8 +16,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Button } from "@/components/ui/button";
 import { folderName, useApi } from "@/lib/api";
 import logo from "@/assets/gavel-logo.png.asset.json";
-import ElsewhereHero from "@/components/ui/elsewhere-hero";
-import { FolderOpen } from "lucide-react";
+import { FolderOpen, ArrowUpRight } from "lucide-react";
 
 /** Workflow steps inside an event folder: the top bar is hidden there, the step nav already shows the location. */
 const WORKSPACE_STEP_PATHS = ["/app/event", "/app/entries", "/app/rubric", "/app/results"];
@@ -140,10 +139,9 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {!isLanding && <ElsewhereHero variant="ambient" brand="GavelMind ambient background" navCta={false} signature={false} />}
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      {!hideNav && !isLanding && <Nav />}
-      <main className={isLanding ? "" : `relative z-10 ${hideNav ? "px-4 pb-24 pt-4 sm:px-6" : "px-4 pb-24 pt-8 sm:px-6 sm:pt-12"} ${isWorkspace ? "workspace-main" : ""}`}>
+      {!hideNav && <Nav />}
+      <main className={isLanding ? "" : `${hideNav ? "px-4 pb-10 pt-4 sm:px-6" : "px-4 pb-20 pt-8 sm:px-6 sm:pt-12"} ${isWorkspace ? "workspace-main" : ""}`}>
         <Outlet />
       </main>
     </QueryClientProvider>
@@ -151,6 +149,7 @@ function RootComponent() {
 }
 
 function Nav() {
+  const isLanding = useRouterState({ select: (s) => s.location.pathname === "/" });
   const state = useApi();
   const active = state.folders.find((f) => f.id === state.activeFolderId);
   const [scrolled, setScrolled] = useState(false);
@@ -167,7 +166,7 @@ function Nav() {
           <img src={logo.url} alt="" aria-hidden className="size-6 shrink-0 object-contain" />
           GavelMind<span className="-ml-2 text-primary">.</span>
         </Link>
-        <Button asChild variant="ghost" className="ml-auto min-w-0 max-w-[55%] rounded-full"><Link to="/app"><FolderOpen className="size-4 shrink-0 text-primary" /><span className="truncate">{active ? folderName(active, state) : "Event folders"}</span></Link></Button>
+        {isLanding ? <div className="ml-auto flex items-center gap-6"><span className="hidden text-xs text-muted-foreground sm:block">Built for the human behind the score.</span><Button asChild variant="outline" className="rounded-full"><Link to="/app">Open app <ArrowUpRight /></Link></Button></div> : <Button asChild variant="ghost" className="ml-auto min-w-0 max-w-[55%] rounded-full"><Link to="/app"><FolderOpen className="size-4 shrink-0 text-primary" /><span className="truncate">{active ? folderName(active, state) : "Event folders"}</span></Link></Button>}
       </div>
 
     </nav>

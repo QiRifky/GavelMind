@@ -125,16 +125,6 @@
   --glass-card-light: rgb(255 244 232 / 0.045);
   --glass-raised: rgb(64 61 58 / 0.72);
   --glass-inner: rgb(255 255 255 / 0.035);
-  /* Cinematic landing hero: light glass controls over day/night footage. */
-  --hero-overlay: linear-gradient(180deg, rgb(0 0 0 / 0.52), rgb(0 0 0 / 0.20) 38%, rgb(0 0 0 / 0.06) 62%, rgb(0 0 0 / 0.44));
-  --hero-workspace-overlay: linear-gradient(180deg, rgb(12 12 12 / 0.86), rgb(25 25 25 / 0.92));
-  --hero-glass: rgb(245 243 238 / 0.10);
-  --hero-glass-hover: rgb(245 243 238 / 0.18);
-  --hero-glass-border: rgb(245 243 238 / 0.24);
-  --hero-glass-border-hover: rgb(245 243 238 / 0.38);
-  --hero-text-soft: rgb(245 243 238 / 0.86);
-  --hero-text-muted: rgb(245 243 238 / 0.68);
-  --hero-text-shadow: 0 2px 24px rgb(0 0 0 / 0.48);
 
   --radius: 1.25rem;
   --card-radius: 8px;
