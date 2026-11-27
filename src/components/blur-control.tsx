@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 export const BLUR_KEY = "gavelmind-card-blur-pct";
 export const clampPct = (pct: number) => Math.min(100, Math.max(0, pct));
-/** 0% = no blur, 50% = default, 100% = strong (2× default). */
+/** 0% = no blur (the level first-time visitors see), 50% = the designed glass blur, 100% = strong (2×). */
 export const blurScale = (pct: number) => clampPct(pct) / 50;
 
 /** Saved card-blur level, or null when this device has no choice yet. */
@@ -26,7 +26,8 @@ export function applyBlur(pct: number) {
 
 /** Display control: a volume-style slider for how strongly glass cards blur the background. */
 export function BlurControl({ className }: { className?: string }) {
-  const [pct, setPct] = useState(50);
+  // First visit shows 0% (fully clear) until the user picks a level.
+  const [pct, setPct] = useState(0);
   // Show the saved level on mount. Only the user's own drag writes to storage,
   // so opening and closing the panel can never overwrite the saved choice.
   useEffect(() => {

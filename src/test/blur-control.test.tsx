@@ -20,6 +20,11 @@ describe("card blur persistence", () => {
     expect(readBlurPct()).toBeNull();
   });
 
+  it("starts fully clear on a first visit", () => {
+    render(<BlurControl />);
+    expect(screen.getByLabelText("Card blur")).toHaveValue("0");
+  });
+
   it("keeps the chosen level after it is saved", () => {
     writeBlurPct(88);
     expect(readBlurPct()).toBe(88);

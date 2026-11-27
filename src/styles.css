@@ -350,27 +350,27 @@ body {
   border-radius: var(--card-radius);
   background: linear-gradient(144deg, var(--glass-card-light), transparent 66%), var(--glass-card);
   box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(calc(17px * var(--blur-scale, 1))) saturate(1.25);
+  backdrop-filter: blur(calc(17px * var(--blur-scale, 0))) saturate(1.25);
 }
 @utility glass-nav {
   border: 1px solid var(--glass-rim);
   background: linear-gradient(165deg, var(--glass-gloss), transparent 32% 73%, var(--glass-gloss)), var(--glass-rail);
   box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(calc(16px * var(--blur-scale, 1))) saturate(1.25);
+  backdrop-filter: blur(calc(16px * var(--blur-scale, 0))) saturate(1.25);
 }
 @utility workspace-stage {
   border: 1px solid var(--glass-rim);
   border-radius: var(--card-radius);
   background: linear-gradient(148deg, var(--glass-gloss), transparent 22% 76%, var(--glass-card-light)), var(--glass-frame);
   box-shadow: var(--shadow-soft), 0 22px 70px rgb(0 0 0 / 0.18);
-  backdrop-filter: blur(calc(12px * var(--blur-scale, 1))) saturate(1.12);
+  backdrop-filter: blur(calc(12px * var(--blur-scale, 0))) saturate(1.12);
 }
 @utility glass {
   border: 1px solid var(--glass-rim);
   border-radius: var(--card-radius);
   background: linear-gradient(144deg, var(--glass-card-light), transparent 66%), var(--glass-card);
   box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(calc(17px * var(--blur-scale, 1))) saturate(1.25);
+  backdrop-filter: blur(calc(17px * var(--blur-scale, 0))) saturate(1.25);
 }
 @utility eyebrow {
   font-size: 0.72rem;
@@ -407,7 +407,7 @@ body {
   border-radius: var(--card-radius);
   background: linear-gradient(144deg, var(--glass-card-light), transparent 66%), var(--glass-nested);
   box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(calc(17px * var(--blur-scale, 1))) saturate(1.25);
+  backdrop-filter: blur(calc(17px * var(--blur-scale, 0))) saturate(1.25);
 }
 @utility bento-stripes {
   background-image: repeating-linear-gradient(45deg, var(--bento-stripe) 0 1px, transparent 1px 10px);
@@ -422,6 +422,6 @@ body {
 }
 
 /* Card blur level chosen in the display control (BlurControl). */
-:root { --blur-scale: 1; }
+:root { --blur-scale: 0; }
 /* Landing navbar: lighter blur than the workspace glass, still scaled by the user's blur setting. */
-.landing-nav { backdrop-filter: blur(calc(7px * var(--blur-scale, 1))) saturate(1.2); }
+.landing-nav { backdrop-filter: blur(calc(7px * var(--blur-scale, 0))) saturate(1.2); }
