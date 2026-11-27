@@ -99,7 +99,7 @@
   --page: #191919;
   --surface: #222222;
   --surface-2: #2a2a2a;
-  --well: rgb(8 8 8 / 0.34);
+  --well: rgb(8 8 8 / 0.20);
   --ink: #f5f3ee;
   --grey: #a39f98;
   --line: rgb(255 255 255 / 0.10);
@@ -120,16 +120,16 @@
   --grid-line: rgb(255 255 255 / 0.08);
   --chart-grid: rgb(255 255 255 / 0.06);
   /* Glass dashboard treatment: dark translucent layers with warm rim lighting. */
-  --glass-rim: rgb(255 240 224 / 0.16);
+  --glass-rim: rgb(255 240 224 / 0.20);
   --glass-edge-light: rgb(255 248 238 / 0.13);
-  --glass-edge-shade: rgb(0 0 0 / 0.24);
-  --glass-gloss: rgb(255 244 231 / 0.055);
-  --glass-frame: rgb(42 42 42 / 0.48);
-  --glass-rail: rgb(34 34 34 / 0.72);
-  --glass-card: rgb(42 42 42 / 0.62);
-  --glass-card-light: rgb(255 244 232 / 0.045);
-  --glass-raised: rgb(64 61 58 / 0.72);
-  --glass-inner: rgb(255 255 255 / 0.035);
+  --glass-edge-shade: rgb(0 0 0 / 0.20);
+  --glass-gloss: rgb(255 244 231 / 0.05);
+  --glass-frame: rgb(36 36 36 / 0.22);
+  --glass-rail: rgb(30 30 30 / 0.38);
+  --glass-card: rgb(38 38 38 / 0.30);
+  --glass-card-light: rgb(255 244 232 / 0.05);
+  --glass-raised: rgb(64 61 58 / 0.40);
+  --glass-inner: rgb(255 255 255 / 0.045);
 
   --radius: 1.25rem;
   --card-radius: 8px;
@@ -345,27 +345,27 @@ body {
   border-radius: var(--card-radius);
   background: linear-gradient(144deg, var(--glass-card-light), transparent 66%), var(--glass-card);
   box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(18px) saturate(1.24);
+  backdrop-filter: blur(26px) saturate(1.3);
 }
 @utility glass-nav {
   border: 1px solid var(--glass-rim);
   background: linear-gradient(165deg, var(--glass-gloss), transparent 32% 73%, var(--glass-gloss)), var(--glass-rail);
   box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(18px) saturate(1.35);
+  backdrop-filter: blur(24px) saturate(1.35);
 }
 @utility workspace-stage {
   border: 1px solid var(--glass-rim);
   border-radius: var(--card-radius);
   background: linear-gradient(148deg, var(--glass-gloss), transparent 22% 76%, var(--glass-card-light)), var(--glass-frame);
   box-shadow: var(--shadow-soft), 0 22px 70px rgb(0 0 0 / 0.18);
-  backdrop-filter: blur(12px) saturate(1.18);
+  backdrop-filter: blur(18px) saturate(1.18);
 }
 @utility glass {
   border: 1px solid var(--glass-rim);
   border-radius: var(--card-radius);
   background: linear-gradient(144deg, var(--glass-card-light), transparent 66%), var(--glass-card);
   box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(18px) saturate(1.24);
+  backdrop-filter: blur(26px) saturate(1.3);
 }
 @utility eyebrow {
   font-size: 0.72rem;
@@ -402,7 +402,7 @@ body {
   border-radius: var(--card-radius);
   background: linear-gradient(144deg, var(--glass-card-light), transparent 66%), var(--glass-card);
   box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(18px) saturate(1.24);
+  backdrop-filter: blur(26px) saturate(1.3);
 }
 @utility bento-stripes {
   background-image: repeating-linear-gradient(45deg, var(--bento-stripe) 0 1px, transparent 1px 10px);
