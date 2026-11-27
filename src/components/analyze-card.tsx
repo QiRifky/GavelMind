@@ -101,7 +101,7 @@ function Result({ report, name, onAgain }: { report: Report; name: string; onAga
       <footer className="mt-5 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5">
         <p className="max-w-md text-xs leading-relaxed text-muted-foreground">AI scores are suggestions to help you decide. The final decision is yours.</p>
         <div className="flex flex-wrap gap-3">
-          <Button asChild className="h-10 rounded-full px-5"><Link to="/app/p/$id" params={{ id: report.projectId }}>Open full report <ArrowRight /></Link></Button>
+          <Button asChild className="h-10 rounded-full px-5"><Link to="/app/p/$id" params={{ id: report.projectId }}>Start judging <ArrowRight /></Link></Button>
           <Button variant="outline" className="h-10 rounded-full px-5" onClick={onAgain}><RotateCcw />Analyze another</Button>
         </div>
       </footer>
