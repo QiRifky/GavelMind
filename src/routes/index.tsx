@@ -6,9 +6,9 @@ import hero from "@/assets/judging-hero.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
-    { title: "Gavel Mind — AI prepares. You decide." },
+    { title: "GavelMind — AI prepares. You decide." },
     { name: "description", content: "A hackathon judging workspace for project material, evidence and AI draft scores. Your rubric. Your final decision." },
-    { property: "og:title", content: "Gavel Mind — AI prepares. You decide." },
+    { property: "og:title", content: "GavelMind — AI prepares. You decide." },
     { property: "og:description", content: "Review project evidence and AI draft scores in one workspace. Human judges make every final decision." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
@@ -26,10 +26,9 @@ function LandingPage() {
       <section className="landing-hero relative isolate overflow-hidden">
         <img src={hero.url} alt="A titanium and amber glass judge's gavel on a charcoal sound block" className="landing-hero-image pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover" fetchPriority="high" />
         <div className="landing-hero-inner px-5 sm:px-6">
-          <p className="flex items-center gap-2 text-xs font-medium text-accent-foreground"><span className="size-1.5 rounded-full bg-primary" /> THE HACKATHON JUDGING WORKSPACE</p>
-          <h1 className="mt-6 text-5xl font-medium leading-none sm:text-7xl">GavelMind<span className="text-primary">.</span></h1>
-          <h2 className="mt-6 text-3xl font-normal leading-tight sm:text-4xl">AI prepares.<br /><span className="text-muted-foreground">You decide.</span></h2>
-          <p className="mt-5 max-w-sm text-sm leading-7 text-muted-foreground sm:text-base">From repository to review. Project material, evidence, and draft scores in one place — with the final call always yours.</p>
+          <p className="glass-nav inline-flex w-fit items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-medium text-accent-foreground"><span className="size-1.5 rounded-full bg-primary" /> GavelMind — The Hackathon Judging Workspace</p>
+          <h1 className="mt-6 text-5xl font-medium leading-[1.05] sm:text-6xl">AI prepares.<br /><span className="hero-decide text-primary">You decide.</span></h1>
+          <p className="mt-5 max-w-lg text-sm leading-7 text-muted-foreground sm:text-base">From repository to review. Project material, evidence, and draft scores in one place — with the final call always yours.</p>
           <div className="mt-7 flex flex-wrap items-center gap-3">
             <Button asChild size="lg" className="h-12 rounded-full px-6"><Link to="/app">Open workspace <ArrowRight /></Link></Button>
             {project && <Button asChild variant="ghost" className="glass-nav h-12 rounded-full px-5"><Link to="/app/p/$id" params={{ id: project.id }}>Explore a sample report <ArrowUpRight /></Link></Button>}
