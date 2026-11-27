@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, ArrowUpRight, FileSearch, GitBranch, Gavel, SlidersHorizontal, Sparkles, Check, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ElsewhereHero from "@/components/ui/elsewhere-hero";
 import { average, draftsFor, useApi } from "@/lib/api";
-import hero from "@/assets/judging-hero.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -23,22 +23,23 @@ function LandingPage() {
 
   return (
     <div className="landing-page">
-      <section className="landing-hero relative isolate overflow-hidden">
-        <img src={hero.url} alt="A titanium and amber glass judge's gavel on a charcoal sound block" className="landing-hero-image absolute inset-0 -z-10 h-full w-full object-cover" fetchPriority="high" />
-        <div className="landing-hero-inner px-5 sm:px-6">
-          <p className="flex items-center gap-2 text-xs font-medium text-accent-foreground"><span className="size-1.5 rounded-full bg-primary" /> THE HACKATHON JUDGING WORKSPACE</p>
-          <h1 className="mt-6 text-5xl font-medium leading-none sm:text-7xl">GavelMind<span className="text-primary">.</span></h1>
-          <h2 className="mt-6 text-3xl font-normal leading-tight sm:text-4xl">AI prepares.<br /><span className="text-muted-foreground">You decide.</span></h2>
-          <p className="mt-5 max-w-sm text-sm leading-7 text-muted-foreground sm:text-base">From repository to review. Project material, evidence, and draft scores in one place — with the final call always yours.</p>
-          <div className="mt-7 flex flex-wrap items-center gap-3">
-            <Button asChild size="lg" className="h-12 rounded-full px-6"><Link to="/app">Open workspace <ArrowRight /></Link></Button>
-            {project && <Button asChild variant="ghost" className="h-12 rounded-full px-4"><Link to="/app/p/$id" params={{ id: project.id }}>Explore a sample report <ArrowUpRight /></Link></Button>}
-          </div>
-          <p className="mt-4 text-xs text-muted-foreground">Interactive demo · No sign-up · Sample data</p>
-        </div>
-      </section>
+      <ElsewhereHero
+        brand="GavelMind."
+        links={[
+          { label: "Why GavelMind", href: "#principles" },
+          { label: "How it works", href: "#how" },
+        ]}
+        navCta={{ label: "Open workspace", href: "/app" }}
+        headline="AI prepares. You decide."
+        subline="Project material, evidence, and AI draft scores in one calm workspace — with every final call made by you."
+        primaryCta={{ label: "Start reviewing", href: "/app" }}
+        listenLabel="Listen"
+        listenOffLabel="Pause sound"
+        soundHint="Turn on the sound"
+        signature={false}
+      />
 
-      <div className="border-y border-border bg-card/40">
+      <div id="principles" className="scroll-mt-6 border-y border-border bg-card/40">
         <div className="flex flex-wrap items-center justify-between gap-x-8 gap-y-4 px-5 py-6 sm:px-6">
           <span className="flex items-center gap-2 text-sm"><ShieldCheck className="size-4 text-primary" /> Human judgment, at the center.</span>
           <div className="flex flex-wrap gap-x-7 gap-y-3 text-xs text-muted-foreground">
@@ -49,7 +50,7 @@ function LandingPage() {
         </div>
       </div>
 
-      <section className="px-5 py-16 sm:px-6 sm:py-20" aria-labelledby="review-heading">
+      <section id="how" className="scroll-mt-6 px-5 py-16 sm:px-6 sm:py-20" aria-labelledby="review-heading">
         <div className="flex flex-wrap items-end justify-between gap-5">
           <div><p className="text-xs font-medium text-primary">FROM SUBMISSION TO DECISION</p><h2 id="review-heading" className="mt-3 text-3xl font-normal sm:text-4xl">A clearer path to your final call.</h2></div>
           <p className="max-w-xs text-sm leading-6 text-muted-foreground">Let AI organize the material.<br />Give the projects your full attention.</p>

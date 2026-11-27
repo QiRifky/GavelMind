@@ -1,3 +1,9 @@
+# Elsewhere cinematic experience
+
+- [x] Integrate the uploaded day/night video hero and opt-in ambient audio on the public landing page.
+- [x] Extend the ambient video and controls to every workspace page without covering workflow content.
+- [x] Verify navigation, sound and theme controls, responsive layouts, and regression tests.
+
 # Glass dashboard style
 
 - [x] Apply the uploaded glass dashboard treatment across the workspace while preserving Onest, the dark background, orange accents, and 8 px card corners.
