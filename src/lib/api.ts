@@ -7,6 +7,7 @@
 import { useSyncExternalStore } from "react";
 import { analyzeRepository } from "./analysis.functions";
 import { storedDrafts } from "./analysis";
+import { extractRulesFromUrl } from "./event-rules.functions";
 
 export const API_BASE_URL: string = import.meta.env["VITE_API_BASE_URL"] ?? "";
 
@@ -173,7 +174,7 @@ export function deleteFolder(id: string): void {
   set({ folders: state.folders.filter((f) => f.id !== id) });
 }
 
-// ---------- Event (mock only; never fetches or interprets the supplied URL) ----------
+// ---------- Event (rules can be drafted from the public event page; judge confirms) ----------
 export function saveEvent(name: string, url: string): void {
   let parsed: URL;
   try { parsed = new URL(url.trim()); } catch { throw new Error("Enter a valid event URL."); }
@@ -184,7 +185,13 @@ export function saveEvent(name: string, url: string): void {
 export async function extractEventRules(): Promise<void> {
   const event = state.event;
   if (!event) throw new Error("Save an event first.");
-  throw new Error("Automatic event-page extraction is not available. Enter rules from the official event page and confirm them manually.");
+  const result = await extractRulesFromUrl({ data: { url: event.url } });
+  if (!result.ok) throw new Error(result.message);
+  const current = state.event;
+  if (!current || current.url !== event.url) return;
+  // Drafted from the event page; the judge must still review and confirm.
+  set({ event: { ...current, rules: result.rules.map((r) => ({ id: newEventRuleId(), label: r.label, enabled: true })), confirmed: false } });
+  log("event", `${event.name} · rules drafted from event page`, "—", `${result.rules.length} rules`);
 }
 export function updateEventRules(rules: EventRule[]): void {
   if (!state.event) return;

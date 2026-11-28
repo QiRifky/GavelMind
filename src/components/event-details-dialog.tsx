@@ -46,11 +46,11 @@ export function EventDetailsDialog({ edit = false, trigger }: { edit?: boolean; 
       <form onSubmit={(e) => void submit(e)} className="space-y-5">
         <div><label htmlFor="folder-event-name" className="mb-2 block text-sm">Event name</label><input id="folder-event-name" required disabled={busy} value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Build Together 2026" className={input} /></div>
         <div><label htmlFor="folder-event-url" className="mb-2 block text-sm">Event / rules URL</label><input id="folder-event-url" type="url" required disabled={busy} value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://" className={`${input} font-mono`} /></div>
-        {!edit && <label className="flex items-center gap-3 text-sm"><input type="checkbox" checked={prepare} disabled onChange={(e) => setPrepare(e.target.checked)} className="size-4 accent-(--brand)" /><Sparkles className="size-4 shrink-0 text-primary" />Automatic rules unavailable</label>}
+        {!edit && <label className="flex items-center gap-3 text-sm"><input type="checkbox" checked={prepare} disabled={busy} onChange={(e) => setPrepare(e.target.checked)} className="size-4 accent-(--brand)" /><Sparkles className="size-4 shrink-0 text-primary" />Read rules from the event page automatically</label>}
         {edit && (name.trim() !== event?.name || url.trim() !== event?.url) && event?.rules.length ? <p className="text-sm text-warn">Changing event details clears the current rules and requires judge confirmation again.</p> : null}
-        <p role="note" className="border-l-2 border-primary bg-accent p-3 text-xs leading-relaxed text-accent-foreground">Enter rules from the official event page manually. Changes reset on reload.</p>
+        <p role="note" className="border-l-2 border-primary bg-accent p-3 text-xs leading-relaxed text-accent-foreground">Rules read from the event page are drafts; review and confirm them. Changes reset on reload.</p>
         {error && <p role="alert" className="text-sm text-fail">{error}</p>}
-        <div className="flex flex-wrap justify-end gap-2 border-t border-border pt-4"><Button type="button" variant="outline" disabled={busy} className="rounded-full" onClick={() => setOpen(false)}>Cancel</Button><Button type="submit" disabled={busy || !name.trim() || !url.trim()} className="rounded-full">{busy ? "Preparing…" : edit ? "Save details" : prepare ? "Create & prepare draft" : "Create event folder"}</Button></div>
+        <div className="flex flex-wrap justify-end gap-2 border-t border-border pt-4"><Button type="button" variant="outline" disabled={busy} className="rounded-full" onClick={() => setOpen(false)}>Cancel</Button><Button type="submit" disabled={busy || !name.trim() || !url.trim()} className="rounded-full">{busy ? "Preparing…" : edit ? "Save details" : prepare ? "Create & read rules" : "Create event folder"}</Button></div>
       </form>
     </DialogContent>
   </Dialog>;

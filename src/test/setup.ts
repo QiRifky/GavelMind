@@ -10,6 +10,10 @@ vi.mock("@/lib/analysis.functions", () => ({
   }),
 }));
 
+vi.mock("@/lib/event-rules.functions", () => ({
+  extractRulesFromUrl: vi.fn(async () => ({ ok: false, message: "Enter rules manually." })),
+}));
+
 Object.defineProperty(window, "scrollTo", {
   writable: true,
   value: () => {},

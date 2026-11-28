@@ -37,7 +37,7 @@ export function EventPage() {
         <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4"><p className="eyebrow font-mono">Event details</p><EventDetailsDialog key={event?.name ?? "empty"} edit /></header>
         <div className="space-y-4 px-5 py-5">
           {event ? <div><h2 className="break-words text-xl">{event.name}</h2><a href={event.url} target="_blank" rel="noreferrer" className="mt-2 flex items-start gap-2 break-all text-sm text-primary hover:underline"><Link2 className="mt-0.5 size-4 shrink-0" />{event.url}</a></div> : <p className="text-sm text-muted-foreground">No event details yet. Add a name and event link first.</p>}
-          <div className="flex flex-wrap items-center gap-3"><Pill disabled onClick={() => void extract()}><Sparkles className="size-4" />Automatic rules unavailable</Pill>{event && <Badge tone={event.confirmed ? "good" : "accent"}>{event.confirmed ? "Confirmed by judge" : "Draft, not final"}</Badge>}</div>
+          <div className="flex flex-wrap items-center gap-3"><Pill disabled={busy || !event} onClick={() => void extract()}><Sparkles className="size-4" />{busy ? "Reading event page…" : event?.rules.length ? "Re-read rules from event page" : "Automatic rules"}</Pill>{event && <Badge tone={event.confirmed ? "good" : "accent"}>{event.confirmed ? "Confirmed by judge" : "Draft, not final"}</Badge>}</div>
           {error && <p role="alert" className="text-sm text-fail">{error}</p>}
         </div>
       </section>

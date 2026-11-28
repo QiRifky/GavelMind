@@ -30,7 +30,7 @@ use the editor.
 <!-- LOVABLE:END -->
 
 - Workspace state stays in api.ts; analysis.functions.ts calls server-only GitHub and Gemini SDK helpers, with no mock fallback.
-- analysis.ts validates rubric drafts and source quotes; rules are manual, eligibility unverified, execution not run. Sprite needs private runtime credentials.
+- analysis.ts validates drafts and quotes; event rules are drafted server-side from the public page (quote-checked, private hosts blocked) and stay unconfirmed until the judge confirms; execution not run. Sprite needs private runtime credentials.
 - Leaderboard ranks only by judge final scores (judgeTotal); AI drafts never rank or declare a winner.
 - Summary style (Neutral/Concise/Detailed via summaryText()) changes wording only, never numbers.
 - The public landing page lives at /; workspace pages stay under /app, and other legacy paths redirect to preserve links.
