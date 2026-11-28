@@ -18,7 +18,7 @@ export const extractRulesFromUrl = createServerFn({ method: "POST" })
         console.error("Rule extraction AI failed", { code: error.code, status: error.httpStatus });
         return { ok: false, message: error.httpStatus === 402 ? "AI credits are unavailable. Enter the rules manually." : "Gemini could not read the rules. Try again or enter them manually." };
       }
-      const msg = error instanceof Error && /^(Use a public|The event page|Gemini )/.test(error.message) ? error.message : "Couldn't read rules from the event page. Enter them manually.";
+      const msg = error instanceof Error && /^(Use a public|The event page|Gemini |Groq )/.test(error.message) ? error.message : "Couldn't read rules from the event page. Enter them manually.";
       console.error("Rule extraction failed", error instanceof Error ? error.message : error);
       return { ok: false, message: msg };
     }
