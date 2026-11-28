@@ -1,5 +1,7 @@
 # Current fixes
 
+- [x] Support comma-separated Groq backup keys on 401/429, preserve single-key retry, and explain shared organization limits; verified with provider tests. Live Sprite testing needs the user's private session and keys.
+
 - [x] Replace Single Analyze's full progress bar with a compact repository header, active-stage spinner, step list and accessible cancel action; preserve analysis and explicit queue behavior.
 
 - [x] Make Judging cards natural-height without internal scroll, with expandable supporting material and evidence-backed AI score recommendations; 85 tests pass and 1280/550/390px fixture interactions verify explicit acceptance, manual editing, navigation and no internal scroll. Live Groq verification remains blocked below.

@@ -29,7 +29,7 @@ use the editor.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
 
-- Workspace state stays in api.ts; analysis uses server-only GitHub + Groq helpers, no mock fallback. Groq (GROQ_API_KEY, groq.server.ts) is the only AI provider: the user removed Gemini/OpenRouter so a Sprite needs one key.
+- Workspace state stays in api.ts; analysis uses server-only GitHub + Groq helpers, no mock fallback. Groq is the only AI provider. GROQ_API_KEY accepts comma-separated backup keys on 401/429; same-organization keys share quotas, and keys/provider bodies must never be logged.
 - Drafts and event rules (read from the public page) are quote-checked and stay unconfirmed until the judge confirms; code is never run. Sprite needs private runtime credentials.
 - Leaderboard ranks only by judge final scores (judgeTotal); AI drafts never rank or declare a winner.
 - Summary style (Neutral/Concise/Detailed via summaryText()) changes wording only, never numbers.

@@ -13,6 +13,8 @@ Install dependencies with `bun install`, then run `bun run dev --host 0.0.0.0 --
 - `GH_GATEWAY`: the verified GitHub API base URL provided by your Sprites connector configuration. GavelMind appends `/repos/owner/repo/...`. A guessed URL or placeholder connection ID is not a verified connector. This implementation assumes the provided gateway handles upstream authorization.
 - The only AI provider is Groq: set `GROQ_API_KEY` on the server (model `llama-3.3-70b-versatile`, override with `GROQ_MODEL`). Gemini, OpenRouter and built-in keys are ignored.
 
+`GROQ_API_KEY` accepts one key or a comma-separated list of private keys. On HTTP 401 or 429, requests try the next key; if all keys fail, the app shows an error rather than inventing results. Keys belonging to the same Groq organization share rate limits: extra keys do not increase its quota. Respect Groq's usage limits and wait for the limit to reset when needed. Never paste real keys in chat; rotate any already exposed credentials. Preserve the generated Cloud URLs exactly—do not substitute a guessed domain.
+
 Do not replace the generated public Cloud configuration with secret credentials. Keep private runtime settings out of the committed `.env` file; use the deployment's secret settings or an ignored `.env.local` for local development. Do not expose a paid analysis service publicly without appropriate access controls.
 
 ### Original design brief
