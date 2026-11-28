@@ -1,7 +1,7 @@
 /** Groq (OpenAI-compatible) chat call for self-hosting, e.g. on a Fly Sprite. Server-only. */
 export const GROQ_MODEL = "llama-3.3-70b-versatile";
 
-export async function groqJson(apiKey: string, system: string, user: string, maxTokens: number, timeoutMs: number): Promise<{ text?: string; finish?: string }> {
+export async function groqJson(apiKey: string, system: string, user: string, maxTokens: number, timeoutMs: number): Promise<{ text: string | undefined; finish: string | undefined }> {
   const r = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
