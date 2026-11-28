@@ -1,5 +1,7 @@
 # Current fixes
 
+- [x] Compact Event overview with equal-height desktop panels and scrolling rules; criteria use two desktop columns and stack on phones. Nine targeted tests and desktop/550px/phone editing, confirmation, scrolling, and Entries navigation passed without changing scoring.
+
 - [x] Make the immediate CSS starfield brighter and denser without changing the dim horizon glow or canvas animation.
 
 - [x] Add CSV/JSON/TXT upload and public showcase import with selection previews; 80 tests pass, file-to-queue and real vite.dev-to-queue flows work, private URLs are blocked, and phone layout has no horizontal overflow.
