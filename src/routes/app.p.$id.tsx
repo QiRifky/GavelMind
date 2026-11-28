@@ -204,11 +204,11 @@ function MaterialCard({ r }: { r: Report }) {
       {tab === "repository" && (
         <div className="space-y-3 text-sm">
           <div><p className="text-xs text-muted-foreground">README summary</p><p className="mt-1">{m.repository.readme}</p><Source s={m.repository.source} /></div>
-          <div><p className="text-xs text-muted-foreground">Stack</p><p className="mt-1">{r.stack.map((s) => s.name).join(", ")}</p><Source s="package.json" /></div>
+          <div><p className="text-xs text-muted-foreground">Stack</p><p className="mt-1">{r.stack.map((s) => s.name).join(", ") || "Not available"}</p><Source s="GitHub language data" /></div>
           <div>
             <p className="text-xs text-muted-foreground">Sandbox run · <span className={m.repository.run.status === "worked" ? "text-pass" : m.repository.run.status === "error" ? "text-warn" : "text-fail"}>{m.repository.run.status}</span></p>
             <pre className="mt-2 max-h-56 overflow-auto rounded-card bg-well p-3 font-mono text-xs leading-relaxed">{m.repository.run.log.map((l, i) => <div key={i} className={logCls[l.type]}>{l.type === "cmd" ? "$ " : ""}{l.text}</div>)}</pre>
-            <p className="mt-2 text-muted-foreground">{m.repository.run.evidence}</p><Source s="GavelMind sandbox" />
+            <p className="mt-2 text-muted-foreground">{m.repository.run.evidence}</p><Source s="GavelMind repository inspection; no sandbox execution" />
           </div>
         </div>
       )}

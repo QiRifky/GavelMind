@@ -2,9 +2,11 @@
 
 # Real GitHub and Gemini analysis
 
-- [ ] Replace generated project reports and criterion scores with GitHub evidence and Google Gemini drafts.
-- [ ] Fail explicitly without configured services; never fall back to fabricated reports, rules, or showcase entries.
-- [ ] Verify analysis and judging tests; live Sprite verification requires valid GitHub configuration and Gemini credentials.
+- [x] Replace generated project reports and criterion scores with GitHub evidence and Google Gemini drafts.
+- [x] Use Gemini through Lovable's built-in AI service, not the user's Google key; keep external Sprite server configuration documented.
+- [x] Fail explicitly without configured services; never fall back to fabricated reports, rules, or showcase entries.
+- [x] Verify analysis and judging tests (55 passing) and the live failure path without inserting fabricated data.
+- [ ] Verify a successful GitHub → Gemini → judge → results flow. Blocked: configured GitHub connector denies access; external Sprite also needs a securely configured Lovable runtime API key.
 
 - [x] Apply the uploaded glass dashboard treatment across the workspace while preserving Onest, the dark background, orange accents, and 8 px card corners.
 - [x] Verify workflow pages, the folder gallery, judging interactions, mobile layout, and regression tests.

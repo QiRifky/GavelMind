@@ -8,7 +8,8 @@ describe("event requirements", () => {
   });
   it("applies only confirmed active rules and never treats unknown eligibility as failure", async () => {
     saveEvent("Test event", "https://example.com/rules");
-    await extractEventRules();
+    await expect(extractEventRules()).rejects.toThrow("Enter rules");
+    updateEventRules([{ id: "event-source", label: "Official event requirement", enabled: true }]);
     const { report } = await analyzePreview("https://github.com/test/event-rules", { stageMs: 0 });
     const event = snapshot().event;
     if (!report || !event) throw new Error("Missing test data");

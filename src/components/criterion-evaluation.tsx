@@ -30,9 +30,9 @@ export function CriterionEvaluation({ report, criterion, index, isFirst, isLast,
         <HandoffBeam phase="idle" radius={0} className="min-w-0 pb-7">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <p className="text-xs font-medium uppercase text-muted-foreground">AI draft · suggestions only</p>
-            <span className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground">{agreed ? "Models agree" : "Models differ"}</span>
+            <span className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground">{drafts.length < 2 ? drafts.length ? "One model draft" : "Not analyzed" : agreed ? "Models agree" : "Models differ"}</span>
           </div>
-          <p className="mt-3 font-mono text-3xl tabular-nums text-primary">{draft}<span className="ml-1 text-sm text-muted-foreground">/10</span></p>
+          <p className="mt-3 font-mono text-3xl tabular-nums text-primary">{drafts.length ? draft : "—"}<span className="ml-1 text-sm text-muted-foreground">/10</span></p>
           <div className="mt-3 space-y-2 text-sm leading-relaxed">
             {Array.from(new Set(drafts.map((d) => d.reason))).map((reason) => <p key={reason}>{reason}</p>)}
           </div>

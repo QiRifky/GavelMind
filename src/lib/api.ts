@@ -1,17 +1,19 @@
 /**
  * GavelMind data layer. EVERY piece of app data goes through this file.
- * Today it is an in-memory mock store with simulated delays; later each exported
- * async function is swapped for a real call to the judge's own backend with the same shape.
+ * Workspace state is in memory; project analysis uses real GitHub evidence and Gemini.
+ * Reports never fall back to simulated material or scores.
  * Rule: AI only drafts. Ranking uses judge final scores only (see judgeTotal).
  */
 import { useSyncExternalStore } from "react";
+import { analyzeRepository } from "./analysis.functions";
+import { storedDrafts } from "./analysis";
 
 export const API_BASE_URL: string = import.meta.env["VITE_API_BASE_URL"] ?? "";
 
 // ---------- Types ----------
 export type AnalysisStatus = "queued" | "analyzing" | "done" | "failed";
 export type JudgeStatus = "Not reviewed" | "In review" | "Finalized";
-export type RunStatus = "worked" | "failed" | "error";
+export type RunStatus = "worked" | "failed" | "error" | "not run";
 export type CheckResult = "pass" | "warn" | "fail";
 export type SummaryStyle = "neutral" | "concise" | "detailed";
 export type LogLineType = "cmd" | "ok" | "info" | "warn" | "error" | "result";
@@ -40,6 +42,8 @@ export interface Report {
   };
   /** Model names returned by the API, never hard-coded in components. */
   models: string[];
+  drafts?: Record<string, ModelDraft[]>;
+  draftCriteria?: Record<string, string>;
 }
 export interface JudgeScore { score?: number; note?: string }
 export type ChangeKind = "score" | "note" | "rubric" | "finalized" | "event";
@@ -47,8 +51,8 @@ export interface ChangeItem { id: number; at: number; kind: ChangeKind; what: st
 export interface Discovered { name: string; repoUrl: string; demoUrl?: string }
 export type AnalyzeStage = 0 | 1 | 2 | 3;
 export const STAGES = [
-  { label: "Cloning repository", detail: "Copying the code into an isolated workspace." },
-  { label: "Running in sandbox", detail: "Installing dependencies and starting the app." },
+  { label: "Reading repository", detail: "Retrieving public GitHub repository material." },
+  { label: "Reviewing source material", detail: "Inspecting README and a bounded source-code sample; no code execution." },
   { label: "Checking rules", detail: "Comparing commits, connectors and demo against the event rules." },
   { label: "Drafting scores", detail: "Writing draft scores with reasons for you to review." },
 ] as const;
@@ -69,81 +73,11 @@ interface State {
 export interface EventFolder { id: string; name: string; createdAt: number }
 type Workspace = Omit<State, "folders" | "activeFolderId">;
 
-// ---------- Mock generators ----------
-function hash(s: string) {
-  let h = 0;
-  for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0;
-  return h;
-}
-const MOCK_MODELS = ["Claude Sonnet 4.5", "GPT-5", "Gemini 2.5 Pro"];
+// ---------- Evidence-backed drafts ----------
 const nameOf = (url: string) => url.replace(/^https?:\/\/(www\.)?github\.com\//, "").replace(/\/$/, "");
-export const isRepoUrl = (u: string) => /^https?:\/\/(www\.)?github\.com\/[^/\s]+\/[^/\s]+\/?$/.test(u);
-
-function runLog(run: RunStatus): LogLine[] {
-  const base: LogLine[] = [{ type: "info", text: "Cloning repository into isolated sandbox" }, { type: "cmd", text: "npm install" }];
-  if (run === "failed") return [...base, { type: "error", text: "npm ERR! 404 package not found in registry" }, { type: "result", text: "Result: failed — install did not complete" }];
-  const built: LogLine[] = [...base, { type: "ok", text: "Dependencies installed" }, { type: "warn", text: "2 deprecated packages" }, { type: "cmd", text: "npm run build" }, { type: "ok", text: "Build finished" }, { type: "cmd", text: "npm start" }];
-  if (run === "error") return [...built, { type: "error", text: "TypeError: cannot read 'map' of undefined (src/App.tsx:42)" }, { type: "result", text: "Result: error — crashed at runtime" }];
-  return [...built, { type: "ok", text: "GET / → 200 in 412 ms" }, { type: "result", text: "Result: worked" }];
-}
-
-function makeReport(p: Project): Report {
-  const n = hash(p.id + p.name);
-  const run: RunStatus = (["worked", "worked", "error", "failed"] as const)[n % 4] ?? "worked";
-  const even = n % 2 === 0;
-  const r = (result: CheckResult, reason: string, file: string): Pick<RuleCheck, "result" | "reason" | "evidenceUrl"> => ({ result, reason, evidenceUrl: `${p.repoUrl}/${file}` });
-  return {
-    projectId: p.id,
-    summary: [
-      `${p.name} is a web app with a small front end and one service behind it.`,
-      `The main flow works end to end; secondary screens are partly stubbed.`,
-      `Tests cover a few helper functions only.`,
-    ],
-    does: "Lets a user upload data, processes it on the server and shows the result on one screen.",
-    doesNot: "No accounts, no saved history, and no mobile layout.",
-    stack: [
-      { name: "TypeScript", kind: "language" },
-      { name: "React", kind: "framework" },
-      { name: even ? "SQLite" : "Postgres", kind: "database" },
-      { name: "Vite", kind: "tool" },
-    ],
-    checks: [
-      { id: "event", label: "Built during the event", ...(even ? r("pass", "All 47 commits fall inside the event window.", "commits/main") : r("warn", "First commit is 3 weeks before the event; most work is inside it.", "commits/main")) },
-      { id: "connector", label: "Uses a required connector", ...(n % 3 === 0 ? r("pass", "src/lib/calendar.ts calls a connected calendar service.", "blob/main/src/lib/calendar.ts") : r("warn", "No connector call found in code; may be configured outside the repo.", "search?q=connector")) },
-      { id: "demo", label: "Demo provided", ...(p.demoUrl ? r("pass", "Demo video linked in the README.", "blob/main/README.md") : r("fail", "No demo video or live link found.", "blob/main/README.md")) },
-      { id: "public", label: "Repository is public", ...r("pass", "Repository opened without credentials.", "") },
-      { id: "runs", label: "Runs successfully", ...(run === "worked" ? r("pass", "Started in the sandbox and answered HTTP 200.", "actions") : run === "error" ? r("warn", "Built, then crashed before serving a request.", "blob/main/src/App.tsx") : r("fail", "Install step failed; the app never started.", "blob/main/package.json")) },
-    ],
-    material: {
-      description: { text: `${p.name}: a hackathon project that turns a manual task into a one-click flow.`, source: "Submission form" },
-      repository: {
-        readme: "README explains the idea in two paragraphs and lists setup steps that mostly match package.json.",
-        source: `${p.repoUrl}#readme`,
-        run: {
-          status: run,
-          log: runLog(run),
-          evidence: run === "worked" ? "`npm install && npm start` exited 0; GET / returned 200 in 412 ms." : run === "error" ? "Runtime threw `TypeError` at src/App.tsx:42." : "`npm install` failed on a missing private package.",
-        },
-      },
-      demo: p.demoUrl
-        ? { url: p.demoUrl, transcriptStatus: "ready", transcript: "Hi, we're the team. Here you paste a file, press Run, and after a few seconds the summary appears on the right. That's the main flow.", source: p.demoUrl }
-        : { transcriptStatus: "not provided", source: "Submission form" },
-    },
-    models: MOCK_MODELS,
-  };
-}
-
-/** Per-model drafts for one criterion. Deterministic mock; real API returns these. */
+export const isRepoUrl = (u: string) => /^https:\/\/(www\.)?github\.com\/[^/\s]+\/[^/\s]+\/?$/.test(u);
 export function draftsFor(report: Report, c: Criterion): ModelDraft[] {
-  return report.models.map((model) => {
-    const score = 4 + (hash(report.projectId + c.name + model) % 6);
-    return {
-      model,
-      score,
-      reason: score >= 7 ? `Strong on ${c.name.toLowerCase()}; the main flow shows clear intent.` : `${c.name} is present but uneven across the project.`,
-      evidence: `README.md and ${(hash(c.id + model) % 20) + 3} files in src/`,
-    };
-  });
+  return storedDrafts(report, c);
 }
 export const average = (xs: number[]) => (xs.length ? Math.round((xs.reduce((a, b) => a + b, 0) / xs.length) * 10) / 10 : 0);
 /** Models agree when every draft is within 1 point of every other. */
@@ -234,7 +168,7 @@ export function createFolder(name: string): string {
 export function deleteFolder(id: string): void {
   if (state.folders.length <= 1) return;
   const rest = state.folders.filter((f) => f.id !== id);
-  if (id === state.activeFolderId) { const target = rest[0]!; switchFolder(target.id); }
+  if (id === state.activeFolderId) { const target = rest[0]; if (target) switchFolder(target.id); }
   stored.delete(id);
   set({ folders: state.folders.filter((f) => f.id !== id) });
 }
@@ -250,14 +184,7 @@ export function saveEvent(name: string, url: string): void {
 export async function extractEventRules(): Promise<void> {
   const event = state.event;
   if (!event) throw new Error("Save an event first.");
-  await wait(600);
-  if (state.event !== event) return;
-  set({ event: { ...event, confirmed: false, rules: [
-    { id: "event-window", label: "Project work must take place during the event period", enabled: true },
-    { id: "event-public", label: "Provide a public source-code repository", enabled: true },
-    { id: "event-demo", label: "Provide a demo video or live demo", enabled: true },
-    { id: "event-sdk", label: "Use the technology required by the event", enabled: true },
-  ] } });
+  throw new Error("Automatic event-page extraction is not available. Enter rules from the official event page and confirm them manually.");
 }
 export function updateEventRules(rules: EventRule[]): void {
   if (!state.event) return;
@@ -275,7 +202,7 @@ export const newEventRuleId = () => `event-rule-${++idSeq}`;
 export function reportForEvent(report: Report, event: EventContext | null): Report {
   if (!event) return report;
   const checks: RuleCheck[] = event.confirmed ? event.rules.filter((r) => r.enabled).map((r) => ({
-    id: r.id, label: r.label, result: "warn", reason: "Not verified — mock analysis cannot establish eligibility. Judge review required.", evidenceUrl: event.url,
+    id: r.id, label: r.label, result: "warn", reason: "Not verified — repository inspection alone cannot establish this requirement. Judge review required.", evidenceUrl: event.url,
   })) : [];
   return { ...report, checks: [...checks, ...report.checks.filter((c) => c.id === "runs")] };
 }
@@ -307,14 +234,8 @@ export function removeProject(id: string) {
 }
 /** Reads a showcase page and returns the projects it lists (mock). */
 export async function scanShowcase(pageUrl: string): Promise<Discovered[]> {
-  await wait(900);
   if (!/^https?:\/\//.test(pageUrl)) throw new Error("That doesn't look like a web address.");
-  const host = pageUrl.replace(/^https?:\/\//, "").split("/")[0] ?? "showcase";
-  return ["echo-notes", "parkspot", "lingo-loop", "fridge-chef", "commit-coach"].map((n, i) => ({
-    name: `team-${i + 1}/${n}`,
-    repoUrl: `https://github.com/team-${i + 1}/${n}`,
-    ...(i % 2 === 0 ? { demoUrl: `https://${host}/demo/${n}` } : {}),
-  }));
+  throw new Error("Showcase import is not connected. Add actual GitHub URLs using single analysis or bulk URLs; no sample entries were added.");
 }
 function setStatus(id: string, status: AnalysisStatus) {
   set({ projects: state.projects.map((p) => (p.id === id ? { ...p, status } : p)) });
@@ -322,13 +243,17 @@ function setStatus(id: string, status: AnalysisStatus) {
 type AnalysisOptions = { onStage?: (s: AnalyzeStage) => void; signal?: AbortSignal; stageMs?: number };
 const analysisPreviews = new Map<string, { folderId: string; project: Project; report: Report }>();
 async function prepareReport(project: Project, opts: AnalysisOptions): Promise<Report> {
-  for (const stage of [0, 1, 2, 3] as const) {
-    if (opts.signal?.aborted) throw new DOMException("Cancelled", "AbortError");
-    opts.onStage?.(stage);
-    await wait(opts.stageMs ?? 1100, opts.signal);
-    if (stage === 0 && !isRepoUrl(project.repoUrl)) throw new Error("Couldn't clone this address. Use a public GitHub repository URL.");
-  }
-  return makeReport(project);
+  const abort = () => { if (opts.signal?.aborted) throw new DOMException("Cancelled", "AbortError"); };
+  abort();
+  if (!isRepoUrl(project.repoUrl)) throw new Error("Use a public HTTPS GitHub repository URL.");
+  opts.onStage?.(0);
+  const criteria = state.criteria.map((c) => ({ ...c }));
+  opts.onStage?.(1);
+  opts.onStage?.(3);
+  const result = await analyzeRepository({ data: { project: { id: project.id, repoUrl: project.repoUrl }, criteria }, ...(opts.signal ? { signal: opts.signal } : {}) });
+  abort();
+  if (!result.ok) throw new Error(result.message);
+  return result.report;
 }
 /** Single analysis stays outside the queue until explicitly accepted. */
 export async function analyzePreview(repoUrl: string, opts: AnalysisOptions = {}) {

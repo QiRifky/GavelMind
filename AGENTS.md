@@ -29,8 +29,8 @@ use the editor.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
 
-- All app data goes through src/lib/api.ts (in-memory mock store via useSyncExternalStore); no backend or auth, by user request.
-- Event setup and rule drafts use the same mock store; reportForEvent applies only judge-confirmed rules and marks eligibility unverified because no live event or repository extraction exists.
+- Workspace state stays in api.ts; analysis.functions.ts calls server-only GitHub and Gemini SDK helpers, with no mock fallback.
+- analysis.ts validates rubric drafts and source quotes; rules are manual, eligibility unverified, execution not run. Sprite needs private runtime credentials.
 - Leaderboard ranks only by judge final scores (judgeTotal); AI drafts never rank or declare a winner.
 - Summary style (Neutral/Concise/Detailed via summaryText()) changes wording only, never numbers.
 - The public landing page lives at /; workspace pages stay under /app, and other legacy paths redirect to preserve links.

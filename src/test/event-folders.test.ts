@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { addProjects, createFolder, extractEventRules, saveEvent, snapshot, switchFolder } from "@/lib/api";
+import { addProjects, createFolder, saveEvent, snapshot, switchFolder, updateEventRules } from "@/lib/api";
 
 describe("event folders", () => {
   beforeEach(() => { createFolder("First event"); });
@@ -18,11 +18,11 @@ describe("event folders", () => {
     const originalEvent = snapshot().event;
     const created = createFolder("Build Together 2026");
     saveEvent("Build Together 2026", "https://example.com/build-together");
-    await extractEventRules();
+    updateEventRules([{ id: "official", label: "Official requirement entered by judge", enabled: true }]);
     expect(snapshot().activeFolderId).toBe(created);
     expect(snapshot().event?.name).toBe("Build Together 2026");
     expect(snapshot().event?.url).toBe("https://example.com/build-together");
-    expect(snapshot().event?.rules).toHaveLength(4);
+    expect(snapshot().event?.rules).toEqual([{ id: "official", label: "Official requirement entered by judge", enabled: true }]);
     expect(snapshot().event?.confirmed).toBe(false);
     switchFolder(first);
     expect(snapshot().event).toEqual(originalEvent);

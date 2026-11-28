@@ -97,7 +97,7 @@ function Result({ report, name, onAgain }: { report: Report; name: string; onAga
     <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 motion-reduce:animate-none">
       <header className="mb-5 flex flex-col items-start justify-between gap-4 sm:flex-row sm:flex-wrap">
         <div className="min-w-0 flex-1"><p className="eyebrow font-mono">Analysis ready</p><h3 className="mt-2 break-words text-xl font-medium">{name}</h3><p className="mt-2 text-sm text-muted-foreground">AI draft score breakdown</p></div>
-        <span className="inline-flex items-center gap-2 rounded-full border border-border px-3 py-2 text-xs text-muted-foreground"><CheckCheck className="size-4" /><span><span className="font-mono text-foreground">{passed}/{report.checks.length}</span> checks passed · mock</span></span>
+        <span className="inline-flex items-center gap-2 rounded-full border border-border px-3 py-2 text-xs text-muted-foreground"><CheckCheck className="size-4" /><span><span className="font-mono text-foreground">{passed}/{report.checks.length}</span> checks passed · repository evidence</span></span>
       </header>
       <DonutBreakdown data={segments} total={draft} />
       <p className="mt-4 text-xs text-muted-foreground">Chart segments show weighted contributions to the AI draft total.</p>
