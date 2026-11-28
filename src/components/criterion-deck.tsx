@@ -37,7 +37,7 @@ export function CriterionDeck({ report, criteria }: { report: Report; criteria: 
         {activeIndex + 1 < criteria.length && <div aria-hidden="true" className="pointer-events-none absolute inset-x-2.5 bottom-4 h-4 rounded-b-card border border-t-0 border-glass-rim bg-glass-raised shadow-glass sm:inset-x-5" />}
         {criteria.map((criterion, index) => (
           <div key={`${report.projectId}-${criterion.id}`} hidden={index !== activeIndex}
-            className="criterion-deck-front relative z-10 flex-1 rounded-card [&>section]:h-full"
+            tabIndex={0} className="criterion-deck-front report-card-scroll relative z-10 rounded-card"
             role="group" aria-label={`Criterion ${index + 1} of ${criteria.length}: ${criterion.name}`}>
             <CriterionEvaluation report={report} criterion={criterion} index={index} isFirst={index === 0} isLast={index === criteria.length - 1} onBack={() => goTo(index - 1)} onNext={() => goTo(index + 1)} />
           </div>

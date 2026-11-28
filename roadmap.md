@@ -1,5 +1,7 @@
 # Current fixes
 
+- [x] Limit both judging card heights with internal scrolling, preserving context and criterion navigation.
+
 - [x] Expand judging Summary using collected description, README and verification/demo data; add bottom controls for Summary → Rules check → Evidence.
 
 - [x] Move criteria into Event; extract quote-backed AI drafts, require judge confirmation, and verify 67 tests plus laptop/phone confirmation and navigation.

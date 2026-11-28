@@ -115,9 +115,9 @@ export function ContextDeck({ r }: { r: Report }) {
       <div className="relative isolate flex flex-1 flex-col pb-8" aria-roledescription="card deck">
         <div aria-hidden="true" className="pointer-events-none absolute inset-x-5 bottom-0 h-4 rounded-b-card border border-t-0 border-glass-rim bg-glass-nested shadow-glass sm:inset-x-10" />
         <div aria-hidden="true" className="pointer-events-none absolute inset-x-2.5 bottom-4 h-4 rounded-b-card border border-t-0 border-glass-rim bg-glass-raised shadow-glass sm:inset-x-5" />
-        <div role="tabpanel" hidden={tab !== "summary"} className="criterion-deck-front relative z-10 flex-1 rounded-card [&>section]:h-full"><SummaryCard r={r} /></div>
-        <div role="tabpanel" hidden={tab !== "rules"} className="criterion-deck-front relative z-10 flex-1 rounded-card [&>section]:h-full"><RulesCard r={r} /></div>
-        <div role="tabpanel" hidden={tab !== "material"} className="criterion-deck-front relative z-10 flex-1 rounded-card [&>section]:h-full"><MaterialCard r={r} /></div>
+        <div role="tabpanel" tabIndex={0} hidden={tab !== "summary"} className="criterion-deck-front report-card-scroll relative z-10 rounded-card"><SummaryCard r={r} /></div>
+        <div role="tabpanel" tabIndex={0} hidden={tab !== "rules"} className="criterion-deck-front report-card-scroll relative z-10 rounded-card"><RulesCard r={r} /></div>
+        <div role="tabpanel" tabIndex={0} hidden={tab !== "material"} className="criterion-deck-front report-card-scroll relative z-10 rounded-card"><MaterialCard r={r} /></div>
       </div>
       <nav aria-label="Context navigation" className="flex flex-wrap items-center justify-between gap-3">
         <Button type="button" variant="outline" className="rounded-full" disabled={!previousTab} onClick={() => { if (previousTab) setTab(previousTab.id); }} aria-label="Previous context table"><ArrowLeft />{previousTab?.label ?? "Back"}</Button>
