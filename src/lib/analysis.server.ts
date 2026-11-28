@@ -59,11 +59,11 @@ export async function analyzeWithGemini(input: AnalysisInput, repo: RepositoryEv
   const directKey = process.env["GEMINI_API_KEY"];
   let text: string | undefined;
   let model: string;
-  const groqKey = process.env["GROQ_API_KEY"];
-  if (groqKey) {
-    const { groqJson, GROQ_MODEL } = await import("./groq.server");
-    model = GROQ_MODEL;
-    const r = await groqJson(groqKey, instruction, JSON.stringify({ rubric: input.criteria, repository: repo }), 8192, 90000).catch((e: Error) => { throw new Error(`${e.message} No report was saved.`); });
+  const { chatJson, pickFreeProvider } = await import("./groq.server");
+  const free = pickFreeProvider();
+  if (free) {
+    model = free.model;
+    const r = await chatJson(free, instruction, JSON.stringify({ rubric: input.criteria, repository: repo }), 8192, 90000).catch((e: Error) => { throw new Error(`${e.message} No report was saved.`); });
     if (r.finish !== "stop") throw new Error("The AI did not complete the analysis. No report was saved.");
     text = r.text;
   } else if (directKey) {
