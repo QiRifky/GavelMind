@@ -15,4 +15,9 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  vite: {
+    // Allow the self-hosted Sprite URL (e.g. gavelmind-xxxx.sprites.app) to reach the dev server.
+    server: { allowedHosts: [".sprites.app"] },
+    preview: { allowedHosts: [".sprites.app"] },
+  },
 });
