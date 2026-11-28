@@ -10,12 +10,11 @@ import {
   judgeStatus,
   switchFolder,
   useApi,
-  weightTotal,
 } from "@/lib/api";
 import { BlurControl } from "@/components/blur-control";
 import { cn } from "@/lib/utils";
 
-type Step = "event" | "entries" | "rubric" | "judging" | "results";
+type Step = "event" | "entries" | "judging" | "results";
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 /** Workflow navbar (expanding card): step pills plus a folder panel that grows the card open. */
@@ -35,13 +34,6 @@ export function WorkflowNav({ current }: { current: Step }) {
       label: "Event",
       status: state.event?.confirmed ? "Rules confirmed" : "Rules pending",
       done: Boolean(state.event?.confirmed),
-    },
-    {
-      id: "rubric",
-      to: "/app/rubric",
-      label: "Rubric",
-      status: `${weightTotal(state.criteria)}% saved weight`,
-      done: false,
     },
     {
       id: "entries",

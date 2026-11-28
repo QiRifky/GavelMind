@@ -24,26 +24,25 @@ import { confirmEventRules, saveEvent, updateEventRules } from "@/lib/api";
 afterEach(cleanup);
 
 describe("Event step next-step button", () => {
-  it("offers a way to the rubric before any event exists", () => {
+  it("goes directly to entries before any event exists", () => {
     render(<EventPage />);
-    const link = screen.getByRole("link", { name: /rubric/i });
-    expect(link.getAttribute("href")).toBe("/app/rubric");
+    const link = screen.getByRole("link", { name: /entries/i });
+    expect(link.getAttribute("href")).toBe("/app/entries");
   });
 
-  it("offers a way to the rubric while rules are still unconfirmed", () => {
+  it("goes directly to entries while rules are still unconfirmed", () => {
     saveEvent("Test event", "https://example.com/rules");
     render(<EventPage />);
-    const link = screen.getByRole("link", { name: /rubric/i });
-    expect(link.getAttribute("href")).toBe("/app/rubric");
-    expect(screen.getByText("Rules awaiting confirmation")).toBeInTheDocument();
+    const link = screen.getByRole("link", { name: /entries/i });
+    expect(link.getAttribute("href")).toBe("/app/entries");
   });
 
-  it("offers a way to the rubric once rules are confirmed", () => {
+  it("goes directly to entries once rules are confirmed", () => {
     saveEvent("Test event", "https://example.com/rules");
     updateEventRules([{ id: "event-demo", label: "Provide a demo", enabled: true }]);
     expect(confirmEventRules()).toBe(true);
     render(<EventPage />);
-    const link = screen.getByRole("link", { name: "Continue to rubric" });
-    expect(link.getAttribute("href")).toBe("/app/rubric");
+    const link = screen.getByRole("link", { name: /entries/i });
+    expect(link.getAttribute("href")).toBe("/app/entries");
   });
 });

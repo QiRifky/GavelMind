@@ -19,7 +19,7 @@ import { folderName, useApi } from "@/lib/api";
 import { FolderOpen, ArrowUpRight } from "lucide-react";
 
 /** Workflow steps inside an event folder: the top bar is hidden there, the step nav already shows the location. */
-const WORKSPACE_STEP_PATHS = ["/app/event", "/app/entries", "/app/rubric", "/app/results"];
+const WORKSPACE_STEP_PATHS = ["/app/event", "/app/entries", "/app/results"];
 
 function NotFoundComponent() {
   return (
