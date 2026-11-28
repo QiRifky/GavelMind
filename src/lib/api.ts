@@ -22,7 +22,7 @@ export type LogLineType = "cmd" | "ok" | "info" | "warn" | "error" | "result";
 export interface Project { id: string; name: string; repoUrl: string; demoUrl?: string; status: AnalysisStatus }
 export interface Criterion { id: string; name: string; weight: number }
 export interface EventRule { id: string; label: string; enabled: boolean }
-export interface EventContext { name: string; url: string; rules: EventRule[]; confirmed: boolean }
+export interface EventContext { name: string; url: string; rules: EventRule[]; confirmed: boolean; /** AI-drafted description of the event page; informational only. */ summary?: string }
 export interface LogLine { type: LogLineType; text: string }
 export interface StackItem { name: string; kind: "language" | "framework" | "database" | "tool" }
 export interface RuleCheck { id: string; label: string; result: CheckResult; reason: string; evidenceUrl: string }
@@ -190,7 +190,7 @@ export async function extractEventRules(): Promise<void> {
   const current = state.event;
   if (!current || current.url !== event.url) return;
   // Drafted from the event page; the judge must still review and confirm.
-  set({ event: { ...current, rules: result.rules.map((r) => ({ id: newEventRuleId(), label: r.label, enabled: true })), confirmed: false } });
+  set({ event: { ...current, summary: result.summary || current.summary, rules: result.rules.map((r) => ({ id: newEventRuleId(), label: r.label, enabled: true })), confirmed: false } });
   log("event", `${event.name} · rules drafted from event page`, "—", `${result.rules.length} rules`);
 }
 export function updateEventRules(rules: EventRule[]): void {
