@@ -1,5 +1,8 @@
 # Current fixes
 
+- [x] Move criteria into Event; extract quote-backed AI drafts, require judge confirmation, and verify 67 tests plus laptop/phone confirmation and navigation.
+- [ ] Verify live Groq criteria extraction on Sprite. Blocked: no Groq key is configured in this preview and the private Sprite session is unavailable.
+
 - [x] Remove the Rubric page and step; Event goes directly to Entries, old URLs redirect, and desktop/mobile navigation plus 7 targeted tests pass.
 
 - [x] Verify New event folder opens its dialog and folder creation reaches the Event page on laptop and phone (3 targeted tests passed).

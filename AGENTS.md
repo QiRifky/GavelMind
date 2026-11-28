@@ -41,6 +41,7 @@ use the editor.
 - Report page uses the glow bento style (GlowCard has no mouse-following glow; accents from --glow-* vars; pass/warn/fail colors only for status).
 - Report criteria use CriterionDeck to show one CriterionEvaluation over layered back cards; inactive forms stay mounted but hidden to preserve score and evidence state, while criterion navigation remains separate from project navigation. Each card ends with Back and Continue buttons that move through the rubric (Continue on the last criterion links to results); no free-text judge note field exists, so the AI's role stays preparation-only and the judge's numbers remain the only saved decision.
 - Event flows directly to Entries; former rubric URLs redirect to Entries, preserving bookmarks and existing judging criteria.
+- Event criteria drafts need page quotes and judge confirmation; missing official weights become labeled equal-weight suggestions.
 - AI never produces numeric scores: analysis returns a project summary plus one quoted evidence note per criterion (ModelDraft has no score), because the user wants judges to score from zero without AI anchoring.
 - AI analysis and criterion drafts use HandoffBeam as a shared adapter for border-beam line animation; override decorative colors with CSS tokens and keep idle, offscreen, hidden-tab, and reduced-motion states static to avoid judging distractions.
 - ShinyButton wraps the shared Button with token-based gleam styling and native button props so animated CTAs preserve form submission and disabled behavior.

@@ -8,6 +8,7 @@ import { useSyncExternalStore } from "react";
 import { analyzeRepository } from "./analysis.functions";
 import { storedDrafts } from "./analysis";
 import { extractRulesFromUrl } from "./event-rules.functions";
+import type { ExtractedCriterion } from "./event-criteria";
 
 export const API_BASE_URL: string = import.meta.env["VITE_API_BASE_URL"] ?? "";
 
@@ -22,7 +23,7 @@ export type LogLineType = "cmd" | "ok" | "info" | "warn" | "error" | "result";
 export interface Project { id: string; name: string; repoUrl: string; demoUrl?: string; status: AnalysisStatus }
 export interface Criterion { id: string; name: string; weight: number }
 export interface EventRule { id: string; label: string; enabled: boolean }
-export interface EventContext { name: string; url: string; rules: EventRule[]; confirmed: boolean; /** AI-drafted description of the event page; informational only. */ summary?: string | undefined }
+export interface EventContext { name: string; url: string; rules: EventRule[]; confirmed: boolean; criteriaDraft?: ExtractedCriterion[]; criteriaConfirmed?: boolean; /** AI-drafted description of the event page; informational only. */ summary?: string | undefined }
 export interface LogLine { type: LogLineType; text: string }
 export interface StackItem { name: string; kind: "language" | "framework" | "database" | "tool" }
 export interface RuleCheck { id: string; label: string; result: CheckResult; reason: string; evidenceUrl: string }
@@ -185,12 +186,13 @@ export function saveEvent(name: string, url: string): void {
 export async function extractEventRules(): Promise<void> {
   const event = state.event;
   if (!event) throw new Error("Save an event first.");
+  const folderId = state.activeFolderId;
   const result = await extractRulesFromUrl({ data: { url: event.url } });
   if (!result.ok) throw new Error(result.message);
   const current = state.event;
-  if (!current || current.url !== event.url) return;
+  if (!current || current !== event || state.activeFolderId !== folderId) return;
   // Drafted from the event page; the judge must still review and confirm.
-  set({ event: { ...current, summary: result.summary || current.summary, rules: result.rules.map((r) => ({ id: newEventRuleId(), label: r.label, enabled: true })), confirmed: false } });
+  set({ event: { ...current, summary: result.summary || current.summary, rules: result.rules.map((r) => ({ id: newEventRuleId(), label: r.label, enabled: true })), criteriaDraft: result.criteria, criteriaConfirmed: false, confirmed: false } });
   log("event", `${event.name} · rules drafted from event page`, "—", `${result.rules.length} rules`);
 }
 export function updateEventRules(rules: EventRule[]): void {
@@ -214,7 +216,14 @@ export function reportForEvent(report: Report, event: EventContext | null): Repo
   return { ...report, checks: [...checks, ...report.checks.filter((c) => c.id === "runs")] };
 }
 export function eventRubricSuggestions(): Criterion[] {
-  return DEFAULT_CRITERIA.map((c) => ({ ...c }));
+  return state.event?.criteriaDraft?.map((c) => ({ id: newCriterionId(), name: c.name, weight: c.weight })) ?? [];
+}
+
+/** Explicit judge confirmation is the only way event-page drafts replace active criteria. */
+export function confirmEventCriteria(criteria: Criterion[]): boolean {
+  if (!state.event || state.finalized || !saveRubric(criteria)) return false;
+  set({ event: { ...state.event, criteriaConfirmed: true } });
+  return true;
 }
 
 // ---------- Projects ----------

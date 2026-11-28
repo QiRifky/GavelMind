@@ -4,15 +4,16 @@ import { ArrowRight, Check, Link2, Plus, Sparkles, Trash2 } from "lucide-react";
 import { Badge, Pill } from "@/components/ui-bits";
 import { Button } from "@/components/ui/button";
 import { EventDetailsDialog } from "@/components/event-details-dialog";
+import { EventCriteria } from "@/components/event-criteria";
 import { StepBody, WorkflowNav } from "@/components/workflow-nav";
 import { confirmEventRules, extractEventRules, newEventRuleId, updateEventRules, useApi } from "@/lib/api";
 
 export const Route = createFileRoute("/app/event")({
   head: () => ({ meta: [
     { title: "Event — Gavel Mind" },
-    { name: "description", content: "Prepare event requirements and confirm the rules for participant review." },
+    { name: "description", content: "Review event-page evidence, eligibility rules and AI-prepared judging criteria before confirming them." },
     { property: "og:title", content: "Event — Gavel Mind" },
-    { property: "og:description", content: "Prepare event requirements and confirm the rules for participant review." },
+    { property: "og:description", content: "Review event-page evidence, eligibility rules and AI-prepared judging criteria before confirming them." },
     { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" },
   ] }),
   component: EventPage,
@@ -37,7 +38,7 @@ export function EventPage() {
         <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4"><p className="eyebrow font-mono">Event details</p><EventDetailsDialog key={event?.name ?? "empty"} edit /></header>
         <div className="space-y-4 px-5 py-5">
           {event ? <div><h2 className="break-words text-xl">{event.name}</h2><a href={event.url} target="_blank" rel="noreferrer" className="mt-2 flex items-start gap-2 break-all text-sm text-primary hover:underline"><Link2 className="mt-0.5 size-4 shrink-0" />{event.url}</a>{event.summary ? <div className="mt-4 rounded-xl border border-border bg-well p-4"><p className="mb-2 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">Event summary · AI draft</p><p className="text-sm leading-relaxed text-foreground/90">{event.summary}</p></div> : <p className="mt-4 text-xs text-muted-foreground">Run Automatic rules to add a short summary of the event page.</p>}</div> : <p className="text-sm text-muted-foreground">No event details yet. Add a name and event link first.</p>}
-          <div className="flex flex-wrap items-center gap-3"><Pill disabled={busy || !event} onClick={() => void extract()}><Sparkles className="size-4" />{busy ? "Reading event page…" : event?.rules.length ? "Re-read rules from event page" : "Automatic rules"}</Pill>{event && <Badge tone={event.confirmed ? "good" : "accent"}>{event.confirmed ? "Confirmed by judge" : "Draft, not final"}</Badge>}</div>
+          <div className="flex flex-wrap items-center gap-3"><Pill disabled={busy || !event} onClick={() => void extract()}><Sparkles className="size-4" />{busy ? "Reading event page…" : event?.criteriaDraft ? "Re-read event page" : "Automatic rules & criteria"}</Pill>{event && <Badge tone={event.confirmed ? "good" : "accent"}>{event.confirmed ? "Confirmed by judge" : "Draft, not final"}</Badge>}</div>
           {error && <p role="alert" className="text-sm text-fail">{error}</p>}
         </div>
       </section>
@@ -54,6 +55,7 @@ export function EventPage() {
         {event && <div className="flex flex-wrap gap-3 border-t border-border px-5 py-4"><Pill variant="outline" disabled={busy} onClick={() => updateEventRules([...event.rules, { id: newEventRuleId(), label: "", enabled: true }])}><Plus className="size-4" />Add rule</Pill><Pill disabled={busy || event.confirmed || !event.rules.some((r) => r.enabled) || event.rules.some((r) => r.enabled && !r.label.trim())} onClick={() => confirmEventRules()}><Check className="size-4" />Confirm rules</Pill></div>}
       </section>
     </div>
+    <EventCriteria busy={busy} />
     <footer className="mt-4 flex shrink-0 flex-wrap items-center justify-between gap-4 border-t border-border pt-4"><Badge tone={event?.confirmed ? "good" : "neutral"}>{event?.confirmed ? "Rules confirmed by judge" : "Rules awaiting confirmation"}</Badge><Button asChild variant={event?.confirmed ? "default" : "outline"} className="rounded-full"><Link to="/app/entries">{event?.confirmed ? "Continue to entries" : "Go to entries"} <ArrowRight /></Link></Button></footer>
     </StepBody>
   </>;
