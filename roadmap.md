@@ -88,3 +88,8 @@
 
 - [x] Replace the AI ribbon with the uploaded border-beam line animation in the existing AI blocks.
 - [x] Verify analysis, report, phone layout, and reduced motion.
+
+# Sprite AI reliability
+
+- [x] Try every configured AI in order (built-in key, then OpenRouter/Groq, then the host's own Gemini key) so one busy free tier never blocks rules or analysis.
+- [ ] Verify Automatic rules and repo analysis on the Sprite after the user pulls and restarts. Blocked: needs the user's Sprite terminal session and a working connector.

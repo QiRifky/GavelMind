@@ -9,6 +9,20 @@ export function pickFreeProvider(): FreeProvider | undefined {
   return undefined;
 }
 
+/** AI options in the order the server should try them: built-in first, then free providers, then the host's own key. */
+export type AiChoice = { kind: "builtin" } | { kind: "free"; provider: FreeProvider } | { kind: "gemini"; key: string };
+
+export function aiCandidates(): AiChoice[] {
+  const choices: AiChoice[] = [];
+  if (process.env["LOVABLE_API_KEY"]) choices.push({ kind: "builtin" });
+  const free = pickFreeProvider();
+  if (free) choices.push({ kind: "free", provider: free });
+  const gemini = process.env["GEMINI_API_KEY"];
+  if (gemini) choices.push({ kind: "gemini", key: gemini });
+  // Nothing configured: keep the built-in path so the gateway reports a clear configuration error.
+  return choices.length ? choices : [{ kind: "builtin" }];
+}
+
 export async function chatJson(p: FreeProvider, system: string, user: string, maxTokens: number, timeoutMs: number): Promise<{ text: string | undefined; finish: string | undefined }> {
   const r = await fetch(p.url, {
     method: "POST",
