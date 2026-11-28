@@ -61,7 +61,7 @@ export async function analyzeWithGemini(input: AnalysisInput, repo: RepositoryEv
   let model: string;
   if (directKey) {
     // Self-hosted (e.g. Fly Sprite): call Google's Gemini API with the host's own key.
-    model = "gemini-2.5-flash";
+    model = "gemini-2.0-flash";
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": directKey },

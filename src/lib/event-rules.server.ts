@@ -37,7 +37,7 @@ export async function extractRulesWithGemini(page: string): Promise<ExtractedRul
   const key = process.env["GEMINI_API_KEY"];
   let text: string | undefined;
   if (key) {
-    const r = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent", {
+    const r = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent", {
       method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": key },
       body: JSON.stringify({ systemInstruction: { parts: [{ text: instruction }] }, contents: [{ role: "user", parts: [{ text: page }] }], generationConfig: { responseMimeType: "application/json", temperature: 0.1, maxOutputTokens: 4096 } }),
       signal: AbortSignal.timeout(60000),
