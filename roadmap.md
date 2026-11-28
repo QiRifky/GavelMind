@@ -2,6 +2,7 @@
 
 - [x] Verify New event folder opens its dialog and folder creation reaches the Event page on laptop and phone (3 targeted tests passed).
 - [ ] Recheck the private Sprite deployment after the user updates and reloads it. Blocked: it requires the user's Fly.io sign-in session.
+- [x] Verify both event-link rule analysis flows against the real Hacksgiving URL: 7 rules from the Event page and 8 during folder creation, with no errors; 4 targeted tests passed. Sprite still needs the feature commit and a restart.
 
 # Glass dashboard style
 
