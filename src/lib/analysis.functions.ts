@@ -17,7 +17,7 @@ export const analyzeRepository = createServerFn({ method: "POST" })
         return { ok: false, message: error.httpStatus === 402 ? "AI credits are unavailable. Check workspace billing; no substitute scores were generated." : "Gemini analysis could not complete. Check AI access and request logs before retrying; no report was saved." };
       }
       // Only app-authored explanations cross the boundary; network errors may contain secret URLs.
-      const allowedMessages = /^(Use a public|Invalid repository URL\.|The GitHub connector URL is invalid\.|Configure a real HTTPS|GitHub connector denied access\.|Repository not found\.|GitHub connector request failed \(\d+\)\.|No GitHub response\.|Only verified public repositories|No readable source material|Gemini did not return|Gemini returned unsupported evidence\.|Gemini did not complete|Gemini returned no analysis\.)/;
+      const allowedMessages = /^(Use a public|Invalid repository URL\.|The GitHub connector URL is invalid\.|Configure a real HTTPS|GitHub connector denied access\.|Repository not found\.|GitHub connector request failed \(\d+\)\.|No GitHub response\.|Only verified public repositories|No readable source material|Gemini did not return|Gemini returned unsupported evidence\.|Gemini did not complete|Gemini returned no analysis\.|Gemini API request failed)/;
       const message = error instanceof Error && allowedMessages.test(error.message) ? error.message : "The analysis could not complete or returned invalid data. No report was saved. Check the service configuration before retrying.";
       return { ok: false, message };
     }

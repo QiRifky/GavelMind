@@ -11,7 +11,8 @@ The app does **not** clone/execute repositories, watch/transcribe demos, prove e
 Install dependencies with `bun install`, then run `bun run dev --host 0.0.0.0 --port 8080` for development. Set the following **server-side runtime environment variables** privately in the Sprite; never commit their values or send them in chat:
 
 - `GH_GATEWAY`: the verified GitHub API base URL provided by your Sprites connector configuration. GavelMind appends `/repos/owner/repo/...`. A guessed URL or placeholder connection ID is not a verified connector. This implementation assumes the provided gateway handles upstream authorization.
-- `LOVABLE_API_KEY`: a valid Lovable API key authorized for the workspace's built-in Gemini service. Lovable injects it on its hosting; a separately deployed Sprite needs its own securely configured runtime value. The app uses `google/gemini-3.8-flash` and workspace credits. A Google AI Studio key is not used on this route.
+- `GEMINI_API_KEY` (self-hosting, e.g. Fly Sprite): your own Google AI Studio key. When set, the server calls Google's Gemini API directly (`gemini-2.5-flash`).
+- `LOVABLE_API_KEY`: used only when `GEMINI_API_KEY` is absent; Lovable hosting injects it and drafts run on built-in `google/gemini-3.8-flash`.
 
 Do not replace the generated public Cloud configuration with secret credentials. Keep private runtime settings out of the committed `.env` file; use the deployment's secret settings or an ignored `.env.local` for local development. Do not expose a paid analysis service publicly without appropriate access controls.
 
