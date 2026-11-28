@@ -34,7 +34,6 @@ function LandingPage() {
             <Button asChild size="lg" className="h-12 rounded-full px-6"><Link to="/app">Open workspace <ArrowRight /></Link></Button>
             {project && <Button asChild variant="ghost" className="glass-nav h-12 rounded-full px-5"><Link to="/app/p/$id" params={{ id: project.id }}>Explore a sample report <ArrowUpRight /></Link></Button>}
           </div>
-          <p className="mt-4 text-xs text-muted-foreground">Interactive demo · No sign-up · Sample data</p>
         </div>
       </section>
 
