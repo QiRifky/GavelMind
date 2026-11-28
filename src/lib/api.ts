@@ -9,6 +9,7 @@ import { analyzeRepository } from "./analysis.functions";
 import { storedDrafts } from "./analysis";
 import { extractRulesFromUrl } from "./event-rules.functions";
 import type { ExtractedCriterion } from "./event-criteria";
+import { importShowcase } from "./showcase.functions";
 
 export const API_BASE_URL: string = import.meta.env["VITE_API_BASE_URL"] ?? "";
 
@@ -248,10 +249,12 @@ export const splitUrls = (text: string) => text.split(/[\s,]+/).map((u) => u.tri
 export function removeProject(id: string) {
   set({ projects: state.projects.filter((p) => p.id !== id) });
 }
-/** Reads a showcase page and returns the projects it lists (mock). */
+/** Reads real repository links; discovery never inserts projects into the queue. */
 export async function scanShowcase(pageUrl: string): Promise<Discovered[]> {
   if (!/^https?:\/\//.test(pageUrl)) throw new Error("That doesn't look like a web address.");
-  throw new Error("Showcase import is not connected. Add actual GitHub URLs using single analysis or bulk URLs; no sample entries were added.");
+  const result = await importShowcase({ data: { url: pageUrl } });
+  if (!result.ok) throw new Error(result.message);
+  return result.items;
 }
 function setStatus(id: string, status: AnalysisStatus) {
   set({ projects: state.projects.map((p) => (p.id === id ? { ...p, status } : p)) });

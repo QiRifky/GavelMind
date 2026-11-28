@@ -1,5 +1,8 @@
 # Current fixes
 
+- [x] Add CSV/JSON/TXT upload and public showcase import with selection previews; 80 tests pass, file-to-queue and real vite.dev-to-queue flows work, private URLs are blocked, and phone layout has no horizontal overflow.
+- [ ] Verify live Groq enrichment of imported project names/demo links. Blocked: no Groq key is available here; real repository-link discovery works without it.
+
 - [x] Limit both judging card heights with internal scrolling, preserving context and criterion navigation.
 
 - [x] Expand judging Summary using collected description, README and verification/demo data; add bottom controls for Summary → Rules check → Evidence.

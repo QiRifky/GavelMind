@@ -1,11 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, FolderGit2, Github, Link2, Trash2, Layers, Globe } from "lucide-react";
-import { addProjects, judgeStatus, prepareJudging, removeProject, scanShowcase, splitUrls, useApi, type Discovered, type Project } from "@/lib/api";
+import { addProjects, judgeStatus, prepareJudging, removeProject, splitUrls, useApi, type Project } from "@/lib/api";
 import { AnalyzeCard } from "@/components/analyze-card";
 import { Badge, Pill } from "@/components/ui-bits";
-import { ShinyButton } from "@/components/ui/shiny-button";
-import { Button } from "@/components/ui/button";
+import { ProjectImport } from "@/components/project-import";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StatsBento } from "@/components/ui/stats-bento";
 import { StepBody, WorkflowNav } from "@/components/workflow-nav";
@@ -72,13 +71,13 @@ export function Entries() {
           <TabsList aria-label="Submission input method" className="grid h-auto w-full grid-cols-3 gap-1 rounded-xl bg-well p-1.5">
             <TabsTrigger value="single" className="min-w-0 flex-col gap-1 whitespace-normal px-1 py-3 text-xs data-[state=active]:bg-accent data-[state=active]:text-accent-foreground sm:flex-row sm:gap-2 sm:text-sm"><Github className="size-4 shrink-0" />Single Analyze</TabsTrigger>
             <TabsTrigger value="bulk" className="min-w-0 flex-col gap-1 whitespace-normal px-1 py-3 text-xs data-[state=active]:bg-accent data-[state=active]:text-accent-foreground sm:flex-row sm:gap-2 sm:text-sm"><Layers className="size-4 shrink-0" />Bulk Repos</TabsTrigger>
-            <TabsTrigger value="showcase" className="min-w-0 flex-col gap-1 whitespace-normal px-1 py-3 text-xs data-[state=active]:bg-accent data-[state=active]:text-accent-foreground sm:flex-row sm:gap-2 sm:text-sm"><Globe className="size-4 shrink-0" />Import Showcase</TabsTrigger>
+            <TabsTrigger value="showcase" className="min-w-0 flex-col gap-1 whitespace-normal px-1 py-3 text-xs data-[state=active]:bg-accent data-[state=active]:text-accent-foreground sm:flex-row sm:gap-2 sm:text-sm"><Globe className="size-4 shrink-0" />Import / Upload</TabsTrigger>
           </TabsList>
           <TabsContent value="single" forceMount className="mt-4 data-[state=inactive]:hidden"><AnalyzeCard embedded /></TabsContent>
           <TabsContent value="bulk" forceMount className="mt-4 data-[state=inactive]:hidden"><PasteCard /></TabsContent>
-          <TabsContent value="showcase" forceMount className="mt-4 data-[state=inactive]:hidden"><ShowcaseCard /></TabsContent>
+          <TabsContent value="showcase" forceMount className="mt-4 data-[state=inactive]:hidden"><ProjectImport /></TabsContent>
         </Tabs>
-        <p className="border-t border-border px-5 py-3 text-xs leading-relaxed text-muted-foreground sm:px-6">Repository evidence + AI notes · No code execution or video transcription. Showcase import is unavailable. Workspace changes reset on reload.</p>
+        <p className="border-t border-border px-5 py-3 text-xs leading-relaxed text-muted-foreground sm:px-6">Repository evidence + AI notes · No code execution or video transcription. Workspace changes reset on reload.</p>
       </section>
 
       <section className="flex flex-col overflow-hidden bento lg:min-h-0" aria-label="Projects">
@@ -128,7 +127,6 @@ export function Entries() {
     </>
   );
 }
-
 function PasteCard() {
   const [text, setText] = useState("");
   const [added, setAdded] = useState<number | null>(null);
@@ -142,49 +140,6 @@ function PasteCard() {
         <Pill variant="outline" disabled={!text.trim()} onClick={() => { setAdded(addProjects(splitUrls(text)).length); setText(""); }}>Add to queue</Pill>
         {added !== null && <span className="text-sm text-muted-foreground">{added === 0 ? "Already in the list." : `${added} added.`}</span>}
       </div>
-    </section>
-  );
-}
-
-function ShowcaseCard() {
-  const [url, setUrl] = useState("");
-  const [st, setSt] = useState<{ k: "idle" } | { k: "loading" } | { k: "error"; m: string } | { k: "list"; items: Discovered[] }>({ k: "idle" });
-  const [sel, setSel] = useState<Set<string>>(new Set());
-  const scan = async () => {
-    setSt({ k: "loading" });
-    try {
-      const items = await scanShowcase(url.trim());
-      setSel(new Set(items.map((i) => i.repoUrl)));
-      setSt({ k: "list", items });
-    } catch (e) {
-      setSt({ k: "error", m: e instanceof Error ? e.message : "Scan failed." });
-    }
-  };
-  return (
-    <section className="py-4" aria-label="Import showcase">
-      <label htmlFor="showcase" className="eyebrow font-mono">Showcase URL</label>
-      <div className="mt-3 flex flex-col gap-3 sm:flex-row">
-        <input id="showcase" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://event.dev/showcase"
-          className="h-10 min-w-0 sm:flex-1 rounded-full border border-border bg-well px-4 font-mono text-sm outline-hidden focus:border-primary" />
-        <ShinyButton className="h-10" label={st.k === "loading" ? "Scanning…" : "Scan"} disabled={!url.trim() || st.k === "loading"} onClick={() => void scan()} />
-      </div>
-      {st.k === "error" && <p className="mt-3 text-sm text-fail">{st.m} <Button variant="link" className="px-2" onClick={() => void scan()}>Retry</Button></p>}
-      {st.k === "loading" && <div className="mt-4 space-y-2"><div className="h-3 w-2/3 animate-pulse rounded bg-foreground/10" /><div className="h-3 w-1/2 animate-pulse rounded bg-foreground/10" /></div>}
-      {st.k === "list" && (st.items.length === 0 ? <p className="mt-3 text-sm text-muted-foreground">No projects found on that page.</p> : (
-        <div className="mt-4">
-          <ul className="space-y-1">
-            {st.items.map((i) => (
-              <li key={i.repoUrl}>
-                <label className="flex items-center gap-3 rounded-xl px-2 py-1.5 text-sm hover:bg-secondary">
-                  <input type="checkbox" className="size-4 accent-(--brand)" checked={sel.has(i.repoUrl)} onChange={() => setSel((s) => { const n = new Set(s); if (n.has(i.repoUrl)) n.delete(i.repoUrl); else n.add(i.repoUrl); return n; })} />
-                  <span className="min-w-0 truncate">{i.name}</span>
-                </label>
-              </li>
-            ))}
-          </ul>
-          <Pill className="mt-3" disabled={sel.size === 0} onClick={() => { addProjects(st.items.filter((i) => sel.has(i.repoUrl))); setSt({ k: "idle" }); setUrl(""); }}>Add selected ({sel.size})</Pill>
-        </div>
-      ))}
     </section>
   );
 }

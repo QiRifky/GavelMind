@@ -14,6 +14,10 @@ vi.mock("@/lib/event-rules.functions", () => ({
   extractRulesFromUrl: vi.fn(async () => ({ ok: false, message: "Enter rules manually." })),
 }));
 
+vi.mock("@/lib/showcase.functions", () => ({
+  importShowcase: vi.fn(async () => ({ ok: false, message: "No direct GitHub repository links were found." })),
+}));
+
 Object.defineProperty(window, "scrollTo", {
   writable: true,
   value: () => {},

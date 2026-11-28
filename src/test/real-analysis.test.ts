@@ -52,7 +52,7 @@ describe("real analysis without fabricated fallback", () => {
   });
   it("never creates invented showcase entries", async () => {
     const before = snapshot().projects;
-    await expect(scanShowcase("https://example.com/showcase")).rejects.toThrow("not connected");
+    await expect(scanShowcase("https://example.com/showcase")).rejects.toThrow("No direct GitHub");
     expect(snapshot().projects).toBe(before);
   });
 });

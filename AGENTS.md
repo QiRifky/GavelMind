@@ -56,3 +56,4 @@ use the editor.
 - Card surfaces use shared `rounded-card` / `--card-radius`, translucent glass, rims and soft shadows via `glass-panel`, `glass-nav`, `workspace-stage`; cards nested inside a card use `bento` / `--glass-nested`; form controls, pills, and orange fills keep their proportions and colors.
 - Every page, landing included, renders CosmicBackground from __root.tsx (colors from --cosmic-* vars) so the landing page matches the workspace.
 - Card blur: BlurControl slider sets --blur-scale on html; per-device.
+- Project import parses CSV/JSON/TXT in the browser and scans bounded public pages server-side; only source-present GitHub links enter selectable previews, with optional Groq enrichment, so discovery never invents or queues entries automatically.
