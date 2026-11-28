@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, FolderGit2, Github, Link2, Trash2, Layers, Globe } from "lucide-react";
-import { addProjects, prepareJudging, removeProject, scanShowcase, splitUrls, useApi, type Discovered } from "@/lib/api";
+import { addProjects, judgeStatus, prepareJudging, removeProject, scanShowcase, splitUrls, useApi, type Discovered, type Project } from "@/lib/api";
 import { AnalyzeCard } from "@/components/analyze-card";
 import { Badge, Pill } from "@/components/ui-bits";
 import { ShinyButton } from "@/components/ui/shiny-button";
@@ -28,7 +28,7 @@ export const Route = createFileRoute("/app/entries")({
   component: Entries,
 });
 
-function Entries() {
+export function Entries() {
   const state = useApi();
   const navigate = useNavigate();
   const [starting, setStarting] = useState(false);
@@ -37,6 +37,13 @@ function Entries() {
   const rows = state.projects;
   const ready = rows.filter((p) => p.status === "done");
   const toggle = (id: string) => setPicked((s) => { const n = new Set(s); if (n.has(id)) n.delete(id); else n.add(id); return n; });
+  /** Judged or not: the judge's own review state for this project. */
+  const judgeLabel = (p: Project) => (p.status === "done" ? judgeStatus(p.id, state) : "Not judged yet");
+  const judgeTone = (p: Project) => {
+    if (p.status !== "done") return "neutral" as const;
+    const s = judgeStatus(p.id, state);
+    return s === "Not reviewed" ? ("neutral" as const) : s === "In review" ? ("accent" as const) : ("good" as const);
+  };
   const selectable = rows.filter((p) => p.status !== "analyzing");
   const allPicked = selectable.length > 0 && selectable.every((p) => picked.has(p.id));
   const somePicked = selectable.some((p) => picked.has(p.id));
@@ -104,6 +111,7 @@ function Entries() {
                   {p.demoUrl && <p className="mt-1 flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground"><Link2 className="size-3 shrink-0" aria-hidden="true" /><span className="truncate">{p.demoUrl}</span></p>}
                 </div>
                 <div className="col-start-2 flex flex-wrap items-center justify-end gap-2 sm:col-start-auto">
+                  <Badge tone={judgeTone(p)}>{judgeLabel(p)}</Badge>
                   {p.status !== "done" && <Pill variant="outline" onClick={() => removeProject(p.id)} className="h-9 w-9 shrink-0 px-0 text-muted-foreground hover:text-destructive" aria-label={`Remove ${p.name}`} title={`Remove ${p.name}`}><Trash2 className="size-3.5" aria-hidden="true" /></Pill>}
                 </div>
               </li>
