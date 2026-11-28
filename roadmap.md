@@ -1,3 +1,8 @@
+# Current fixes
+
+- [x] Verify New event folder opens its dialog and folder creation reaches the Event page on laptop and phone (3 targeted tests passed).
+- [ ] Recheck the private Sprite deployment after the user updates and reloads it. Blocked: it requires the user's Fly.io sign-in session.
+
 # Glass dashboard style
 
 # Real GitHub and Gemini analysis
