@@ -5,7 +5,7 @@ import { Pill } from "@/components/ui-bits";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ShinyButton } from "@/components/ui/shiny-button";
-import { Plus, RotateCcw, CheckCheck, Check } from "lucide-react";
+import { Plus, RotateCcw, CheckCheck, Check, Github, LoaderCircle, X } from "lucide-react";
 
 type Phase = { k: "idle" } | { k: "running"; stage: AnalyzeStage } | { k: "done"; report: Report; name: string } | { k: "error"; message: string };
 
@@ -45,17 +45,35 @@ export function AnalyzeCard({ initialUrl = "", className, embedded = false }: { 
       )}
 
       {phase.k === "running" && (
-        <div className="flex flex-col items-center py-4 text-center animate-in fade-in zoom-in-90 duration-500">
-            <div className="w-full max-w-sm">
-              <div className="h-2 overflow-hidden rounded-full bg-well" role="progressbar" aria-valuemin={0} aria-valuemax={4} aria-valuenow={phase.stage + 1}>
-                <div className="h-full rounded-full bg-primary" style={{ width: `${((phase.stage + 1) / 4) * 100}%` }} />
-              </div>
+        <div className="py-1 animate-in fade-in duration-300 motion-reduce:animate-none" aria-busy="true">
+          <header className="flex items-center gap-3 border-b border-border pb-4">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground"><Github className="size-5" /></span>
+            <div className="min-w-0">
+              <h3 className="text-sm font-medium">Analyzing repository</h3>
+              <p className="mt-1 truncate font-mono text-xs text-muted-foreground" title={url.trim()}>{url.trim().replace(/^https?:\/\//, "")}</p>
             </div>
-          <p key={phase.stage} className="mt-5 text-base font-medium animate-in fade-in duration-500">
-            {STAGES[phase.stage].label} <span className="font-mono text-xs text-muted-foreground">{phase.stage + 1}/4</span>
-          </p>
-          <p key={`d${phase.stage}`} className="mt-1 max-w-sm text-sm text-muted-foreground animate-in fade-in duration-500">{STAGES[phase.stage].detail}</p>
-          <Pill variant="outline" className="mt-5" onClick={() => ctrl.current?.abort()}>Cancel</Pill>
+          </header>
+          <ol className="space-y-1 py-4" aria-label="Analysis stages">
+            {STAGES.map((step, index) => {
+              const active = index === phase.stage;
+              const past = index < phase.stage;
+              return (
+                <li key={step.label} aria-current={active ? "step" : undefined} className={cn("flex min-h-11 items-start gap-3 rounded-card px-3 py-2.5", active && "bg-accent/60")}>
+                  <span className={cn("flex size-5 shrink-0 items-center justify-center", active || past ? "text-primary" : "text-muted-foreground")}>
+                    {active ? <LoaderCircle className="size-4 motion-safe:animate-spin" /> : past ? <Check className="size-4" /> : <span className="font-mono text-xs">{index + 1}</span>}
+                  </span>
+                  <div className="min-w-0">
+                    <p className={cn("text-sm leading-5", active ? "font-medium text-foreground" : "text-muted-foreground")}>{step.label}</p>
+                    {active && <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{step.detail}</p>}
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+          <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3">
+            <p role="status" className="text-xs text-muted-foreground">Analysis in progress</p>
+            <Button variant="ghost" size="sm" className="rounded-full" onClick={() => ctrl.current?.abort()}><X className="size-3.5" />Cancel</Button>
+          </footer>
         </div>
       )}
 

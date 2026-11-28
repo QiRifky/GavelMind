@@ -1,5 +1,7 @@
 # Current fixes
 
+- [x] Replace Single Analyze's full progress bar with a compact repository header, active-stage spinner, step list and accessible cancel action; preserve analysis and explicit queue behavior.
+
 - [x] Make Judging cards natural-height without internal scroll, with expandable supporting material and evidence-backed AI score recommendations; 85 tests pass and 1280/550/390px fixture interactions verify explicit acceptance, manual editing, navigation and no internal scroll. Live Groq verification remains blocked below.
 - [ ] Verify live Groq score recommendations on Sprite. Blocked: no Groq key is configured here and the private Sprite session is unavailable.
 
