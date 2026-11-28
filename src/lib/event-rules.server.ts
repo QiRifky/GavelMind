@@ -37,12 +37,15 @@ export async function extractRulesWithGemini(page: string): Promise<ExtractedRul
   const key = process.env["GEMINI_API_KEY"];
   let text: string | undefined;
   if (key) {
-    const r = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent", {
+    const r = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent", {
       method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": key },
-      body: JSON.stringify({ systemInstruction: { parts: [{ text: instruction }] }, contents: [{ role: "user", parts: [{ text: page }] }], generationConfig: { responseMimeType: "application/json", temperature: 0.1, maxOutputTokens: 4096 } }),
+      body: JSON.stringify({ systemInstruction: { parts: [{ text: instruction }] }, contents: [{ role: "user", parts: [{ text: page }] }], generationConfig: { responseMimeType: "application/json", temperature: 0.1, maxOutputTokens: 16384 } }),
       signal: AbortSignal.timeout(60000),
     });
-    if (!r.ok) throw new Error(`Gemini API request failed (${r.status}).`);
+    if (!r.ok) {
+      console.error("Gemini API failed", { status: r.status, body: (await r.text()).slice(0, 500) });
+      throw new Error(`Gemini API request failed (${r.status}).`);
+    }
     const d = await r.json() as { candidates?: { content?: { parts?: { text?: string }[] } }[] };
     text = d.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("");
   } else {

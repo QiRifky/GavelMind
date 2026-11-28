@@ -61,19 +61,19 @@ export async function analyzeWithGemini(input: AnalysisInput, repo: RepositoryEv
   let model: string;
   if (directKey) {
     // Self-hosted (e.g. Fly Sprite): call Google's Gemini API with the host's own key.
-    model = "gemini-2.0-flash";
+    model = "gemini-3.8-flash";
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": directKey },
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: instruction }] },
         contents: [{ role: "user", parts: [{ text: JSON.stringify({ rubric: input.criteria, repository: repo }) }] }],
-        generationConfig: { responseMimeType: "application/json", temperature: 0.2, maxOutputTokens: 8192 },
+        generationConfig: { responseMimeType: "application/json", temperature: 0.2, maxOutputTokens: 32768 },
       }),
       signal: AbortSignal.timeout(90000),
     });
     if (!response.ok) {
-      console.error("Gemini API failed", { status: response.status });
+      console.error("Gemini API failed", { status: response.status, body: (await response.text()).slice(0, 500) });
       throw new Error(`Gemini API request failed (${response.status}). No report was saved.`);
     }
     const data = await response.json() as { candidates?: { finishReason?: string; content?: { parts?: { text?: string }[] } }[] };
