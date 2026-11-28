@@ -99,9 +99,12 @@ function Bento({ r, criteria }: { r: Report; criteria: Criterion[] }) {
   );
 }
 
-function ContextDeck({ r }: { r: Report }) {
+export function ContextDeck({ r }: { r: Report }) {
   const [tab, setTab] = useState<"summary" | "rules" | "material">("summary");
   const tabs = [{ id: "summary", label: "Summary" }, { id: "rules", label: "Rules check" }, { id: "material", label: "Evidence" }] as const;
+  const activeIndex = tabs.findIndex((item) => item.id === tab);
+  const previousTab = tabs[activeIndex - 1];
+  const nextTab = tabs[activeIndex + 1];
   return (
     <section aria-label="Project context" className="flex min-w-0 flex-col gap-4">
       <div role="tablist" aria-label="Context cards" className="flex flex-wrap gap-2">
@@ -116,6 +119,11 @@ function ContextDeck({ r }: { r: Report }) {
         <div role="tabpanel" hidden={tab !== "rules"} className="criterion-deck-front relative z-10 flex-1 rounded-card [&>section]:h-full"><RulesCard r={r} /></div>
         <div role="tabpanel" hidden={tab !== "material"} className="criterion-deck-front relative z-10 flex-1 rounded-card [&>section]:h-full"><MaterialCard r={r} /></div>
       </div>
+      <nav aria-label="Context navigation" className="flex flex-wrap items-center justify-between gap-3">
+        <Button type="button" variant="outline" className="rounded-full" disabled={!previousTab} onClick={() => { if (previousTab) setTab(previousTab.id); }} aria-label="Previous context table"><ArrowLeft />{previousTab?.label ?? "Back"}</Button>
+        <span className="font-mono text-xs text-muted-foreground">{activeIndex + 1} / {tabs.length}</span>
+        <Button type="button" variant="outline" className="rounded-full" disabled={!nextTab} onClick={() => { if (nextTab) setTab(nextTab.id); }} aria-label="Next context table">{nextTab?.label ?? "Next"}<ArrowRight /></Button>
+      </nav>
     </section>
   );
 }
@@ -129,6 +137,11 @@ function SummaryCard({ r }: { r: Report }) {
           <option value="neutral">Neutral</option><option value="concise">Concise</option><option value="detailed">Detailed</option>
         </select>}>Summary</CardTitle>
       <div className="space-y-3 text-sm leading-relaxed">{summaryText(r, style).map((t) => <p key={t}>{t}</p>)}</div>
+      {r.material.description.text && <div className="mt-5 border-t border-border pt-4">
+        <h3 className="text-sm font-medium">Project description</h3>
+        <p className="mt-2 whitespace-pre-line break-words text-sm leading-relaxed text-muted-foreground">{r.material.description.text}</p>
+        <Source s={r.material.description.source} />
+      </div>}
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         <div className="flex h-full flex-col rounded-card bg-well p-4">
           <p className="flex items-center gap-1.5 text-xs text-muted-foreground"><Check className="size-3.5 shrink-0 text-pass" />What it does</p>
@@ -139,7 +152,18 @@ function SummaryCard({ r }: { r: Report }) {
           <p className="mt-2 text-sm leading-relaxed">{r.doesNot}</p>
         </div>
       </div>
-      <div className="mt-auto pt-4">
+      {r.material.repository.readme && <div className="mt-5 border-t border-border pt-4">
+        <h3 className="text-sm font-medium">README overview</h3>
+        <p className="mt-2 whitespace-pre-line break-words text-sm leading-relaxed text-muted-foreground">{r.material.repository.readme}</p>
+        <Source s={r.material.repository.source} />
+      </div>}
+      <div className="mt-5 border-t border-border pt-4">
+        <h3 className="text-sm font-medium">Verification & demo</h3>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{r.material.repository.run.evidence}</p>
+        {r.material.demo.url ? <a href={r.material.demo.url} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1 text-sm text-primary hover:underline">Project demo<ArrowUpRight className="size-3.5" /></a> : <p className="mt-2 text-sm text-muted-foreground">No demo video provided.</p>}
+        <p className="mt-2 text-xs text-muted-foreground">Transcript: {r.material.demo.transcriptStatus}</p>
+      </div>
+      <div className="mt-auto pt-5">
         <p className="font-mono text-[11px] uppercase text-muted-foreground">Stack</p>
         <div className="mt-2 flex flex-wrap gap-2">{r.stack.map((s) => <span key={s.name} className="rounded-full border border-border px-3 py-1 text-xs">{s.name} <span className="text-muted-foreground">· {s.kind}</span></span>)}</div>
       </div>

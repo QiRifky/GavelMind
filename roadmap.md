@@ -1,5 +1,7 @@
 # Current fixes
 
+- [x] Expand judging Summary using collected description, README and verification/demo data; add bottom controls for Summary → Rules check → Evidence.
+
 - [x] Move criteria into Event; extract quote-backed AI drafts, require judge confirmation, and verify 67 tests plus laptop/phone confirmation and navigation.
 - [ ] Verify live Groq criteria extraction on Sprite. Blocked: no Groq key is configured in this preview and the private Sprite session is unavailable.
 
