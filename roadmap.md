@@ -1,5 +1,11 @@
 # Glass dashboard style
 
+# Real GitHub and Gemini analysis
+
+- [ ] Replace generated project reports and criterion scores with GitHub evidence and Google Gemini drafts.
+- [ ] Fail explicitly without configured services; never fall back to fabricated reports, rules, or showcase entries.
+- [ ] Verify analysis and judging tests; live Sprite verification requires valid GitHub configuration and Gemini credentials.
+
 - [x] Apply the uploaded glass dashboard treatment across the workspace while preserving Onest, the dark background, orange accents, and 8 px card corners.
 - [x] Verify workflow pages, the folder gallery, judging interactions, mobile layout, and regression tests.
 
