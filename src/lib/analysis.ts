@@ -17,7 +17,7 @@ const outputSchema = z.object({
   does: z.string().min(1).max(1500),
   doesNot: z.string().min(1).max(1500),
   drafts: z.array(z.object({
-    criterionId: z.string(), reason: z.string().min(1).max(2000),
+    criterionId: z.string(), score: z.number().min(1).max(10), reason: z.string().min(1).max(2000),
     sourcePath: z.string(), quote: z.string().min(1).max(1000),
   })),
 });
@@ -40,7 +40,7 @@ export function reportFromAnalysis(input: AnalysisInput, repo: RepositoryEvidenc
     if (matches.length !== 1 || !source || !normText(draft.quote) || !normText(source.text).includes(normText(draft.quote))) {
       throw new Error("The AI returned unsupported evidence. Retry analysis or review the repository manually.");
     }
-    drafts[criterion.id] = [{ model, reason: draft.reason, evidence: `${source.url}\nQuote: ${draft.quote}` }];
+    drafts[criterion.id] = [{ model, score: draft.score, reason: draft.reason, evidence: `${source.url}\nQuote: ${draft.quote}` }];
     draftCriteria[criterion.id] = criterion.name;
   }
   return {

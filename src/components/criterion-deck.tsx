@@ -20,11 +20,11 @@ export function CriterionDeck({ report, criteria }: { report: Report; criteria: 
   };
 
   return (
-    <div className="flex flex-1 flex-col gap-4">
+    <div className="flex min-w-0 flex-col gap-4">
       <nav aria-label="Criterion navigation" className="flex flex-wrap gap-2">
         {criteria.map((criterion, index) => (
           <Button key={criterion.id} type="button" variant={index === activeIndex ? "default" : "outline"}
-            className="min-w-11 rounded-full" aria-label={`Review ${criterion.name}`}
+            className="h-auto min-h-10 min-w-11 max-w-full rounded-full py-2 text-left whitespace-normal" aria-label={`Review ${criterion.name}`}
             aria-current={index === activeIndex ? "step" : undefined} onClick={() => goTo(index)}>
             <span className="font-mono text-xs">{String(index + 1).padStart(2, "0")}</span>
             <span className="hidden sm:inline">{criterion.name}</span>
@@ -32,12 +32,12 @@ export function CriterionDeck({ report, criteria }: { report: Report; criteria: 
           </Button>
         ))}
       </nav>
-      <div className="relative isolate flex flex-1 flex-col pb-8" aria-roledescription="card deck" aria-label="Criterion cards">
+      <div className="relative isolate flex flex-col pb-8" aria-roledescription="card deck" aria-label="Criterion cards">
         {activeIndex + 2 < criteria.length && <div aria-hidden="true" className="pointer-events-none absolute inset-x-5 bottom-0 h-4 rounded-b-card border border-t-0 border-glass-rim bg-glass-nested shadow-glass sm:inset-x-10" />}
         {activeIndex + 1 < criteria.length && <div aria-hidden="true" className="pointer-events-none absolute inset-x-2.5 bottom-4 h-4 rounded-b-card border border-t-0 border-glass-rim bg-glass-raised shadow-glass sm:inset-x-5" />}
         {criteria.map((criterion, index) => (
           <div key={`${report.projectId}-${criterion.id}`} hidden={index !== activeIndex}
-            tabIndex={0} className="criterion-deck-front report-card-scroll relative z-10 rounded-card"
+            className="criterion-deck-front relative z-10 min-w-0 rounded-card"
             role="group" aria-label={`Criterion ${index + 1} of ${criteria.length}: ${criterion.name}`}>
             <CriterionEvaluation report={report} criterion={criterion} index={index} isFirst={index === 0} isLast={index === criteria.length - 1} onBack={() => goTo(index - 1)} onNext={() => goTo(index + 1)} />
           </div>

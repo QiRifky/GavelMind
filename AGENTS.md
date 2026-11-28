@@ -43,7 +43,8 @@ use the editor.
 - Event flows directly to Entries; former rubric URLs redirect to Entries, preserving bookmarks and existing judging criteria.
 - Event criteria drafts need page quotes and judge confirmation; missing official weights become labeled equal-weight suggestions.
 - Event uses equal-height desktop overview panels with internally scrolling rules and a two-column criteria list that stacks on phones, keeping review compact without altering confirmation or scoring.
-- AI never produces numeric scores: analysis returns a project summary plus one quoted evidence note per criterion (ModelDraft has no score), because the user wants judges to score from zero without AI anchoring.
+- Analysis validates a numeric draft recommendation and quoted evidence for every criterion; ModelDraft.score is optional only for older reports, which offer explicit reanalysis. Recommendations never enter judge state except through a judge action, preserving judge-only ranking.
+- Judging decks use natural-height cards and expandable supporting material instead of nested scroll areas, keeping decisions and navigation accessible.
 - AI analysis and criterion drafts use HandoffBeam as a shared adapter for border-beam line animation; override decorative colors with CSS tokens and keep idle, offscreen, hidden-tab, and reduced-motion states static to avoid judging distractions.
 - ShinyButton wraps the shared Button with token-based gleam styling and native button props so animated CTAs preserve form submission and disabled behavior.
 - Entries uses persistent Radix tabs for single analysis, bulk URLs, and showcase import; hidden panels retain state so switching modes never cancels work or loses input.

@@ -80,7 +80,7 @@ function Bento({ r, criteria }: { r: Report; criteria: Criterion[] }) {
           </div>
         )}
       </div>
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
+      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
       <ContextDeck r={r} />
       <section aria-label="Criterion evaluations" className="flex min-w-0 flex-col">
         {criteria.length === 0 && <CardState kind="empty">No criteria in the rubric yet.</CardState>}
@@ -112,12 +112,12 @@ export function ContextDeck({ r }: { r: Report }) {
           <Button key={t.id} type="button" role="tab" aria-selected={tab === t.id} variant={tab === t.id ? "default" : "outline"} className="rounded-full" onClick={() => setTab(t.id)}>{t.label}</Button>
         ))}
       </div>
-      <div className="relative isolate flex flex-1 flex-col pb-8" aria-roledescription="card deck">
+      <div className="relative isolate flex flex-col pb-8" aria-roledescription="card deck">
         <div aria-hidden="true" className="pointer-events-none absolute inset-x-5 bottom-0 h-4 rounded-b-card border border-t-0 border-glass-rim bg-glass-nested shadow-glass sm:inset-x-10" />
         <div aria-hidden="true" className="pointer-events-none absolute inset-x-2.5 bottom-4 h-4 rounded-b-card border border-t-0 border-glass-rim bg-glass-raised shadow-glass sm:inset-x-5" />
-        <div role="tabpanel" tabIndex={0} hidden={tab !== "summary"} className="criterion-deck-front report-card-scroll relative z-10 rounded-card"><SummaryCard r={r} /></div>
-        <div role="tabpanel" tabIndex={0} hidden={tab !== "rules"} className="criterion-deck-front report-card-scroll relative z-10 rounded-card"><RulesCard r={r} /></div>
-        <div role="tabpanel" tabIndex={0} hidden={tab !== "material"} className="criterion-deck-front report-card-scroll relative z-10 rounded-card"><MaterialCard r={r} /></div>
+        <div role="tabpanel" hidden={tab !== "summary"} className="criterion-deck-front relative z-10 min-w-0 rounded-card"><SummaryCard r={r} /></div>
+        <div role="tabpanel" hidden={tab !== "rules"} className="criterion-deck-front relative z-10 min-w-0 rounded-card"><RulesCard r={r} /></div>
+        <div role="tabpanel" hidden={tab !== "material"} className="criterion-deck-front relative z-10 min-w-0 rounded-card"><MaterialCard r={r} /></div>
       </div>
       <nav aria-label="Context navigation" className="flex flex-wrap items-center justify-between gap-3">
         <Button type="button" variant="outline" className="rounded-full" disabled={!previousTab} onClick={() => { if (previousTab) setTab(previousTab.id); }} aria-label="Previous context table"><ArrowLeft />{previousTab?.label ?? "Back"}</Button>
@@ -137,32 +137,32 @@ function SummaryCard({ r }: { r: Report }) {
           <option value="neutral">Neutral</option><option value="concise">Concise</option><option value="detailed">Detailed</option>
         </select>}>Summary</CardTitle>
       <div className="space-y-3 text-sm leading-relaxed">{summaryText(r, style).map((t) => <p key={t}>{t}</p>)}</div>
-      {r.material.description.text && <div className="mt-5 border-t border-border pt-4">
-        <h3 className="text-sm font-medium">Project description</h3>
+      {r.material.description.text && <details className="mt-5 border-t border-border pt-4">
+        <summary className="cursor-pointer text-sm font-medium">Project description</summary>
         <p className="mt-2 whitespace-pre-line break-words text-sm leading-relaxed text-muted-foreground">{r.material.description.text}</p>
         <Source s={r.material.description.source} />
-      </div>}
+      </details>}
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
-        <div className="flex h-full flex-col rounded-card bg-well p-4">
+        <div className="min-w-0">
           <p className="flex items-center gap-1.5 text-xs text-muted-foreground"><Check className="size-3.5 shrink-0 text-pass" />What it does</p>
-          <p className="mt-2 text-sm leading-relaxed">{r.does}</p>
+          <p className="mt-2 break-words text-sm leading-relaxed">{r.does}</p>
         </div>
-        <div className="flex h-full flex-col rounded-card bg-well p-4">
+        <div className="min-w-0">
           <p className="flex items-center gap-1.5 text-xs text-muted-foreground"><Minus className="size-3.5 shrink-0" />What it does not do</p>
-          <p className="mt-2 text-sm leading-relaxed">{r.doesNot}</p>
+          <p className="mt-2 break-words text-sm leading-relaxed">{r.doesNot}</p>
         </div>
       </div>
-      {r.material.repository.readme && <div className="mt-5 border-t border-border pt-4">
-        <h3 className="text-sm font-medium">README overview</h3>
+      {r.material.repository.readme && <details className="mt-5 border-t border-border pt-4">
+        <summary className="cursor-pointer text-sm font-medium">README overview</summary>
         <p className="mt-2 whitespace-pre-line break-words text-sm leading-relaxed text-muted-foreground">{r.material.repository.readme}</p>
         <Source s={r.material.repository.source} />
-      </div>}
-      <div className="mt-5 border-t border-border pt-4">
-        <h3 className="text-sm font-medium">Verification & demo</h3>
+      </details>}
+      <details className="mt-5 border-t border-border pt-4">
+        <summary className="cursor-pointer text-sm font-medium">Verification & demo</summary>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{r.material.repository.run.evidence}</p>
         {r.material.demo.url ? <a href={r.material.demo.url} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1 text-sm text-primary hover:underline">Project demo<ArrowUpRight className="size-3.5" /></a> : <p className="mt-2 text-sm text-muted-foreground">No demo video provided.</p>}
         <p className="mt-2 text-xs text-muted-foreground">Transcript: {r.material.demo.transcriptStatus}</p>
-      </div>
+      </details>
       <div className="mt-auto pt-5">
         <p className="font-mono text-[11px] uppercase text-muted-foreground">Stack</p>
         <div className="mt-2 flex flex-wrap gap-2">{r.stack.map((s) => <span key={s.name} className="rounded-full border border-border px-3 py-1 text-xs">{s.name} <span className="text-muted-foreground">· {s.kind}</span></span>)}</div>
@@ -207,7 +207,7 @@ function RulesCard({ r }: { r: Report }) {
   );
 }
 
-const Source = ({ s }: { s: string }) => <p className="mt-2 font-mono text-[11px] text-muted-foreground">Source: {s}</p>;
+const Source = ({ s }: { s: string }) => <p className="mt-2 break-all font-mono text-[11px] text-muted-foreground">Source: {s}</p>;
 const logCls = { cmd: "text-foreground", ok: "text-pass", info: "text-muted-foreground", warn: "text-warn", error: "text-fail", result: "text-primary" } as const;
 
 function MaterialCard({ r }: { r: Report }) {
@@ -231,7 +231,7 @@ function MaterialCard({ r }: { r: Report }) {
           <div><p className="text-xs text-muted-foreground">Stack</p><p className="mt-1">{r.stack.map((s) => s.name).join(", ") || "Not available"}</p><Source s="GitHub language data" /></div>
           <div>
             <p className="text-xs text-muted-foreground">Sandbox run · <span className={m.repository.run.status === "worked" ? "text-pass" : m.repository.run.status === "error" ? "text-warn" : "text-fail"}>{m.repository.run.status}</span></p>
-            <pre className="mt-2 max-h-56 overflow-auto rounded-card bg-well p-3 font-mono text-xs leading-relaxed">{m.repository.run.log.map((l, i) => <div key={i} className={logCls[l.type]}>{l.type === "cmd" ? "$ " : ""}{l.text}</div>)}</pre>
+            <details className="mt-2"><summary className="cursor-pointer text-xs text-muted-foreground">Inspection log</summary><div className="mt-2 space-y-2 break-all font-mono text-xs leading-relaxed">{m.repository.run.log.map((l, i) => <p key={i} className={logCls[l.type]}>{l.type === "cmd" ? "$ " : ""}{l.text}</p>)}</div></details>
             <p className="mt-2 text-muted-foreground">{m.repository.run.evidence}</p><Source s="GavelMind repository inspection; no sandbox execution" />
           </div>
         </div>

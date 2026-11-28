@@ -29,8 +29,8 @@ export interface LogLine { type: LogLineType; text: string }
 export interface StackItem { name: string; kind: "language" | "framework" | "database" | "tool" }
 export interface RuleCheck { id: string; label: string; result: CheckResult; reason: string; evidenceUrl: string }
 /** One model's draft for one criterion. `model` is a display name supplied by the API. */
-/** AI note for one criterion: evidence only, never a score. */
-export interface ModelDraft { model: string; reason: string; evidence: string }
+/** Evidence-backed AI recommendation, not a judge decision. Score may be absent in older reports. */
+export interface ModelDraft { model: string; score?: number; reason: string; evidence: string }
 export interface Report {
   projectId: string;
   /** Exactly 3 neutral sentences. */
@@ -417,7 +417,7 @@ export function reopen() {
 export function getChangeLog(): ChangeItem[] {
   return state.log;
 }
-export const EXPORT_LINE = "AI gives no scores; final scores are the judge's decisions.";
+export const EXPORT_LINE = "AI scores are recommendations only; final scores are the judge's decisions.";
 export type ExportFormat = "csv" | "json" | "md";
 /** Builds the export file in the browser. */
 export function exportResults(format: ExportFormat, s: State = state): { filename: string; mime: string; content: string } {

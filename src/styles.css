@@ -213,18 +213,6 @@
   animation: criterion-deck-enter 220ms ease-out;
 }
 
-@utility report-card-scroll {
-  height: 32rem;
-  max-height: 75svh;
-  min-width: 0;
-  flex: none;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-gutter: stable;
-  & > section {
-    min-height: 100%;
-  }
-}
 @keyframes criterion-deck-enter {
   from {
     opacity: 0.65;

@@ -1,5 +1,8 @@
 # Current fixes
 
+- [x] Make Judging cards natural-height without internal scroll, with expandable supporting material and evidence-backed AI score recommendations; 85 tests pass and 1280/550/390px fixture interactions verify explicit acceptance, manual editing, navigation and no internal scroll. Live Groq verification remains blocked below.
+- [ ] Verify live Groq score recommendations on Sprite. Blocked: no Groq key is configured here and the private Sprite session is unavailable.
+
 - [x] Compact Event overview with equal-height desktop panels and scrolling rules; criteria use two desktop columns and stack on phones. Nine targeted tests and desktop/550px/phone editing, confirmation, scrolling, and Entries navigation passed without changing scoring.
 
 - [x] Make the immediate CSS starfield brighter and denser without changing the dim horizon glow or canvas animation.
@@ -7,7 +10,7 @@
 - [x] Add CSV/JSON/TXT upload and public showcase import with selection previews; 80 tests pass, file-to-queue and real vite.dev-to-queue flows work, private URLs are blocked, and phone layout has no horizontal overflow.
 - [ ] Verify live Groq enrichment of imported project names/demo links. Blocked: no Groq key is available here; real repository-link discovery works without it.
 
-- [x] Limit both judging card heights with internal scrolling, preserving context and criterion navigation.
+- [x] Replace the former fixed-height judging scroll areas with natural-height decks and expandable supporting material, preserving context and criterion navigation.
 
 - [x] Expand judging Summary using collected description, README and verification/demo data; add bottom controls for Summary → Rules check → Evidence.
 

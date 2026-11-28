@@ -104,7 +104,7 @@ function Result({ report, name, onAgain }: { report: Report; name: string; onAga
           {report.stack.length > 0 && <ul className="mt-4 flex flex-wrap gap-2">{report.stack.map((t) => <li key={t.name} className="rounded-full border border-border px-2.5 py-1 font-mono text-xs text-muted-foreground">{t.name}</li>)}</ul>}
         </section>
         <section className="bento p-5" aria-label="Notes per criterion">
-          <p className="text-xs font-medium uppercase text-muted-foreground">Notes per criterion · no scores</p>
+          <p className="text-xs font-medium uppercase text-muted-foreground">Evidence notes per criterion</p>
           <ul className="mt-3 divide-y divide-border">{notes.map((n) => <li key={n.id} className="py-3 first:pt-0"><p className="text-sm font-medium">{n.name}</p><p className="mt-1 text-sm leading-relaxed text-muted-foreground">{n.note ?? "No evidence found."}</p></li>)}</ul>
         </section>
       </div>
