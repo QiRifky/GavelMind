@@ -89,6 +89,10 @@
 - [x] Replace the AI ribbon with the uploaded border-beam line animation in the existing AI blocks.
 - [x] Verify analysis, report, phone layout, and reduced motion.
 
+# Judged status in the queue
+
+- [x] Show whether each queued project has been judged: Not judged yet → Not reviewed → In review → Finalized, with a test covering the switch after the judge's first score.
+
 # Sprite AI reliability
 
 - [x] Use Groq as the only AI for rules and analysis (Gemini and OpenRouter removed).
