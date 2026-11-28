@@ -55,5 +55,6 @@ use the editor.
 - Workflow-step pages open with the shared StatsBento strip (src/components/ui/stats-bento.tsx) and use the `bento` utility for cards, so all four steps share one card language.
 - Card surfaces use shared `rounded-card` / `--card-radius`, translucent glass, rims and soft shadows via `glass-panel`, `glass-nav`, `workspace-stage`; cards nested inside a card use `bento` / `--glass-nested`; form controls, pills, and orange fills keep their proportions and colors.
 - Every page, landing included, renders CosmicBackground from __root.tsx (colors from --cosmic-* vars) so the landing page matches the workspace.
+- CosmicBackground keeps a token-colored static CSS starfield under the canvas so stars are visible before hydration, even without JavaScript.
 - Card blur: BlurControl slider sets --blur-scale on html; per-device.
 - Project import parses CSV/JSON/TXT in the browser and scans bounded public pages server-side; only source-present GitHub links enter selectable previews, with optional Groq enrichment, so discovery never invents or queues entries automatically.

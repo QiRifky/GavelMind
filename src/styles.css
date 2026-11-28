@@ -93,6 +93,11 @@
   --cosmic-bg: #03060f;
   --cosmic-stars: #ffffff, #e0f2fe, #fdf4ff, #fbcfe8, #bae6fd;
   --cosmic-trail: 255 255 255;
+  --cosmic-static-bright: rgb(255 255 255 / 0.95);
+  --cosmic-static-cool: rgb(224 242 254 / 0.85);
+  --cosmic-static-warm: rgb(253 244 255 / 0.75);
+  --cosmic-static-halo: rgb(224 242 254 / 0.18);
+  --cosmic-static-opacity: 0.9;
   /* Horizon glow: kept dim so the lower part of the screen stays calm. */
   --cosmic-glow: radial-gradient(
     ellipse at 50% 100%,
@@ -630,16 +635,23 @@ body {
 /* Instant CSS starfield shown before the canvas script runs (no JS needed). */
 @utility cosmic-static-stars {
   background-image:
-    radial-gradient(1px 1px at 12% 18%, rgb(255 255 255 / 0.8), transparent 60%),
-    radial-gradient(1px 1px at 27% 62%, rgb(224 242 254 / 0.7), transparent 60%),
-    radial-gradient(1.5px 1.5px at 41% 33%, rgb(255 255 255 / 0.9), transparent 60%),
-    radial-gradient(1px 1px at 58% 78%, rgb(253 244 255 / 0.6), transparent 60%),
-    radial-gradient(1px 1px at 66% 12%, rgb(186 230 253 / 0.8), transparent 60%),
-    radial-gradient(1.5px 1.5px at 79% 47%, rgb(255 255 255 / 0.85), transparent 60%),
-    radial-gradient(1px 1px at 88% 85%, rgb(251 207 232 / 0.6), transparent 60%),
-    radial-gradient(1px 1px at 5% 90%, rgb(255 255 255 / 0.6), transparent 60%),
-    radial-gradient(1px 1px at 94% 24%, rgb(255 255 255 / 0.7), transparent 60%),
-    radial-gradient(1px 1px at 35% 8%, rgb(224 242 254 / 0.7), transparent 60%);
-  background-size: 320px 320px;
-  opacity: 0.55;
+    radial-gradient(2px 2px at 12% 18%, var(--cosmic-static-bright) 25%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 27% 62%, var(--cosmic-static-cool) 25%, transparent 100%),
+    radial-gradient(2px 2px at 41% 33%, var(--cosmic-static-bright) 25%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 58% 78%, var(--cosmic-static-warm) 25%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 66% 12%, var(--cosmic-static-cool) 25%, transparent 100%),
+    radial-gradient(2px 2px at 79% 47%, var(--cosmic-static-bright) 25%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 88% 85%, var(--cosmic-static-warm) 25%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 5% 90%, var(--cosmic-static-bright) 25%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 94% 24%, var(--cosmic-static-bright) 25%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 35% 8%, var(--cosmic-static-cool) 25%, transparent 100%),
+    radial-gradient(2.5px 2.5px at 23% 44%, var(--cosmic-static-bright) 20%, transparent 100%),
+    radial-gradient(5px 5px at 23% 44%, var(--cosmic-static-halo), transparent 100%),
+    radial-gradient(2px 2px at 72% 71%, var(--cosmic-static-cool) 20%, transparent 100%),
+    radial-gradient(4px 4px at 72% 71%, var(--cosmic-static-halo), transparent 100%);
+  background-size: 277px 293px, 307px 331px, 347px 313px, 283px 359px,
+    317px 277px, 373px 337px, 293px 307px, 331px 367px,
+    359px 283px, 313px 347px, 419px 397px, 419px 397px,
+    389px 433px, 389px 433px;
+  opacity: var(--cosmic-static-opacity);
 }

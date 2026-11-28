@@ -1,5 +1,7 @@
 # Current fixes
 
+- [x] Make the immediate CSS starfield brighter and denser without changing the dim horizon glow or canvas animation.
+
 - [x] Add CSV/JSON/TXT upload and public showcase import with selection previews; 80 tests pass, file-to-queue and real vite.dev-to-queue flows work, private URLs are blocked, and phone layout has no horizontal overflow.
 - [ ] Verify live Groq enrichment of imported project names/demo links. Blocked: no Groq key is available here; real repository-link discovery works without it.
 
