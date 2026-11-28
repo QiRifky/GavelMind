@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Check, ChevronDown, Eraser, Scale, Star, StarHalf, ArrowLeft, ArrowRight } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { agreement, average, draftsFor, saveJudgeScore, useApi, type Criterion, type Report } from "@/lib/api";
+import { draftsFor, saveJudgeScore, useApi, type Criterion, type Report } from "@/lib/api";
 import { GlowCard } from "@/components/glow-card";
 import { Button } from "@/components/ui/button";
 import { HandoffBeam } from "@/components/ui/handoff-beam";
@@ -13,8 +13,6 @@ export function CriterionEvaluation({ report, criterion, index, isFirst, isLast,
   const [expanded, setExpanded] = useState(false);
   const [hoverScore, setHoverScore] = useState<number | null>(null);
   const drafts = draftsFor(report, criterion);
-  const draft = average(drafts.map((d) => d.score));
-  const agreed = agreement(drafts.map((d) => d.score));
   const detailsId = `models-${criterion.id}`;
 
   return (
@@ -29,19 +27,18 @@ export function CriterionEvaluation({ report, criterion, index, isFirst, isLast,
       <div className="grid gap-5">
         <HandoffBeam phase="idle" radius={0} className="min-w-0 pb-7">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-xs font-medium uppercase text-muted-foreground">AI draft · suggestions only</p>
-            <span className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground">{drafts.length < 2 ? drafts.length ? "One model draft" : "Not analyzed" : agreed ? "Models agree" : "Models differ"}</span>
+            <p className="text-xs font-medium uppercase text-muted-foreground">AI notes · evidence only</p>
+            <span className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground">{drafts.length ? "No AI score" : "Not analyzed"}</span>
           </div>
-          <p className="mt-3 font-mono text-3xl tabular-nums text-primary">{drafts.length ? draft : "—"}<span className="ml-1 text-sm text-muted-foreground">/10</span></p>
           <div className="mt-3 space-y-2 text-sm leading-relaxed">
             {Array.from(new Set(drafts.map((d) => d.reason))).map((reason) => <p key={reason}>{reason}</p>)}
           </div>
           <Button variant="ghost" size="sm" className="mt-3 rounded-full text-muted-foreground" aria-expanded={expanded} aria-controls={detailsId} onClick={() => setExpanded(!expanded)}>
-            {expanded ? "Hide" : "View"} model reasons & evidence <ChevronDown className={expanded ? "rotate-180" : ""} />
+            {expanded ? "Hide" : "View"} evidence <ChevronDown className={expanded ? "rotate-180" : ""} />
           </Button>
           {expanded && <div id={detailsId} className="mt-3 divide-y divide-border border-t border-border">
             {drafts.map((d) => <div key={d.model} className="py-3">
-              <div className="flex items-center justify-between gap-3 text-sm"><p className="font-medium">{d.model}</p><span className="font-mono tabular-nums text-primary">{d.score}/10</span></div>
+              <p className="text-sm font-medium">{d.model}</p>
               <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{d.reason}</p>
               <p className="mt-2 break-words font-mono text-xs text-muted-foreground">Evidence: {d.evidence}</p>
             </div>)}
@@ -73,7 +70,6 @@ export function CriterionEvaluation({ report, criterion, index, isFirst, isLast,
             <span className="pointer-events-none absolute top-1/2 right-5 -translate-y-1/2 font-mono text-sm text-muted-foreground">/10</span>
           </div>
           <div className="mt-2 flex flex-wrap gap-2">
-            <Button variant="outline" size="sm" className="rounded-full" disabled={state.finalized || drafts.length === 0} onClick={() => saveJudgeScore(report.projectId, criterion.id, { score: Math.round(draft * 2) / 2 })}>Use AI draft</Button>
             <Button variant="ghost" size="sm" className="rounded-full text-muted-foreground" disabled={state.finalized || value?.score === undefined} onClick={() => saveJudgeScore(report.projectId, criterion.id, { score: null })}><Eraser />Clear</Button>
           </div>
           <div className="mt-4 flex flex-wrap items-center justify-between gap-3">

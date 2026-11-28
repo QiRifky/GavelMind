@@ -1,6 +1,6 @@
 import { Cell, Label, Pie, PieChart, ResponsiveContainer } from "recharts";
-import { AlertTriangle, Gauge, ListChecks, Scale, ShieldCheck, Users } from "lucide-react";
-import { agreement, average, draftsFor, finalsOf, judgeTotal, useApi, type Criterion, type Project, type Report } from "@/lib/api";
+import { AlertTriangle, Code2, FileText, ListChecks, Scale, ShieldCheck } from "lucide-react";
+import { draftsFor, finalsOf, judgeTotal, useApi, type Criterion, type Project, type Report } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 const BARS = 24;
@@ -13,17 +13,15 @@ export function ReportOverview({ r, project, criteria }: { r: Report; project: P
   const total = judgeTotal(finals, criteria);
   const decided = criteria.filter((c) => finals[c.id] !== undefined).length;
   const reviewPct = criteria.length ? Math.round((decided / criteria.length) * 100) : 0;
-  const draftAvgs = criteria.map((c) => average(draftsFor(r, c).map((d) => d.score)));
-  const draftAvg = average(draftAvgs);
-  const agreeCount = criteria.filter((c) => agreement(draftsFor(r, c).map((d) => d.score))).length;
+  const notedCount = criteria.filter((c) => draftsFor(r, c).length > 0).length;
   const passCount = r.checks.filter((c) => c.result === "pass").length;
   const flagCount = r.checks.filter((c) => c.result !== "pass").length;
   const filled = Math.round((reviewPct * BARS) / 100);
   const owner = project.repoUrl.replace(/^https?:\/\/(www\.)?github\.com\//, "").split("/")[0] ?? "";
 
   const metrics = [
-    { icon: Gauge, title: "AI draft average", value: `${draftAvg}/10` },
-    { icon: Users, title: "Model agreement", value: `${agreeCount}/${criteria.length} criteria` },
+    { icon: FileText, title: "Criteria with evidence", value: `${notedCount}/${criteria.length}` },
+    { icon: Code2, title: "Languages", value: r.stack.map((t) => t.name).slice(0, 3).join(", ") || "—" },
     { icon: ListChecks, title: "Rule checks", value: `${passCount}/${r.checks.length} pass` },
     { icon: AlertTriangle, title: "Flags to review", value: String(flagCount), warn: flagCount > 0 },
   ];
@@ -91,7 +89,7 @@ export function ReportOverview({ r, project, criteria }: { r: Report; project: P
         </div>
         <div className="flex flex-col gap-4 lg:col-span-4">
           <p className="font-medium">Before you finalize</p>
-          <p className="text-sm text-muted-foreground">AI scores are suggestions to help you decide. Read the flags and evidence, then set a final score for every criterion.</p>
+          <p className="text-sm text-muted-foreground">AI notes are suggestions to help you decide. Read the summary, flags and evidence, then set a final score for every criterion.</p>
           <ul className="grid gap-3 text-sm md:grid-cols-2">
             <li className="flex items-center gap-2"><ShieldCheck className={cn("size-5", flagCount ? "text-warn" : "text-pass")} />{flagCount ? `${flagCount} rule check${flagCount > 1 ? "s need" : " needs"} a look` : "All rule checks passed"}</li>
             <li className="flex items-center gap-2"><Scale className="size-5 text-primary" />{r.material.repository.run.status === "worked" ? "Sandbox run worked" : `Sandbox run: ${r.material.repository.run.status}`}</li>

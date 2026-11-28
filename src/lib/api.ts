@@ -27,7 +27,8 @@ export interface LogLine { type: LogLineType; text: string }
 export interface StackItem { name: string; kind: "language" | "framework" | "database" | "tool" }
 export interface RuleCheck { id: string; label: string; result: CheckResult; reason: string; evidenceUrl: string }
 /** One model's draft for one criterion. `model` is a display name supplied by the API. */
-export interface ModelDraft { model: string; score: number; reason: string; evidence: string }
+/** AI note for one criterion: evidence only, never a score. */
+export interface ModelDraft { model: string; reason: string; evidence: string }
 export interface Report {
   projectId: string;
   /** Exactly 3 neutral sentences. */
@@ -55,7 +56,7 @@ export const STAGES = [
   { label: "Reading repository", detail: "Retrieving public GitHub repository material." },
   { label: "Reviewing source material", detail: "Inspecting README and a bounded source-code sample; no code execution." },
   { label: "Checking rules", detail: "Comparing commits, connectors and demo against the event rules." },
-  { label: "Drafting scores", detail: "Writing draft scores with reasons for you to review." },
+  { label: "Writing notes", detail: "Summarizing the project and citing evidence for each criterion." },
 ] as const;
 
 interface State {
@@ -82,7 +83,6 @@ export function draftsFor(report: Report, c: Criterion): ModelDraft[] {
 }
 export const average = (xs: number[]) => (xs.length ? Math.round((xs.reduce((a, b) => a + b, 0) / xs.length) * 10) / 10 : 0);
 /** Models agree when every draft is within 1 point of every other. */
-export const agreement = (xs: number[]) => xs.length > 0 && Math.max(...xs) - Math.min(...xs) <= 1;
 
 // ---------- Store ----------
 /** Criteria the judge can pick from in the rubric editor; "Custom name…" opens a text field. */
@@ -405,7 +405,7 @@ export function reopen() {
 export function getChangeLog(): ChangeItem[] {
   return state.log;
 }
-export const EXPORT_LINE = "AI scores are drafts; final scores are the judge's decisions.";
+export const EXPORT_LINE = "AI gives no scores; final scores are the judge's decisions.";
 export type ExportFormat = "csv" | "json" | "md";
 /** Builds the export file in the browser. */
 export function exportResults(format: ExportFormat, s: State = state): { filename: string; mime: string; content: string } {

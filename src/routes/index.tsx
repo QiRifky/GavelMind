@@ -1,15 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, ArrowUpRight, FileSearch, GitBranch, Gavel, SlidersHorizontal, Sparkles, Check, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { average, draftsFor, useApi } from "@/lib/api";
+import { draftsFor, useApi } from "@/lib/api";
 const heroUrl = "/images/judging-hero.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
     { title: "Gavel Mind — AI prepares. You decide." },
-    { name: "description", content: "A hackathon judging workspace for project material, evidence and AI draft scores. Your rubric. Your final decision." },
+    { name: "description", content: "A hackathon judging workspace for project material, evidence and AI evidence notes. Your rubric. Your final decision." },
     { property: "og:title", content: "Gavel Mind — AI prepares. You decide." },
-    { property: "og:description", content: "Review project evidence and AI draft scores in one workspace. Human judges make every final decision." },
+    { property: "og:description", content: "Review project evidence and AI evidence notes in one workspace. Human judges make every final decision." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
   ] }),
@@ -29,7 +29,7 @@ function LandingPage() {
           <p className="flex items-center gap-2 text-xs font-medium text-accent-foreground"><span className="size-1.5 rounded-full bg-primary" /> THE HACKATHON JUDGING WORKSPACE</p>
           <h1 className="mt-6 text-5xl font-medium leading-none sm:text-7xl">GavelMind<span className="text-primary">.</span></h1>
           <h2 className="mt-6 text-3xl font-normal leading-tight sm:text-4xl">AI prepares.<br /><span className="text-muted-foreground">You decide.</span></h2>
-          <p className="mt-5 max-w-sm text-sm leading-7 text-muted-foreground sm:text-base">From repository to review. Project material, evidence, and draft scores in one place — with the final call always yours.</p>
+          <p className="mt-5 max-w-sm text-sm leading-7 text-muted-foreground sm:text-base">From repository to review. Project material, evidence, and AI notes in one place — with the final call always yours.</p>
           <div className="mt-7 flex flex-wrap items-center gap-3">
             <Button asChild size="lg" className="h-12 rounded-full px-6"><Link to="/app">Open workspace <ArrowRight /></Link></Button>
             {project && <Button asChild variant="ghost" className="glass-nav h-12 rounded-full px-5"><Link to="/app/p/$id" params={{ id: project.id }}>Explore a sample report <ArrowUpRight /></Link></Button>}
@@ -56,18 +56,18 @@ function LandingPage() {
         </div>
         <div className="mt-10 grid gap-4 md:grid-cols-3">
           <div className="glass-panel p-6"><div className="flex items-center justify-between"><GitBranch className="size-6 text-primary" /><span className="font-mono text-xs text-muted-foreground">01 / COLLECT</span></div><h3 className="mt-6 text-xl">Bring the projects together.</h3><p className="mt-3 text-sm leading-7 text-muted-foreground">Add repositories and demo links to a single review queue. Keep every submission in sight.</p></div>
-          <div className="glass-panel p-6"><div className="flex items-center justify-between"><FileSearch className="size-6 text-primary" /><span className="font-mono text-xs text-muted-foreground">02 / REVIEW</span></div><h3 className="mt-6 text-xl">See the evidence. Not just a score.</h3><p className="mt-3 text-sm leading-7 text-muted-foreground">Review summaries, rule checks, and model-by-model drafts, with reasons and sources beside them.</p></div>
+          <div className="glass-panel p-6"><div className="flex items-center justify-between"><FileSearch className="size-6 text-primary" /><span className="font-mono text-xs text-muted-foreground">02 / REVIEW</span></div><h3 className="mt-6 text-xl">See the evidence. Not just a score.</h3><p className="mt-3 text-sm leading-7 text-muted-foreground">Review summaries, rule checks, and per-criterion notes, with quoted sources beside them.</p></div>
           <div className="glass-panel p-6"><div className="flex items-center justify-between"><Gavel className="size-6 text-primary" /><span className="font-mono text-xs text-muted-foreground">03 / DECIDE</span></div><h3 className="mt-6 text-xl">Make it your decision.</h3><p className="mt-3 text-sm leading-7 text-muted-foreground">Set final scores against your rubric. Choose the winners yourself, then finalize and export the results.</p></div>
         </div>
       </section>
 
       {project && report && <section className="px-4 sm:px-6" aria-labelledby="sample-heading">
         <div className="glass-panel grid gap-10 px-5 py-16 sm:px-6 lg:grid-cols-[1fr_1.3fr] lg:items-center">
-          <div><p className="text-xs font-medium text-primary">A LOOK INSIDE</p><h2 id="sample-heading" className="mt-3 text-3xl leading-tight sm:text-4xl">Prepared by AI.<br />Reviewed by you.</h2><p className="mt-5 max-w-sm text-sm leading-7 text-muted-foreground">Draft scores are a starting point, never a verdict. Compare the material, weigh the evidence, and record your own judgment.</p><Button asChild variant="ghost" className="glass-nav mt-6 h-11 rounded-full"><Link to="/app/p/$id" params={{ id: project.id }}>Open sample report <ArrowUpRight /></Link></Button></div>
+          <div><p className="text-xs font-medium text-primary">A LOOK INSIDE</p><h2 id="sample-heading" className="mt-3 text-3xl leading-tight sm:text-4xl">Prepared by AI.<br />Reviewed by you.</h2><p className="mt-5 max-w-sm text-sm leading-7 text-muted-foreground">AI summarizes the project and cites evidence, but never scores it. Compare the material, weigh the evidence, and record your own judgment.</p><Button asChild variant="ghost" className="glass-nav mt-6 h-11 rounded-full"><Link to="/app/p/$id" params={{ id: project.id }}>Open sample report <ArrowUpRight /></Link></Button></div>
           <div className="bento overflow-hidden">
             <div className="flex items-center justify-between gap-4 border-b border-border px-5 py-4"><div className="flex min-w-0 items-center gap-2 text-sm"><GitBranch className="size-4 shrink-0 text-primary" /><span className="truncate">{project.name}</span></div><span className="shrink-0 text-xs text-muted-foreground">Sample report</span></div>
-            <div className="px-5 py-5"><div className="mb-5 flex items-center gap-2 text-xs text-accent-foreground"><Sparkles className="size-3.5" /> AI DRAFT SCORES</div><div className="grid grid-cols-[1fr_auto_auto] gap-x-5 gap-y-4 text-sm"><span className="text-xs text-muted-foreground">Criterion</span><span className="text-xs text-muted-foreground">AI draft</span><span className="text-xs text-muted-foreground">Judge</span>{state.criteria.map((c) => <div key={c.id} className="contents"><span>{c.name}</span><span className="text-right font-mono">{average(draftsFor(report, c).map((d) => d.score)).toFixed(1)}</span><span className="text-right font-mono text-muted-foreground">{state.judge[project.id]?.[c.id]?.score ?? "—"}</span></div>)}</div></div>
-            <div className="border-t border-border bg-accent/40 px-5 py-4 text-xs leading-6 text-muted-foreground">AI scores are suggestions to help you decide. The final decision is yours.</div>
+            <div className="px-5 py-5"><div className="mb-5 flex items-center gap-2 text-xs text-accent-foreground"><Sparkles className="size-3.5" /> AI NOTES · NO SCORES</div><div className="grid grid-cols-[1fr_auto_auto] gap-x-5 gap-y-4 text-sm"><span className="text-xs text-muted-foreground">Criterion</span><span className="text-xs text-muted-foreground">Evidence</span><span className="text-xs text-muted-foreground">Judge</span>{state.criteria.map((c) => <div key={c.id} className="contents"><span>{c.name}</span><span className="text-right text-xs text-muted-foreground">{draftsFor(report, c).length ? "Noted" : "—"}</span><span className="text-right font-mono text-muted-foreground">{state.judge[project.id]?.[c.id]?.score ?? "—"}</span></div>)}</div></div>
+            <div className="border-t border-border bg-accent/40 px-5 py-4 text-xs leading-6 text-muted-foreground">AI notes are suggestions to help you decide. The final decision is yours.</div>
           </div>
         </div>
       </section>}

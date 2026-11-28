@@ -1,10 +1,9 @@
 import { useRef, useState } from "react";
-import { analyzePreview, enqueuePreview, average, draftsFor, STAGES, useApi, type AnalyzeStage, type Report } from "@/lib/api";
+import { analyzePreview, enqueuePreview, draftsFor, STAGES, useApi, type AnalyzeStage, type Report } from "@/lib/api";
 import { HandoffBeam } from "@/components/ui/handoff-beam";
 import { Pill } from "@/components/ui-bits";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { DonutBreakdown } from "@/components/ui/donut-breakdown";
 import { ShinyButton } from "@/components/ui/shiny-button";
 import { Plus, RotateCcw, CheckCheck, Check } from "lucide-react";
 
@@ -87,22 +86,30 @@ function Result({ report, name, onAgain }: { report: Report; name: string; onAga
     catch (e) { setError(e instanceof Error ? e.message : "Couldn't add this project."); }
   };
   const passed = report.checks.filter((c) => c.result === "pass").length;
-  const w = criteria.reduce((a, c) => a + c.weight, 0) || 1;
-  const draft = criteria.reduce((a, c) => a + average(draftsFor(report, c).map((d) => d.score)) * c.weight, 0) / w;
-  const segments = criteria.map((criterion) => {
-    const drafts = draftsFor(report, criterion);
-    return { id: criterion.id, label: criterion.name, score: average(drafts.map((d) => d.score)), weight: criterion.weight, reason: drafts[0]?.reason ?? "No model evidence available." };
-  });
+  const notes = criteria.map((c) => ({ id: c.id, name: c.name, note: draftsFor(report, c)[0]?.reason }));
   return (
     <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 motion-reduce:animate-none">
       <header className="mb-5 flex flex-col items-start justify-between gap-4 sm:flex-row sm:flex-wrap">
-        <div className="min-w-0 flex-1"><p className="eyebrow font-mono">Analysis ready</p><h3 className="mt-2 break-words text-xl font-medium">{name}</h3><p className="mt-2 text-sm text-muted-foreground">AI draft score breakdown</p></div>
+        <div className="min-w-0 flex-1"><p className="eyebrow font-mono">Analysis ready</p><h3 className="mt-2 break-words text-xl font-medium">{name}</h3><p className="mt-2 text-sm text-muted-foreground">Project description from the repository</p></div>
         <span className="inline-flex items-center gap-2 rounded-full border border-border px-3 py-2 text-xs text-muted-foreground"><CheckCheck className="size-4" /><span><span className="font-mono text-foreground">{passed}/{report.checks.length}</span> checks passed · repository evidence</span></span>
       </header>
-      <DonutBreakdown data={segments} total={draft} />
-      <p className="mt-4 text-xs text-muted-foreground">Chart segments show weighted contributions to the AI draft total.</p>
+      <div className="grid gap-4 lg:grid-cols-[1.2fr_1fr]">
+        <section className="bento p-5" aria-label="Project summary">
+          <p className="text-xs font-medium uppercase text-muted-foreground">Summary</p>
+          <div className="mt-3 space-y-2 text-sm leading-relaxed">{report.summary.map((s) => <p key={s}>{s}</p>)}</div>
+          <p className="mt-4 text-xs font-medium uppercase text-muted-foreground">What it does</p>
+          <p className="mt-2 text-sm leading-relaxed">{report.does}</p>
+          <p className="mt-4 text-xs font-medium uppercase text-muted-foreground">Limitations & unknowns</p>
+          <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">{report.doesNot}</p>
+          {report.stack.length > 0 && <ul className="mt-4 flex flex-wrap gap-2">{report.stack.map((t) => <li key={t.name} className="rounded-full border border-border px-2.5 py-1 font-mono text-xs text-muted-foreground">{t.name}</li>)}</ul>}
+        </section>
+        <section className="bento p-5" aria-label="Notes per criterion">
+          <p className="text-xs font-medium uppercase text-muted-foreground">Notes per criterion · no scores</p>
+          <ul className="mt-3 divide-y divide-border">{notes.map((n) => <li key={n.id} className="py-3 first:pt-0"><p className="text-sm font-medium">{n.name}</p><p className="mt-1 text-sm leading-relaxed text-muted-foreground">{n.note ?? "No evidence found."}</p></li>)}</ul>
+        </section>
+      </div>
       <footer className="mt-5 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5">
-        <p className="max-w-md text-xs leading-relaxed text-muted-foreground">AI scores are suggestions to help you decide. The final decision is yours.</p>
+        <p className="max-w-md text-xs leading-relaxed text-muted-foreground">AI notes are suggestions to help you decide. The final decision is yours.</p>
         <div className="flex flex-wrap gap-3">
           <Button className="h-auto min-h-10 max-w-full rounded-full px-5 py-2 whitespace-normal" disabled={inQueue} onClick={addToQueue}>{inQueue ? <Check /> : <Plus />}{inQueue ? "Added to project queue" : "Add to project queue"}</Button>
           <Button variant="outline" className="h-10 rounded-full px-5" onClick={onAgain}><RotateCcw />Analyze another</Button>

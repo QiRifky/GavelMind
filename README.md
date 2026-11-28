@@ -47,7 +47,7 @@ PAGES
 
    per criterion a field "Judge's decision" for the FINAL score, with
 
-   the AI draft shown beside it.
+   the AI evidence note (no AI score) shown beside it.
 
 4. Leaderboard: rank ONLY by the judge's final scores. Unreviewed
 

@@ -71,7 +71,7 @@ function Entries() {
           <TabsContent value="bulk" forceMount className="mt-4 data-[state=inactive]:hidden"><PasteCard /></TabsContent>
           <TabsContent value="showcase" forceMount className="mt-4 data-[state=inactive]:hidden"><ShowcaseCard /></TabsContent>
         </Tabs>
-        <p className="border-t border-border px-5 py-3 text-xs leading-relaxed text-muted-foreground sm:px-6">Repository evidence + AI drafts · No code execution or video transcription. Showcase import is unavailable. Workspace changes reset on reload.</p>
+        <p className="border-t border-border px-5 py-3 text-xs leading-relaxed text-muted-foreground sm:px-6">Repository evidence + AI notes · No code execution or video transcription. Showcase import is unavailable. Workspace changes reset on reload.</p>
       </section>
 
       <section className="flex flex-col overflow-hidden bento lg:min-h-0" aria-label="Projects">
