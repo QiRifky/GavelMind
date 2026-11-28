@@ -1,6 +1,6 @@
 /**
  * GavelMind data layer. EVERY piece of app data goes through this file.
- * Workspace state is in memory; project analysis uses real GitHub evidence and Gemini.
+ * Workspace state is in memory; project analysis uses real GitHub evidence and Groq.
  * Reports never fall back to simulated material or scores.
  * Rule: AI only drafts. Ranking uses judge final scores only (see judgeTotal).
  */

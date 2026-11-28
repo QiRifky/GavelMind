@@ -25,7 +25,7 @@ const outputSchema = z.object({
 /** Accept drafts only for the requested rubric and exact quotations from fetched sources. */
 export function reportFromAnalysis(input: AnalysisInput, repo: RepositoryEvidence, model: string, output: unknown): Report {
   const parsed = outputSchema.parse(output);
-  if (parsed.drafts.length !== input.criteria.length) throw new Error("Gemini did not return the complete rubric. Retry analysis.");
+  if (parsed.drafts.length !== input.criteria.length) throw new Error("The AI did not return the complete rubric. Retry analysis.");
   const drafts: Record<string, ModelDraft[]> = {};
   const draftCriteria: Record<string, string> = {};
   for (const criterion of input.criteria) {
@@ -33,7 +33,7 @@ export function reportFromAnalysis(input: AnalysisInput, repo: RepositoryEvidenc
     const draft = matches[0];
     const source = repo.documents.find((doc) => doc.path === draft?.sourcePath);
     if (matches.length !== 1 || !draft || !source || !source.text.includes(draft.quote)) {
-      throw new Error("Gemini returned unsupported evidence. Retry analysis or review the repository manually.");
+      throw new Error("The AI returned unsupported evidence. Retry analysis or review the repository manually.");
     }
     drafts[criterion.id] = [{ model, score: draft.score, reason: draft.reason, evidence: `${source.url}\nQuote: ${draft.quote}` }];
     draftCriteria[criterion.id] = criterion.name;

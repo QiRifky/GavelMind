@@ -91,5 +91,5 @@
 
 # Sprite AI reliability
 
-- [x] Try every configured AI in order (built-in key, then OpenRouter/Groq, then the host's own Gemini key) so one busy free tier never blocks rules or analysis.
+- [x] Use Groq as the only AI for rules and analysis (Gemini and OpenRouter removed).
 - [ ] Verify Automatic rules and repo analysis on the Sprite after the user pulls and restarts. Blocked: needs the user's Sprite terminal session and a working connector.

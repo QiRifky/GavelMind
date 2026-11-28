@@ -60,7 +60,7 @@ function Entries() {
       <StepBody className="grid items-start gap-4 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-stretch">
       <div className="lg:col-span-2"><StatsBento hero={{ badge: "Projects", value: rows.length, caption: "Submissions in this event" }} trend={{ label: "Analysis ready", value: `${rows.length ? Math.round((ready.length / rows.length) * 100) : 0}%`, bars: (["queued", "analyzing", "done", "failed"] as const).map((k) => rows.filter((p) => p.status === k).length) }} tiles={[{ label: "Ready", value: ready.length }, { label: "Queued", value: rows.filter((p) => p.status === "queued").length }]} /></div>
       <section className="overflow-hidden bento " aria-label="Add submissions">
-        <header className="flex flex-wrap items-center justify-between gap-3 px-5 pt-5 sm:px-6"><h2 className="text-lg font-medium">Add submissions</h2><Badge tone="neutral">GitHub + Gemini</Badge></header>
+        <header className="flex flex-wrap items-center justify-between gap-3 px-5 pt-5 sm:px-6"><h2 className="text-lg font-medium">Add submissions</h2><Badge tone="neutral">GitHub + Groq</Badge></header>
         <Tabs defaultValue="single" className="p-5 sm:p-6">
           <TabsList aria-label="Submission input method" className="grid h-auto w-full grid-cols-3 gap-1 rounded-xl bg-well p-1.5">
             <TabsTrigger value="single" className="min-w-0 flex-col gap-1 whitespace-normal px-1 py-3 text-xs data-[state=active]:bg-accent data-[state=active]:text-accent-foreground sm:flex-row sm:gap-2 sm:text-sm"><Github className="size-4 shrink-0" />Single Analyze</TabsTrigger>

@@ -2,7 +2,7 @@
 
 ## Real repository analysis
 
-Project analysis reads public GitHub metadata, README, up to six source files, and one page of commit dates, then requests criterion drafts from Gemini through Lovable's built-in AI SDK. Exact evidence quotes and a complete rubric are validated before a report can be saved. Errors never fall back to sample reports or scores.
+Project analysis reads public GitHub metadata, README, up to six source files, and one page of commit dates, then requests criterion drafts from Groq. Exact evidence quotes and a complete rubric are validated before a report can be saved. Errors never fall back to sample reports or scores.
 
 The app does **not** clone/execute repositories, watch/transcribe demos, prove event eligibility, fetch event rules, or import showcase pages. Event rules are entered manually. Final scores and winners are always the judge's decisions. Workspace data remains in memory and resets on reload; Cloud provisioning alone does not make this data persistent.
 
@@ -11,7 +11,7 @@ The app does **not** clone/execute repositories, watch/transcribe demos, prove e
 Install dependencies with `bun install`, then run `bun run dev --host 0.0.0.0 --port 8080` for development. Set the following **server-side runtime environment variables** privately in the Sprite; never commit their values or send them in chat:
 
 - `GH_GATEWAY`: the verified GitHub API base URL provided by your Sprites connector configuration. GavelMind appends `/repos/owner/repo/...`. A guessed URL or placeholder connection ID is not a verified connector. This implementation assumes the provided gateway handles upstream authorization.
-- AI providers are tried in this order until one answers: `LOVABLE_API_KEY` (built-in `google/gemini-3.8-flash`, only present on Lovable hosting), then `OPENROUTER_API_KEY` (free `meta-llama/llama-3.3-70b-instruct:free`, override with `OPENROUTER_MODEL`), then `GROQ_API_KEY` (Groq `llama-3.3-70b-versatile`), then `GEMINI_API_KEY` (your own Google AI Studio key, called directly as `gemini-3.8-flash`). On a Sprite the built-in key is absent, so the first key you configure there wins; a busy free tier falls through to the next key instead of failing the page.
+- The only AI provider is Groq: set `GROQ_API_KEY` on the server (model `llama-3.3-70b-versatile`, override with `GROQ_MODEL`). Gemini, OpenRouter and built-in keys are ignored.
 
 Do not replace the generated public Cloud configuration with secret credentials. Keep private runtime settings out of the committed `.env` file; use the deployment's secret settings or an ignored `.env.local` for local development. Do not expose a paid analysis service publicly without appropriate access controls.
 

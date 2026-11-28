@@ -29,7 +29,7 @@ use the editor.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
 
-- Workspace state stays in api.ts; analysis.functions.ts calls server-only GitHub and Gemini SDK helpers, with no mock fallback.
+- Workspace state stays in api.ts; analysis uses server-only GitHub + Groq helpers, no mock fallback. Groq (GROQ_API_KEY, groq.server.ts) is the only AI provider: the user removed Gemini/OpenRouter so a Sprite needs one key.
 - Drafts and event rules (read from the public page) are quote-checked and stay unconfirmed until the judge confirms; code is never run. Sprite needs private runtime credentials.
 - Leaderboard ranks only by judge final scores (judgeTotal); AI drafts never rank or declare a winner.
 - Summary style (Neutral/Concise/Detailed via summaryText()) changes wording only, never numbers.
@@ -46,7 +46,7 @@ use the editor.
 - ShinyButton wraps the shared Button with token-based gleam styling and native button props so animated CTAs preserve form submission and disabled behavior.
 - Entries uses persistent Radix tabs for single analysis, bulk URLs, and showcase import; hidden panels retain state so switching modes never cancels work or loses input.
 - Single-analysis previews and explicit queue insertion live in api.ts; Start judging prepares only selected entries before navigation, so previewing never silently queues a project and existing ready reports are not regenerated.
-- WorkflowNav is an expanding rounded-3xl navbar card (motion/react layout + height animation, step pills, folder panel with switch/delete, mobile menu) replacing the EventFolders header on workflow pages. WorkflowNav shares the existing Event → Rubric → Entries → Judging → Results order (Judging links to the next unreviewed ready project at /app/p/$id) and reads session status from the mock store; page footers link to existing next-step and completed-report views without changing scoring rules.
+- WorkflowNav is the expanding rounded-3xl workflow navbar (step pills Event → Rubric → Entries → Judging → Results, folder panel, mobile menu); Judging links to the next unreviewed ready project at /app/p/$id; footers link to next steps without changing scoring.
 - Event folders swap the whole mock workspace (event, projects, rubric, scores, results) in api.ts so events never mix; EventFolders owns create/edit event dialogs and contains WorkflowNav on every workspace step and report; global navigation shows only the active folder to keep steps scoped to that event.
 - /app is the event-folder gallery (open a folder → /app/event); Entries lives at /app/entries so the folder level stays separate from the workflow steps.
 - The top bar (Gavel Mind brand + active-folder pill) is hidden only on the workflow-step paths (/app/event, /app/entries, /app/rubric, /app/results, plus /app/p/*) via WORKSPACE_STEP_PATHS in src/routes/__root.tsx, because WorkflowNav already shows the location; every other page keeps the top bar.

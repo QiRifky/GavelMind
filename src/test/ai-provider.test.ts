@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { aiCandidates } from "@/lib/groq.server";
+import { groqConfig } from "@/lib/groq.server";
 
-const KEYS = ["LOVABLE_API_KEY", "OPENROUTER_API_KEY", "OPENROUTER_MODEL", "GROQ_API_KEY", "GEMINI_API_KEY"] as const;
+const KEYS = ["GROQ_API_KEY", "GROQ_MODEL", "GEMINI_API_KEY", "OPENROUTER_API_KEY", "LOVABLE_API_KEY"] as const;
 const saved: Record<string, string | undefined> = {};
 
 beforeEach(() => {
@@ -15,27 +15,22 @@ afterEach(() => {
   }
 });
 
-describe("AI provider order", () => {
-  it("tries Lovable's built-in model first when its key is present", () => {
-    process.env["LOVABLE_API_KEY"] = "built-in";
-    process.env["OPENROUTER_API_KEY"] = "free";
-    process.env["GEMINI_API_KEY"] = "own";
-    expect(aiCandidates()).toEqual([{ kind: "builtin" }, { kind: "free", provider: { name: "OpenRouter", url: "https://openrouter.ai/api/v1/chat/completions", key: "free", model: "meta-llama/llama-3.3-70b-instruct:free" } }, { kind: "gemini", key: "own" }]);
+describe("Groq is the only AI provider", () => {
+  it("uses Groq with the default model when GROQ_API_KEY is set", () => {
+    process.env["GROQ_API_KEY"] = "gsk_test";
+    expect(groqConfig()).toEqual({ name: "Groq", url: "https://api.groq.com/openai/v1/chat/completions", key: "gsk_test", model: "llama-3.3-70b-versatile" });
   });
 
-  it("falls back to the host's own Gemini key when the free provider is the only other option", () => {
-    process.env["OPENROUTER_API_KEY"] = "free";
-    process.env["GEMINI_API_KEY"] = "own";
-    const choices = aiCandidates();
-    expect(choices.map((choice) => choice.kind)).toEqual(["free", "gemini"]);
+  it("ignores Gemini, OpenRouter and built-in keys", () => {
+    process.env["GEMINI_API_KEY"] = "g";
+    process.env["OPENROUTER_API_KEY"] = "o";
+    process.env["LOVABLE_API_KEY"] = "l";
+    expect(() => groqConfig()).toThrow("Add GROQ_API_KEY");
   });
 
-  it("keeps only the Gemini key when no free provider is configured", () => {
-    process.env["GEMINI_API_KEY"] = "own";
-    expect(aiCandidates()).toEqual([{ kind: "gemini", key: "own" }]);
-  });
-
-  it("still reports a clear configuration error when no key is set", () => {
-    expect(aiCandidates()).toEqual([{ kind: "builtin" }]);
+  it("allows overriding the Groq model", () => {
+    process.env["GROQ_API_KEY"] = "gsk_test";
+    process.env["GROQ_MODEL"] = "llama-3.1-8b-instant";
+    expect(groqConfig().model).toBe("llama-3.1-8b-instant");
   });
 });
