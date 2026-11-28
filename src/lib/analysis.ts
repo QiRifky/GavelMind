@@ -22,17 +22,22 @@ const outputSchema = z.object({
   })),
 });
 
+const normPath = (p: string) => p.trim().replace(/^\.?\//, "").toLowerCase();
+/** Compare quotes ignoring whitespace, quote-mark style and wrapping quotes; content must still match. */
+export const normText = (t: string) => t.replace(/[\u2018\u2019\u201B`]/g, "'").replace(/[\u201C\u201D]/g, '"').replace(/\s+/g, " ").trim().replace(/^["']+|["']+$/g, "").replace(/[.…]+$/, "").trim().toLowerCase();
 /** Accept drafts only for the requested rubric and exact quotations from fetched sources. */
 export function reportFromAnalysis(input: AnalysisInput, repo: RepositoryEvidence, model: string, output: unknown): Report {
   const parsed = outputSchema.parse(output);
-  if (parsed.drafts.length !== input.criteria.length) throw new Error("The AI did not return the complete rubric. Retry analysis.");
   const drafts: Record<string, ModelDraft[]> = {};
   const draftCriteria: Record<string, string> = {};
   for (const criterion of input.criteria) {
-    const matches = parsed.drafts.filter((draft) => draft.criterionId === criterion.id);
+    const key = (v: string) => v.trim().toLowerCase();
+    const matches = parsed.drafts.filter((d) => key(d.criterionId) === key(criterion.id) || key(d.criterionId) === key(criterion.name));
     const draft = matches[0];
-    const source = repo.documents.find((doc) => doc.path === draft?.sourcePath);
-    if (matches.length !== 1 || !draft || !source || !source.text.includes(draft.quote)) {
+    if (!draft) throw new Error("The AI did not return the complete rubric. Retry analysis.");
+    const path = normPath(draft.sourcePath);
+    const source = repo.documents.find((doc) => normPath(doc.path) === path) ?? repo.documents.find((doc) => normText(doc.text).includes(normText(draft.quote)));
+    if (matches.length !== 1 || !source || !normText(draft.quote) || !normText(source.text).includes(normText(draft.quote))) {
       throw new Error("The AI returned unsupported evidence. Retry analysis or review the repository manually.");
     }
     drafts[criterion.id] = [{ model, score: draft.score, reason: draft.reason, evidence: `${source.url}\nQuote: ${draft.quote}` }];

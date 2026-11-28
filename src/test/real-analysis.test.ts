@@ -20,9 +20,13 @@ describe("real analysis without fabricated fallback", () => {
     const data = output(); data.drafts[0] = { criterionId: "creativity", score: 8, reason: "Invented", sourcePath: "README.md", quote: "Never present in source" };
     expect(() => reportFromAnalysis(input, repo, "Gemini", data)).toThrow("unsupported evidence");
   });
-  it("rejects fabricated source paths", () => {
+  it("accepts a real quote with different whitespace, wrapping quotes and ./ path", () => {
+    const data = output(); data.drafts[0] = { criterionId: "Creativity", score: 6, reason: "ok", sourcePath: "./README.md", quote: "\u201cPublic  README\ntext.\u201d" };
+    expect(reportFromAnalysis(input, repo, "Groq", data).drafts?.["creativity"]?.[0]?.score).toBe(6);
+  });
+  it("cites the real file when the AI names a wrong path for a real quote", () => {
     const data = output(); data.drafts[0] = { criterionId: "creativity", score: 8, reason: "Invented", sourcePath: "fake.ts", quote: "Public README text." };
-    expect(() => reportFromAnalysis(input, repo, "Gemini", data)).toThrow("unsupported evidence");
+    expect(reportFromAnalysis(input, repo, "Gemini", data).drafts?.["creativity"]?.[0]?.evidence).toContain("README.md");
   });
   it("rejects scores above 10", () => {
     const data = output(); const first = data.drafts[0]; if (!first) throw new Error("Missing fixture"); first.score = 11;
