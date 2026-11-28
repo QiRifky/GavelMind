@@ -1,6 +1,8 @@
 # Current fixes
 
 - [x] Verify New event folder opens its dialog and folder creation reaches the Event page on laptop and phone (3 targeted tests passed).
+- [x] Fix the Sprite "Gemini API request failed (404)" error: direct Google API calls now use the real model name `gemini-2.0-flash` (commit d410334); 56 tests passed.
+- [ ] Recheck Automatic rules on the private Sprite deployment after the user pulls this fix and restarts the server. Blocked: it requires the user's Fly.io sign-in session.
 - [ ] Recheck the private Sprite deployment after the user updates and reloads it. Blocked: it requires the user's Fly.io sign-in session.
 - [x] Verify both event-link rule analysis flows against the real Hacksgiving URL: 7 rules from the Event page and 8 during folder creation, with no errors; 4 targeted tests passed. Sprite still needs the feature commit and a restart.
 
